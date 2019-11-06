@@ -111,16 +111,17 @@ android {
         //resConfigs "en"
 
         archivesBaseName += "-$versionName"
-        applicationId "de.pixart.messenger"
+        applicationId = 'de.schulchat.messenger'
+        resConfigs "en"
         multiDexEnabled true
 
-        buildConfigField("String", "LOGTAG", '"Pix-Art_Messenger"')
-        buildConfigField("String", "DOMAIN_LOCK", 'null')
-        buildConfigField("String", "MAGIC_CREATE_DOMAIN", '"blabber.im"')
-        buildConfigField("boolean", "SHOW_INTRO", 'true')
         buildConfigField("String", "UPDATE_URL", '"https://xmpp.pix-art.de/Pix-Art_Messenger/update/"')
+        buildConfigField("String", "DOMAIN_LOCK", '"kurswahl-online.de"')
+        buildConfigField("String", "MAGIC_CREATE_DOMAIN", '"kurswahl-online.de"')
+        buildConfigField("String", "LOGTAG", '"Schulchat_Messenger"')
+        buildConfigField("boolean", "SHOW_INTRO", "false")
         resValue "string", "applicationId", applicationId
-        resValue "string", "app_name", "Pix-Art Messenger"
+        resValue "string", "app_name", "Schulchat Messenger"
     }
 
     dataBinding {
@@ -139,25 +140,9 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    flavorDimensions("mode", "distribution")
+    flavorDimensions("distribution")
 
     productFlavors {
-        pixart {
-            dimension "mode"
-        }
-        schulchat {
-            dimension "mode"
-            applicationId = 'de.schulchat.messenger'
-            resConfigs "en"
-
-            resValue "string", "applicationId", applicationId
-            resValue "string", "app_name", "Schulchat Messenger"
-
-            buildConfigField("String", "DOMAIN_LOCK", '"kurswahl-online.de"')
-            buildConfigField("String", "MAGIC_CREATE_DOMAIN", '"kurswahl-online.de"')
-            buildConfigField("String", "LOGTAG", '"Schulchat_Messenger"')
-            buildConfigField("boolean", "SHOW_INTRO", "false")
-        }
         playstore {
             dimension "distribution"
             versionNameSuffix "-playstore"

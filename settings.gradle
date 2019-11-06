@@ -1,4 +1,4 @@
 include ':libs:android-transcoder'
 include ':libs:xmpp-addr'
 include ':libs:fullscreenvideoview'
-rootProject.name = 'PixArtMessenger'
+rootProject.name = 'SchulchatMessenger'
