@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="pref_about_message" translatable="false"><b>Pix-Art Messenger</b>
+    <string name="pref_about_message" translatable="false"><b>Schulchat Messenger</b>
 			\n\nCopyright © 2014-2019 Christian Schneppe
-			\n\nhttp://jabber.pix-art.de
+			\n\nhttps://schulchat.de
 			\n\nThis program is free software: you can redistribute it and/or modify
 			it under the terms of the GNU General Public License as published by
 			the Free Software Foundation, either version 3 of the License, or
@@ -13,10 +13,9 @@
 			GNU General Public License for more details.
 			\n\nYou should have received a copy of the GNU General Public License
 			along with this program. If not, see https://www.gnu.org/licenses
+			\n\nSchulchat-Messenger is based on Conversations and Pix-Art Messenger
 			\n\nDownload the full original source code at https://github.com/siacs/Conversations (Copyright © 2014-2019 Daniel Gultsch)
-			\n\nDownload the modified source code at https://github.com/kriztan/Pix-Art-Messenger
-            \n\nPix-Art Messenger recommends blabber.im as provider. More information can be found at https://blabber.im
-            \n\nYou can support me by making a donation in form of a gift in sense of § 516 ff BGB i.e. a gratuitous donation.
+			\n\nDownload the modified source code at https://github.com/kriztan/Pix-Art-Messenger (Copyright © 2014-2019 Christian Schneppe)
 	</string>
     <string name="pref_about_libraries" translatable="false"><b>Libraries</b>
 			\n\nhttps://www.bouncycastle.org\n(The MIT License (MIT))
