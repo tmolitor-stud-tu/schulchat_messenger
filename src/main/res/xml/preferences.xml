@@ -373,6 +373,7 @@
         </PreferenceCategory>
     </PreferenceScreen>
     <!--Expert-->
+    <!-- disable expert settings
     <PreferenceScreen
         android:icon="?attr/ic_settings_expert"
         android:key="expert"
@@ -490,6 +491,7 @@
                 android:title="@string/pref_autojoin" />
         </PreferenceCategory>
     </PreferenceScreen>
+    -->
     <!--About-->
     <de.pixart.messenger.ui.AboutPreference
         android:icon="?attr/ic_settings_about"
