@@ -115,7 +115,6 @@ android {
         resConfigs "en"
         multiDexEnabled true
 
-        buildConfigField("String", "UPDATE_URL", '"https://xmpp.pix-art.de/Pix-Art_Messenger/update/"')
         buildConfigField("String", "DOMAIN_LOCK", '"kurswahl-online.de"')
         buildConfigField("String", "MAGIC_CREATE_DOMAIN", '"kurswahl-online.de"')
         buildConfigField("String", "LOGTAG", '"Schulchat_Messenger"')
