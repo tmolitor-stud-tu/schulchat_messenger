@@ -36,7 +36,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_gravity="center_horizontal"
                     android:padding="8dp"
-                    android:src="@drawable/main_logo" />
+                    android:src="@drawable/logo" />
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView

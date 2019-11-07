@@ -51,7 +51,7 @@ public class IntroActivity extends AppIntro {
                 SliderPage welcome = new SliderPage();
                 welcome.setTitle(getString(R.string.welcome_header));
                 welcome.setDescription(getString(R.string.intro_desc_main));
-                welcome.setImageDrawable(R.drawable.main_logo);
+                welcome.setImageDrawable(R.drawable.logo);
                 welcome.setBgColor(backgroundColor);
                 addSlide(AppIntroFragment.newInstance(welcome));
 
