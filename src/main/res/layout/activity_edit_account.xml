@@ -120,6 +120,7 @@
                                     style="@style/Widget.Conversations.EditText"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:enabled="false"
                                     android:imeOptions="actionNext"
                                     android:inputType="textEmailAddress"
                                     android:textColor="?attr/edit_text_color" />
@@ -140,6 +141,7 @@
                                     style="@style/Widget.Conversations.EditText"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:enabled="false"
                                     android:hint="@string/password"
                                     android:inputType="textPassword"
                                     android:textColor="?attr/edit_text_color" />

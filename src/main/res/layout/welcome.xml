@@ -6,7 +6,7 @@
 
     <include layout="@layout/toolbar" />
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
@@ -50,42 +50,23 @@
                     android:textAppearance="@style/TextAppearance.Conversations.Body1" />
 
                 <TextView
-                    android:id="@id/import_text"
+                    android:id="@id/scan_qr_code_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="@string/import_text"
+                    android:text="@string/scan_qr_code_text"
                     android:textColor="?attr/text_Color_Main"
-                    android:textSize="?attr/TextSizeBody"
-                    android:visibility="gone" />
+                    android:textSize="?attr/TextSizeBody" />
 
                 <Button
-                    android:id="@+id/import_database"
+                    android:id="@+id/scan_qr_code"
                     style="@style/Widget.Conversations.Button.Borderless"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
-                    android:text="@string/import_database"
+                    android:text="@string/scan_qr_code"
                     android:textColor="?attr/colorAccent"
                     android:visibility="gone" />
-
-                <Button
-                    android:id="@+id/create_account"
-                    style="@style/Widget.Conversations.Button.Borderless"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:text="@string/create_account"
-                    android:textColor="?attr/colorAccent" />
-
-                <Button
-                    android:id="@+id/use_existing_account"
-                    style="@style/Widget.Conversations.Button.Borderless"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:text="@string/welcome_existing_account"
-                    android:textColor="?attr/colorAccent" />
             </LinearLayout>
 
             <RelativeLayout

@@ -784,6 +784,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
                 if (mForceRegister != null) {
                     if (mForceRegister) {
                         setTitle(R.string.action_add_new_account);
+                        next();
                     } else {
                         setTitle(R.string.action_add_existing_account);
                     }
@@ -1135,7 +1136,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
 
         }
 
-        final boolean editable = !mAccount.isOptionSet(Account.OPTION_LOGGED_IN_SUCCESSFULLY) && QuickConversationsService.isConversations();
+        final boolean editable = false;
         this.binding.accountJid.setEnabled(editable);
         this.binding.accountJid.setFocusable(editable);
         this.binding.accountJid.setFocusableInTouchMode(editable);
@@ -1147,7 +1148,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
         final String presenceStatusMessage = mAccount.getPresenceStatusMessage();
         updatePresenceStatus(presenceStatus, presenceStatusMessage);
         final boolean tooglePassword = mAccount.isOptionSet(Account.OPTION_MAGIC_CREATE) || !mAccount.isOptionSet(Account.OPTION_LOGGED_IN_SUCCESSFULLY);
-        final boolean editPassword = !mAccount.isOptionSet(Account.OPTION_MAGIC_CREATE) || (!mAccount.isOptionSet(Account.OPTION_LOGGED_IN_SUCCESSFULLY) && QuickConversationsService.isConversations()) || mAccount.getLastErrorStatus() == Account.State.UNAUTHORIZED;
+        final boolean editPassword = false;
         this.binding.accountPasswordLayout.setPasswordVisibilityToggleEnabled(tooglePassword);
         this.binding.accountPassword.setFocusable(editPassword);
         this.binding.accountPassword.setFocusableInTouchMode(editPassword);
