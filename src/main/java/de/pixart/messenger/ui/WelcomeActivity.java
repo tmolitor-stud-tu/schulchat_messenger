@@ -112,16 +112,15 @@ public class WelcomeActivity extends XmppActivity {
             Account account = xmppConnectionService.findAccountByJid(jid);
             if (account == null) {
                 account = new Account(jid, password);
-                account.setOption(Account.OPTION_REGISTER, true);
+                account.setOption(Account.OPTION_REGISTER, false);
                 account.setOption(Account.OPTION_DISABLED, true);
-                account.setOption(Account.OPTION_MAGIC_CREATE, true);
+                account.setOption(Account.OPTION_MAGIC_CREATE, false);
                 xmppConnectionService.createAccount(account);
             }
             Intent intent = new Intent(WelcomeActivity.this, EditAccountActivity.class);
             intent.putExtra("jid", account.getJid().asBareJid().toString());
             intent.putExtra("init", true);
-            intent.putExtra("existing", false);
-            intent.putExtra("useownprovider", false);
+            intent.putExtra("existing", true);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             StartConversationActivity.addInviteUri(intent, getIntent());
             startActivity(intent);

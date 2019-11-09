@@ -784,7 +784,6 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
                 if (mForceRegister != null) {
                     if (mForceRegister) {
                         setTitle(R.string.action_add_new_account);
-                        next();
                     } else {
                         setTitle(R.string.action_add_existing_account);
                     }
