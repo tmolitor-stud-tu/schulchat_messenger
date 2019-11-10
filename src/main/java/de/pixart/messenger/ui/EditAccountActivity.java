@@ -683,46 +683,24 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
         final MenuItem showBlocklist = menu.findItem(R.id.action_show_block_list);
         final MenuItem reconnect = menu.findItem(R.id.mgmt_account_reconnect);
         final MenuItem showMoreInfo = menu.findItem(R.id.action_server_info_show_more);
-        final MenuItem changePassword = menu.findItem(R.id.action_change_password_on_server);
-        final MenuItem showPassword = menu.findItem(R.id.action_show_password);
-        final MenuItem renewCertificate = menu.findItem(R.id.action_renew_certificate);
         final MenuItem mamPrefs = menu.findItem(R.id.action_mam_prefs);
         final MenuItem actionShare = menu.findItem(R.id.action_share);
         final MenuItem shareBarcode = menu.findItem(R.id.action_share_barcode);
         final MenuItem shareQRCode = menu.findItem(R.id.action_show_qr_code);
-        final MenuItem announcePGP = menu.findItem(R.id.mgmt_account_announce_pgp);
-        final MenuItem forgotPassword = menu.findItem(R.id.mgmt_account_password_forgotten);
-        renewCertificate.setVisible(mAccount != null && mAccount.getPrivateKeyAlias() != null);
-
         if (mAccount != null && mAccount.isOnlineAndConnected()) {
             if (!mAccount.getXmppConnection().getFeatures().blocking()) {
                 showBlocklist.setVisible(false);
             }
-            if (!mAccount.getXmppConnection().getFeatures().register()) {
-                changePassword.setVisible(false);
-            }
             reconnect.setVisible(true);
-            announcePGP.setVisible(true);
-            forgotPassword.setVisible(true);
             mamPrefs.setVisible(mAccount.getXmppConnection().getFeatures().mam());
         } else {
-            announcePGP.setVisible(false);
-            forgotPassword.setVisible(false);
             reconnect.setVisible(false);
             showBlocklist.setVisible(false);
             showMoreInfo.setVisible(false);
-            changePassword.setVisible(false);
             mamPrefs.setVisible(false);
             actionShare.setVisible(false);
             shareBarcode.setVisible(false);
             shareQRCode.setVisible(false);
-        }
-
-        if (mAccount != null) {
-            showPassword.setVisible(mAccount.isOptionSet(Account.OPTION_MAGIC_CREATE)
-                    && !mAccount.isOptionSet(Account.OPTION_REGISTER));
-        } else {
-            showPassword.setVisible(false);
         }
         return super.onCreateOptionsMenu(menu);
     }
@@ -922,36 +900,12 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
             case R.id.action_share_uri:
                 shareLink(false);
                 break;
-            case R.id.action_change_password_on_server:
-                gotoChangePassword(null);
-                break;
             case R.id.action_mam_prefs:
                 editMamPrefs();
-                break;
-            case R.id.action_renew_certificate:
-                renewCertificate();
-                break;
-            case R.id.action_show_password:
-                showPassword();
                 break;
             case R.id.mgmt_account_announce_pgp:
                 publishOpenPGPPublicKey(mAccount);
                 return true;
-            case R.id.mgmt_account_password_forgotten:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle(R.string.password_forgotten_title);
-                builder.setMessage(R.string.password_forgotten_text);
-                builder.setNegativeButton(R.string.cancel, null);
-                builder.setPositiveButton(R.string.confirm, (dialog, which) -> {
-                    try {
-                        Uri uri = Uri.parse(getSupportSite(mAccount.getJid().getDomain()));
-                        final Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                        startActivity(intent);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-                builder.create().show();
         }
         return super.onOptionsItemSelected(item);
     }

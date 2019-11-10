@@ -87,17 +87,11 @@ public class WelcomeActivity extends XmppActivity {
         if (requestCode == REQUEST_SCAN_QR_CODE && resultCode == RESULT_OK) {
             String result = intent.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
             if (result != null) {
-                if (result.startsWith("domain=kurswahl-online.de")) {
+                if (result.startsWith("domain=" + Config.MAGIC_CREATE_DOMAIN)) {
                     String[] strings = result.split("&");
-                    /*
-                    strings[0]; //domain=kurswahl-online.de
-                    strings[1]; //user=b011e554-c9ee-4a12-a9d0-24c4ab8b21e7
-                    strings[2]; //token=571bb231023b209d9536f641adf647a5006ce5d597965266f21161599b28eb0c
-                    */
                     final String domain = strings[0].substring(("domain=").length());
                     final String username = strings[1].substring(("user=").length());
                     final String password = strings[2].substring(("token=").length());
-                    Log.d(Config.LOGTAG, "ScanCode domain " + domain + " user " + username + " pw " + password);
                     addAccount(domain, username, password);
                 }
             }
