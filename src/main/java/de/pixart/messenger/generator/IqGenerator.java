@@ -474,14 +474,12 @@ public class IqGenerator extends AbstractGenerator {
         final IqPacket packet = new IqPacket(IqPacket.TYPE.SET);
         packet.setTo(appServer);
         final Element command = packet.addChild("command", Namespace.COMMANDS);
-        command.setAttribute("node", "register-push-fcm");
+        command.setAttribute("node", "v1-register-push");
         command.setAttribute("action", "execute");
         final Data data = new Data();
+        data.put("type", "fcm");
         data.put("token", token);
-        data.put("android-id", deviceId);
-        if (muc != null) {
-            data.put("muc", muc.toEscapedString());
-        }
+        data.put("node", deviceId);
         data.submit();
         command.addChild(data);
         return packet;
