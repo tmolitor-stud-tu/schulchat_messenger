@@ -365,16 +365,6 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
     };
     private OnClickListener mBlockClickListener = this::showBlockSubmenu;
 
-    private OnClickListener mAddBackClickListener = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            final Contact contact = conversation == null ? null : conversation.getContact();
-            if (contact != null) {
-                activity.xmppConnectionService.createContact(contact, true);
-                activity.switchToContactDetails(contact);
-            }
-        }
-    };
     private View.OnLongClickListener mLongPressBlockListener = v -> {
         showBlockSubmenu(v);
         return true;
@@ -2394,8 +2384,6 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
             showSnackbar(R.string.this_account_is_disabled, R.string.enable, this.mEnableAccountListener);
         } else if (conversation.isBlocked()) {
             showSnackbar(R.string.contact_blocked, R.string.unblock, this.mUnblockClickListener);
-        } else if (contact != null && !contact.showInRoster() && contact.getOption(Contact.Options.PENDING_SUBSCRIPTION_REQUEST)) {
-            showSnackbar(R.string.contact_added_you, R.string.add_back, this.mAddBackClickListener, this.mLongPressBlockListener);
         } else if (contact != null && contact.getOption(Contact.Options.PENDING_SUBSCRIPTION_REQUEST)) {
             showSnackbar(R.string.contact_asks_for_presence_subscription, R.string.allow, this.mAllowPresenceSubscription, this.mLongPressBlockListener);
         } else if (mode == Conversation.MODE_MULTI

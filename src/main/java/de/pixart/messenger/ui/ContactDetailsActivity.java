@@ -81,13 +81,6 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
     private Conversation mConversation;
     ActivityContactDetailsBinding binding;
     private MediaAdapter mMediaAdapter;
-    private DialogInterface.OnClickListener removeFromRoster = new DialogInterface.OnClickListener() {
-
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            xmppConnectionService.deleteContactOnServer(contact);
-        }
-    };
     private OnCheckedChangeListener mOnSendCheckedChange = new OnCheckedChangeListener() {
 
         @Override
@@ -128,49 +121,6 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
     private String messageFingerprint;
     private TextView mNotifyStatusText;
     private ImageButton mNotifyStatusButton;
-
-    private DialogInterface.OnClickListener addToPhonebook = new DialogInterface.OnClickListener() {
-
-        @Override
-        public void onClick(DialogInterface dialog, int which) {
-            Intent intent = new Intent(Intent.ACTION_INSERT_OR_EDIT);
-            intent.setType(Contacts.CONTENT_ITEM_TYPE);
-            intent.putExtra(Intents.Insert.IM_HANDLE, contact.getJid().toEscapedString());
-            intent.putExtra(Intents.Insert.IM_PROTOCOL, CommonDataKinds.Im.PROTOCOL_JABBER);
-            intent.putExtra("finishActivityOnSaveCompleted", true);
-            try {
-                ContactDetailsActivity.this.startActivityForResult(intent, 0);
-            } catch (ActivityNotFoundException e) {
-                Toast.makeText(ContactDetailsActivity.this, R.string.no_application_found_to_view_contact, Toast.LENGTH_SHORT).show();
-            }
-        }
-    };
-
-    private OnClickListener onBadgeClick = new OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            Uri systemAccount = contact.getSystemAccount();
-            if (systemAccount == null) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(
-                        ContactDetailsActivity.this);
-                builder.setTitle(getString(R.string.action_add_phone_book));
-                builder.setMessage(getString(R.string.add_phone_book_text, contact.getJid().toString()));
-                builder.setNegativeButton(getString(R.string.cancel), null);
-                builder.setPositiveButton(getString(R.string.add), addToPhonebook);
-                builder.create().show();
-            } else {
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(systemAccount);
-                try {
-                    startActivity(intent);
-                    overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
-                } catch (ActivityNotFoundException e) {
-                    Toast.makeText(ContactDetailsActivity.this, R.string.no_application_found_to_view_contact, Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-    };
 
     private OnClickListener mNotifyStatusClickListener = new OnClickListener() {
         @Override
@@ -278,7 +228,6 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
             showInactiveOmemo = !showInactiveOmemo;
             populateView();
         });
-        binding.addContactButton.setOnClickListener(v -> showAddToRosterDialog(contact));
         this.mNotifyStatusButton = findViewById(R.id.notification_status_button);
         this.mNotifyStatusButton.setOnClickListener(this.mNotifyStatusClickListener);
         this.mNotifyStatusText = findViewById(R.id.notification_status_text);
@@ -426,19 +375,8 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
         if (contact.showInRoster()) {
             binding.detailsSendPresence.setVisibility(View.VISIBLE);
             binding.detailsReceivePresence.setVisibility(View.VISIBLE);
-            binding.addContactButton.setVisibility(View.VISIBLE);
-            binding.addContactButton.setText(getString(R.string.action_delete_contact));
-            binding.addContactButton.getBackground().setColorFilter(getWarningButtonColor(), PorterDuff.Mode.MULTIPLY);
             binding.detailsSendPresence.setOnCheckedChangeListener(null);
             binding.detailsReceivePresence.setOnCheckedChangeListener(null);
-
-            binding.addContactButton.setOnClickListener(view -> {
-                final AlertDialog.Builder deleteFromRosterDialog = new AlertDialog.Builder(ContactDetailsActivity.this);
-                deleteFromRosterDialog.setNegativeButton(getString(R.string.cancel), null)
-                        .setTitle(getString(R.string.action_delete_contact))
-                        .setMessage(JidDialog.style(this, R.string.remove_contact_text, contact.getJid().toEscapedString()))
-                        .setPositiveButton(getString(R.string.delete), removeFromRoster).create().show();
-            });
             binding.detailsSendPresence.setOnCheckedChangeListener(null);
             binding.detailsReceivePresence.setOnCheckedChangeListener(null);
 
@@ -509,15 +447,6 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
             binding.detailsSendPresence.setOnCheckedChangeListener(this.mOnSendCheckedChange);
             binding.detailsReceivePresence.setOnCheckedChangeListener(this.mOnReceiveCheckedChange);
         } else {
-            binding.addContactButton.setVisibility(View.VISIBLE);
-            binding.addContactButton.setText(getString(R.string.add_contact));
-            binding.addContactButton.getBackground().clearColorFilter();
-            binding.addContactButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    showAddToRosterDialog(contact);
-                }
-            });
             binding.detailsSendPresence.setVisibility(View.GONE);
             binding.detailsReceivePresence.setVisibility(View.GONE);
             binding.statusMessage.setVisibility(View.GONE);
@@ -546,7 +475,6 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
         }
         binding.detailsAccount.setText(getString(R.string.using_account, account));
         AvatarWorkerTask.loadAvatar(contact, binding.detailsContactBadge, R.dimen.avatar_big);
-        binding.detailsContactBadge.setOnClickListener(this.onBadgeClick);
 
         if (xmppConnectionService.multipleAccounts()) {
             binding.detailsAccount.setVisibility(View.VISIBLE);

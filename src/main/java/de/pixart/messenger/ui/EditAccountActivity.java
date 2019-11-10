@@ -311,7 +311,6 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
                 && mAccount.getStatus() != Account.State.ONLINE
                 && mFetchingAvatar) {
             Intent intent = new Intent(this, StartConversationActivity.class);
-            StartConversationActivity.addInviteUri(intent, getIntent());
             startActivity(intent);
             overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
             finish();
@@ -447,7 +446,6 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
             if (wasFirstAccount) {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             }
-            StartConversationActivity.addInviteUri(intent, getIntent());
             startActivity(intent);
             overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
             finish();
@@ -1173,11 +1171,6 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
                 this.binding.serverInfoSm.setText(R.string.server_info_available);
             } else {
                 this.binding.serverInfoSm.setText(R.string.server_info_unavailable);
-            }
-            if (features.adhocinvite) {
-                this.binding.serverInfoAdhocInvite.setText(R.string.server_info_available);
-            } else {
-                this.binding.serverInfoAdhocInvite.setText(R.string.server_info_unavailable);
             }
             if (features.pep()) {
                 AxolotlService axolotlService = this.mAccount.getAxolotlService();

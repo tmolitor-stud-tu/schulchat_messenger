@@ -1278,10 +1278,6 @@ public class XmppConnectionService extends Service {
         editor.apply();
         toggleSetProfilePictureActivity(hasEnabledAccounts);
         restoreFromDatabase();
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            startContactObserver();
-        }
         if (Compatibility.hasStoragePermission(this)) {
             Log.d(Config.LOGTAG, "starting file observer");
             mFileAddingExecutor.execute(this.fileObserver::startWatching);
@@ -1352,18 +1348,6 @@ public class XmppConnectionService extends Service {
             databaseBackend.markFilesAsChanged(changed);
             markChangedFiles(changed);
         }
-    }
-
-    public void startContactObserver() {
-        getContentResolver().registerContentObserver(ContactsContract.Contacts.CONTENT_URI, true, new ContentObserver(null) {
-            @Override
-            public void onChange(boolean selfChange) {
-                super.onChange(selfChange);
-                if (restoredFromDatabaseLatch.getCount() == 0) {
-                    loadPhoneContacts();
-                }
-            }
-        });
     }
 
     @Override
@@ -1571,10 +1555,6 @@ public class XmppConnectionService extends Service {
         account.deactivateGracePeriod();
         if (QuickConversationsService.isQuicksy() && conversation.getMode() == Conversation.MODE_SINGLE) {
             final Contact contact = conversation.getContact();
-            if (!contact.showInRoster() && contact.getOption(Contact.Options.SYNCED_VIA_OTHER)) {
-                Log.d(Config.LOGTAG, account.getJid().asBareJid() + ": adding " + contact.getJid() + " on sending message");
-                createContact(contact, true);
-            }
         }
         MessagePacket packet = null;
         final boolean addToConversation = (conversation.getMode() != Conversation.MODE_MULTI
@@ -3612,14 +3592,6 @@ public class XmppConnectionService extends Service {
                 deleteContactOnServer(contact);
             }
         }
-    }
-
-    public void createContact(Contact contact, boolean autoGrant) {
-        if (autoGrant) {
-            contact.setOption(Contact.Options.PREEMPTIVE_GRANT);
-            contact.setOption(Contact.Options.ASKING);
-        }
-        pushContactToServer(contact);
     }
 
     public void onOtrSessionEstablished(Conversation conversation) {

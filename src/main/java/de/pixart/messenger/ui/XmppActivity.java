@@ -667,22 +667,6 @@ public abstract class XmppActivity extends ActionBarActivity {
 
     }
 
-    public void showAddToRosterDialog(final Conversation conversation) {
-        showAddToRosterDialog(conversation.getContact());
-    }
-
-    public void showAddToRosterDialog(final Contact contact) {
-        if (contact == null) {
-            return;
-        }
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(contact.getJid().toString());
-        builder.setMessage(getString(R.string.not_in_roster));
-        builder.setNegativeButton(getString(R.string.cancel), null);
-        builder.setPositiveButton(getString(R.string.add_contact), (dialog, which) -> xmppConnectionService.createContact(contact, true));
-        builder.create().show();
-    }
-
     private void showAskForPresenceDialog(final Contact contact) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(contact.getJid().toString());
@@ -840,8 +824,6 @@ public abstract class XmppActivity extends ActionBarActivity {
             }
             conversation.setNextCounterpart(jid);
             listener.onPresenceSelected();
-        } else if (!contact.showInRoster()) {
-            showAddToRosterDialog(conversation);
         } else {
             final Presences presences = contact.getPresences();
             if (presences.size() == 0) {
@@ -968,130 +950,6 @@ public abstract class XmppActivity extends ActionBarActivity {
 
     protected String getShareableUri(boolean http) {
         return null;
-    }
-
-    public void inviteUser() {
-        if (!xmppConnectionServiceBound) {
-            Toast.makeText(this, R.string.not_connected_try_again, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (xmppConnectionService.getAccounts() == null) {
-            Toast.makeText(this, R.string.no_accounts, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (!xmppConnectionService.multipleAccounts()) {
-            Account mAccount = xmppConnectionService.getAccounts().get(0);
-            String user = Jid.ofEscaped(mAccount.getJid()).getLocal();
-            String domain = Jid.ofEscaped(mAccount.getJid()).getDomain();
-            String inviteURL;
-            try {
-                inviteURL = new getAdHocInviteUri(mAccount).execute().get();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-                inviteURL = Config.inviteUserURL + user + "/" + domain;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                inviteURL = Config.inviteUserURL + user + "/" + domain;
-            }
-            if (inviteURL == null) {
-                inviteURL = Config.inviteUserURL + user + "/" + domain;
-            }
-            Log.d(Config.LOGTAG, "Invite uri = " + inviteURL);
-            String inviteText = getString(R.string.InviteText, user);
-            Intent intent = new Intent(android.content.Intent.ACTION_SEND);
-            intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_SUBJECT, user + " " + getString(R.string.inviteUser_Subject) + " " + getString(R.string.app_name));
-            intent.putExtra(Intent.EXTRA_TEXT, inviteText + "\n\n" + inviteURL);
-            startActivity(Intent.createChooser(intent, getString(R.string.invite_contact)));
-            overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
-        } else {
-            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(R.string.chooce_account);
-            final View dialogView = this.getLayoutInflater().inflate(R.layout.choose_account_dialog, null);
-            final Spinner spinner = dialogView.findViewById(R.id.account);
-            builder.setView(dialogView);
-            List<String> mActivatedAccounts = new ArrayList<>();
-            for (Account account : xmppConnectionService.getAccounts()) {
-                if (account.getStatus() != Account.State.DISABLED) {
-                    if (Config.DOMAIN_LOCK != null) {
-                        mActivatedAccounts.add(account.getJid().getLocal());
-                    } else {
-                        mActivatedAccounts.add(account.getJid().asBareJid().toString());
-                    }
-                }
-            }
-            StartConversationActivity.populateAccountSpinner(this, mActivatedAccounts, spinner);
-            builder.setPositiveButton(R.string.ok,
-                    (dialog, id) -> {
-                        String selection = spinner.getSelectedItem().toString();
-                        Account mAccount = xmppConnectionService.findAccountByJid(Jid.of(selection).asBareJid());
-                        String user = Jid.of(mAccount.getJid()).getLocal();
-                        String domain = Jid.of(mAccount.getJid()).getDomain();
-                        String inviteURL;
-                        try {
-                            inviteURL = new getAdHocInviteUri(mAccount).execute().get();
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                            inviteURL = Config.inviteUserURL + user + "/" + domain;
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                            inviteURL = Config.inviteUserURL + user + "/" + domain;
-                        }
-                        if (inviteURL == null) {
-                            inviteURL = Config.inviteUserURL + user + "/" + domain;
-                        }
-                        Log.d(Config.LOGTAG, "Invite uri = " + inviteURL);
-                        String inviteText = getString(R.string.InviteText, user);
-                        Intent intent = new Intent(Intent.ACTION_SEND);
-                        intent.setType("text/plain");
-                        intent.putExtra(Intent.EXTRA_SUBJECT, user + " " + getString(R.string.inviteUser_Subject) + " " + getString(R.string.app_name));
-                        intent.putExtra(Intent.EXTRA_TEXT, inviteText + "\n\n" + inviteURL);
-                        startActivity(Intent.createChooser(intent, getString(R.string.invite_contact)));
-                        overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
-                    });
-            builder.setNegativeButton(R.string.cancel, null);
-            builder.create().show();
-        }
-    }
-
-    private boolean AdHocInvite(Account account) {
-        if (!xmppConnectionServiceBound) {
-            return false;
-        }
-        XmppConnection.Features features = account.getXmppConnection().getFeatures();
-        Log.d(Config.LOGTAG, "Invite available: " + features.adhocinvite);
-        return features.adhocinvite;
-    }
-
-    private class getAdHocInviteUri extends AsyncTask<Account, Void, String> {
-
-        private Account account;
-
-        public getAdHocInviteUri(Account a) {
-            this.account = a;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected String doInBackground(Account... params) {
-            if (AdHocInvite(account)) {
-                XmppConnection.Features features = account.getXmppConnection().getFeatures();
-                account.getXmppConnection().getAdHocInviteUrl(Jid.ofDomain(account.getJid().getDomain()));
-                String uri = features.adhocinviteURI;
-                features.adhocinviteURI = null;
-                return uri;
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-        }
     }
 
     private void createIssue() {

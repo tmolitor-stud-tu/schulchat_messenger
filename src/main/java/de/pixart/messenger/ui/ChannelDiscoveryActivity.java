@@ -233,9 +233,6 @@ public class ChannelDiscoveryActivity extends XmppActivity implements MenuItem.O
         final Room room = adapter.getCurrent();
         if (room != null) {
             switch (item.getItemId()) {
-                case R.id.share_with:
-                    StartConversationActivity.shareAsChannel(this, room.address);
-                    return true;
                 case R.id.open_join_dialog:
                     final Intent intent = new Intent(this, StartConversationActivity.class);
                     intent.setAction(Intent.ACTION_VIEW);

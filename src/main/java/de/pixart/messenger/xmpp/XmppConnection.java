@@ -1210,7 +1210,6 @@ public class XmppConnection implements Runnable {
         final boolean requestDiscoItemsFirst = !account.isOptionSet(Account.OPTION_LOGGED_IN_SUCCESSFULLY);
         if (requestDiscoItemsFirst) {
             sendServiceDiscoveryItems(Jid.of(account.getServer()));
-            getAdHocFeatures(Jid.of(account.getServer()));
         }
         if (discoveryResult == null) {
             sendServiceDiscoveryInfo(Jid.of(account.getServer()));
@@ -1222,7 +1221,6 @@ public class XmppConnection implements Runnable {
         sendServiceDiscoveryInfo(account.getJid().asBareJid());
         if (!requestDiscoItemsFirst) {
             sendServiceDiscoveryItems(Jid.of(account.getServer()));
-            getAdHocFeatures(Jid.of(account.getServer()));
         }
 
         if (!mWaitForDisco.get()) {
@@ -1334,71 +1332,6 @@ public class XmppConnection implements Runnable {
                 }
             } else {
                 Log.d(Config.LOGTAG, account.getJid().asBareJid() + ": could not query disco items of " + server);
-            }
-            if (packet.getType() != IqPacket.TYPE.TIMEOUT) {
-                if (mPendingServiceDiscoveries.decrementAndGet() == 0
-                        && mWaitForDisco.compareAndSet(true, false)) {
-                    finalizeBind();
-                }
-            }
-        });
-    }
-
-    private void getAdHocFeatures(final Jid server) {
-        mPendingServiceDiscoveries.incrementAndGet();
-        IqPacket iq = new IqPacket(IqPacket.TYPE.GET);
-        iq.setTo(Jid.ofDomain(server.getDomain()));
-        iq.setFrom(Jid.of(account.getJid().asBareJid()));
-        iq.setAttribute("query", "jabber:client");
-        final Element query = iq.addChild("query", "http://jabber.org/protocol/disco#items");
-        query.setAttribute("node", "http://jabber.org/protocol/commands");
-        this.sendIqPacket(iq, (account, packet) -> {
-            if (packet.getType() == IqPacket.TYPE.RESULT) {
-                final List<Element> elements = packet.query().getChildren();
-                for (final Element element : elements) {
-                    if (element.getName().equals("item")) {
-                        final Jid jid = InvalidJid.getNullForInvalid(element.getAttributeAsJid("jid"));
-                        if (jid != null && jid.equals(Jid.of(account.getServer()))) {
-                            final String node = element.getAttribute("node");
-                            if (node.equals("invite")) {
-                                features.adhocinvite = true;
-                                Log.d(Config.LOGTAG, account.getJid().asBareJid() + ": query disco commands of " + server + " was successful for node " + node);
-                            }
-                        }
-                    }
-                }
-            } else {
-                Log.d(Config.LOGTAG, account.getJid().asBareJid() + ": could not query disco commands of " + server);
-            }
-            if (packet.getType() != IqPacket.TYPE.TIMEOUT) {
-                if (mPendingServiceDiscoveries.decrementAndGet() == 0
-                        && mWaitForDisco.compareAndSet(true, false)) {
-                    finalizeBind();
-                }
-            }
-        });
-    }
-
-    public void getAdHocInviteUrl(final Jid server) {
-        IqPacket iqPacket = new IqPacket(IqPacket.TYPE.SET);
-        iqPacket.setTo(Jid.ofDomain(server.getDomain()));
-        iqPacket.setFrom(Jid.of(account.getJid().asBareJid()));
-        iqPacket.setContent("jabber:client");
-        final Element command = iqPacket.addChild("command", "http://jabber.org/protocol/commands");
-        command.setAttribute("node", "invite");
-        command.setAttribute("action", "execute");
-        Log.d(Config.LOGTAG, "AdHoc URL command " + iqPacket);
-        this.sendIqPacket(iqPacket, (account, packet) -> {
-            Log.d(Config.LOGTAG, "AdHoc URL packet " + packet);
-            if (packet.getType() == IqPacket.TYPE.RESULT) {
-                final List<Element> elements = packet.command().getChildren();
-                for (final Element element : elements) {
-                    features.adhocinviteURI = element.getContent();
-                    Log.d(Config.LOGTAG, "Commands URI: " + features.adhocinviteURI);
-                }
-            } else {
-                features.adhocinviteURI = "";
-                Log.d(Config.LOGTAG, account.getJid().asBareJid() + ": could not query disco commands of " + server);
             }
             if (packet.getType() != IqPacket.TYPE.TIMEOUT) {
                 if (mPendingServiceDiscoveries.decrementAndGet() == 0
@@ -1851,8 +1784,6 @@ public class XmppConnection implements Runnable {
     }
 
     public class Features {
-        public boolean adhocinvite;
-        public String adhocinviteURI;
         XmppConnection connection;
         private boolean carbonsEnabled = false;
         private boolean encryptionEnabled = false;

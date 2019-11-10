@@ -208,7 +208,6 @@ public class ConferenceDetailsActivity extends XmppActivity implements OnConvers
         this.binding.destroy.setVisibility(View.GONE);
         this.binding.destroy.setOnClickListener(destroyListener);
         this.binding.leaveMuc.setVisibility(View.GONE);
-        this.binding.addContactButton.setVisibility(View.GONE);
         setSupportActionBar((Toolbar) binding.toolbar);
         configureActionBar(getSupportActionBar());
         this.binding.editNickButton.setOnClickListener(v -> quickEdit(mConversation.getMucOptions().getActualNick(),
@@ -573,28 +572,6 @@ public class ConferenceDetailsActivity extends XmppActivity implements OnConvers
                 LeaveMucDialog.create().show();
             });
             this.binding.leaveMuc.getBackground().setColorFilter(getWarningButtonColor(), PorterDuff.Mode.MULTIPLY);
-            this.binding.addContactButton.setVisibility(View.VISIBLE);
-            if (mConversation.getBookmark() != null) {
-                this.binding.addContactButton.setText(R.string.delete_bookmark);
-                this.binding.addContactButton.getBackground().setColorFilter(getWarningButtonColor(), PorterDuff.Mode.MULTIPLY);
-                this.binding.addContactButton.setOnClickListener(v2 -> {
-                    final AlertDialog.Builder deleteFromRosterDialog = new AlertDialog.Builder(ConferenceDetailsActivity.this);
-                    deleteFromRosterDialog.setNegativeButton(getString(R.string.cancel), null);
-                    deleteFromRosterDialog.setTitle(getString(R.string.action_delete_contact));
-                    deleteFromRosterDialog.setMessage(getString(R.string.remove_bookmark_text, mConversation.getJid().toString()));
-                    deleteFromRosterDialog.setPositiveButton(getString(R.string.delete),
-                            (dialog, which) -> {
-                                deleteBookmark();
-                            });
-                    deleteFromRosterDialog.create().show();
-                });
-            } else {
-                this.binding.addContactButton.setText(R.string.save_as_bookmark);
-                this.binding.addContactButton.getBackground().clearColorFilter();
-                this.binding.addContactButton.setOnClickListener(v2 -> {
-                    saveAsBookmark();
-                });
-            }
         } else {
             this.binding.usersWrapper.setVisibility(View.GONE);
             this.binding.mucInfoMore.setVisibility(View.GONE);

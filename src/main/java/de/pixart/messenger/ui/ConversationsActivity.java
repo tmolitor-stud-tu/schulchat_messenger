@@ -341,7 +341,6 @@ public class ConversationsActivity extends XmppActivity implements OnConversatio
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        UriHandlerActivity.onRequestPermissionResult(this, requestCode, grantResults);
         if (grantResults.length > 0) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 switch (requestCode) {
@@ -444,29 +443,11 @@ public class ConversationsActivity extends XmppActivity implements OnConversatio
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_conversations, menu);
-        final MenuItem qrCodeScanMenuItem = menu.findItem(R.id.action_scan_qr_code);
         final MenuItem menuEditProfiles = menu.findItem(R.id.action_accounts);
-        final MenuItem inviteUser = menu.findItem(R.id.action_invite_user);
-        if (qrCodeScanMenuItem != null) {
-            if (isCameraFeatureAvailable()) {
-                Fragment fragment = getFragmentManager().findFragmentById(R.id.main_fragment);
-                boolean visible = getResources().getBoolean(R.bool.show_qr_code_scan)
-                        && fragment != null
-                        && fragment instanceof ConversationsOverviewFragment;
-                qrCodeScanMenuItem.setVisible(visible);
-            } else {
-                qrCodeScanMenuItem.setVisible(false);
-            }
-        }
         if (xmppConnectionServiceBound && xmppConnectionService.getAccounts().size() == 1 && !xmppConnectionService.multipleAccounts()) {
             menuEditProfiles.setTitle(R.string.action_account);
         } else {
             menuEditProfiles.setTitle(R.string.action_accounts);
-        }
-        if (xmppConnectionServiceBound && xmppConnectionService.getAccounts().size() > 0) {
-            inviteUser.setVisible(true);
-        } else {
-            inviteUser.setVisible(false);
         }
         return super.onCreateOptionsMenu(menu);
     }
@@ -566,18 +547,12 @@ public class ConversationsActivity extends XmppActivity implements OnConversatio
                     return true;
                 }
                 break;
-            case R.id.action_scan_qr_code:
-                UriHandlerActivity.scan(this);
-                return true;
             case R.id.action_check_updates:
                 if (xmppConnectionService.hasInternetConnection()) {
                     openInstallFromUnknownSourcesDialogIfNeeded(true);
                 } else {
                     Toast.makeText(this, R.string.account_status_no_internet, Toast.LENGTH_LONG).show();
                 }
-                break;
-            case R.id.action_invite_user:
-                inviteUser();
                 break;
         }
         return super.onOptionsItemSelected(item);

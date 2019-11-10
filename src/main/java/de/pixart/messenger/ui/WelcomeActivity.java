@@ -116,7 +116,6 @@ public class WelcomeActivity extends XmppActivity {
             intent.putExtra("init", true);
             intent.putExtra("existing", true);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            StartConversationActivity.addInviteUri(intent, getIntent());
             startActivity(intent);
         }
     }

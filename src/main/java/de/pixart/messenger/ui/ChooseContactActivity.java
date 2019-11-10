@@ -230,7 +230,6 @@ public class ChooseContactActivity extends AbstractSearchableListItemActivity im
         super.onCreateOptionsMenu(menu);
         final Intent i = getIntent();
         boolean showEnterJid = i != null && i.getBooleanExtra(EXTRA_SHOW_ENTER_JID, false);
-        menu.findItem(R.id.action_scan_qr_code).setVisible(isCameraFeatureAvailable() && showEnterJid);
         MenuItem mMenuSearchView = menu.findItem(R.id.action_search);
         if (startSearching) {
             mMenuSearchView.expandActionView();
@@ -285,16 +284,6 @@ public class ChooseContactActivity extends AbstractSearchableListItemActivity im
 
     public void refreshUiReal() {
         //nothing to do. This Activity doesn't implement any listeners
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_scan_qr_code:
-                ScanActivity.scan(this);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     protected void showEnterJidDialog(XmppUri uri) {

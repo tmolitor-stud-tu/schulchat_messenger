@@ -2,13 +2,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_scan_qr_code"
-        android:icon="?attr/icon_scan_qr_code"
-        android:orderInCategory="10"
-        android:title="@string/scan_qr_code"
-        android:visible="@bool/show_qr_code_scan"
-        app:showAsAction="always" />
-    <item
         android:id="@+id/action_accounts"
         android:orderInCategory="90"
         android:title="@string/action_accounts"
@@ -21,11 +14,6 @@
     <item
         android:id="@+id/action_check_updates"
         android:title="@string/action_check_update"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_invite_user"
-        android:orderInCategory="100"
-        android:title="@string/invite_user"
         app:showAsAction="never" />
 
 </menu>

@@ -123,7 +123,6 @@ public class MagicCreateActivity extends XmppActivity implements TextWatcher, Ad
                     builder.setMessage(messasge);
                     builder.setPositiveButton(getString(R.string.copy_to_clipboard), (dialogInterface, i) -> {
                         if (copyTextToClipboard(password, R.string.create_account)) {
-                            StartConversationActivity.addInviteUri(intent, getIntent());
                             startActivity(intent);
                             overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
                             finish();
