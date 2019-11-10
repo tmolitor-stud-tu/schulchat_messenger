@@ -164,20 +164,6 @@ public class UpdaterActivity extends XmppActivity {
                             Log.d(Config.LOGTAG, "AppUpdater: failed - has storage permissions " + isStoragePermissionGranted() + " and internet " + isNetworkAvailable(getApplicationContext()));
                         }
                     })
-                    .setNeutralButton(R.string.changelog, (dialog, id) -> {
-                        Uri uri = Uri.parse(Config.CHANGELOG_URL); // missing 'http://' will cause crash
-                        try {
-                            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-                            overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        } finally {
-                            //restart updater to show dialog again after coming back after opening changelog
-                            recreate();
-                        }
-                    })
                     .setNegativeButton(R.string.remind_later, (dialog, id) -> {
                         // User cancelled the dialog
                         UpdaterActivity.this.finish();

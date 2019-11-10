@@ -67,13 +67,6 @@ public class FixedURLSpan extends URLSpan {
     public void onClick(View widget) {
         final Uri uri = Uri.parse(getURL());
         final Context context = widget.getContext();
-        final boolean candidateToProcessDirectly = "xmpp".equals(uri.getScheme()) || ("https".equals(uri.getScheme()) && Config.inviteHostURL.equals(uri.getHost()) && uri.getPathSegments().size() > 1 && Arrays.asList("j", "i").contains(uri.getPathSegments().get(0)));
-        if (candidateToProcessDirectly && context instanceof ConversationsActivity) {
-            if (((ConversationsActivity) context).onXmppUriClicked(uri)) {
-                widget.playSoundEffect(0);
-                return;
-            }
-        }
         final Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
