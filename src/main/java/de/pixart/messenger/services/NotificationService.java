@@ -950,7 +950,6 @@ public class NotificationService {
                 mBuilder.setContentTitle(mXmppConnectionService.getString(R.string.conversations_foreground_service) + status);
             }
         }
-        mBuilder.setContentText(mXmppConnectionService.getString(R.string.connected_accounts, connected, enabled));
         mBuilder.setContentIntent(createOpenConversationsIntent());
         final PendingIntent openIntent = createOpenConversationsIntent();
         if (openIntent != null) {
