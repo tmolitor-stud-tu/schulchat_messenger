@@ -9,7 +9,7 @@ public class FirstStartManager {
     Context context;
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
-    private static final String PREF_NAME = "de.pixart.messenger";
+    private static final String PREF_NAME = "de.schulchat.messenger";
     private static final String IS_FIRST_TIME_LAUNCH = "IsFirstTimeLaunch";
 
     public FirstStartManager(Context context) {

@@ -16,7 +16,7 @@ public class MaintenanceReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(Config.LOGTAG, "received intent in maintenance receiver");
-        if ("de.pixart.messenger.RENEW_INSTANCE_ID".equals(intent.getAction())) {
+        if ("de.schulchat.messenger.RENEW_INSTANCE_ID".equals(intent.getAction())) {
             renewInstanceToken(context);
 
         }

@@ -186,7 +186,7 @@ public class XmppConnectionService extends Service {
     public static final String ACTION_IDLE_PING = "idle_ping";
     public static final String ACTION_FCM_TOKEN_REFRESH = "fcm_token_refresh";
     public static final String ACTION_FCM_MESSAGE_RECEIVED = "fcm_message_received";
-    private static final String ACTION_POST_CONNECTIVITY_CHANGE = "de.pixart.messenger.POST_CONNECTIVITY_CHANGE";
+    private static final String ACTION_POST_CONNECTIVITY_CHANGE = "de.schulchat.messenger.POST_CONNECTIVITY_CHANGE";
     public static final String FDroid = "org.fdroid.fdroid";
     public static final String PlayStore = "com.android.vending";
     private static final String SETTING_LAST_ACTIVITY_TS = "last_activity_timestamp";

@@ -76,7 +76,7 @@ public class AccountUtils {
 
     private static Class getManageAccountActivityClass() {
         try {
-            return Class.forName("de.pixart.messenger.ui.ManageAccountActivity");
+            return Class.forName("de.schulchat.messenger.ui.ManageAccountActivity");
         } catch (ClassNotFoundException e) {
             return null;
         }

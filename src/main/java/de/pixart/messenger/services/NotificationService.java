@@ -72,7 +72,7 @@ public class NotificationService {
     public static final String UPDATE_CHANNEL_ID = "appupdate";
     public static final String VIDEOCOMPRESSION_CHANNEL_ID = "compression";
     public static final String ERROR_CHANNEL_ID = "error";
-    private static final String CONVERSATIONS_GROUP = "de.pixart.messenger";
+    private static final String CONVERSATIONS_GROUP = "de.schulchat.messenger";
     private static final int NOTIFICATION_ID_MULTIPLIER = 1024 * 1024;
     public static final int NOTIFICATION_ID = 2 * NOTIFICATION_ID_MULTIPLIER;
     public static final int FOREGROUND_NOTIFICATION_ID = NOTIFICATION_ID_MULTIPLIER * 4;
