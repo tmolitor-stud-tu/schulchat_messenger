@@ -10,6 +10,12 @@
         android:longClickable="true"
         android:textAppearance="@style/TextAppearance.Conversations.Body1" />
 
+    <TextView
+        android:id="@+id/message_user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
     <de.pixart.messenger.ui.widget.RichLinkView
         android:id="@+id/richLinkView"
         android:layout_width="wrap_content"
@@ -84,4 +90,17 @@
             android:layout_toRightOf="@+id/play_pause"
             android:progress="100" />
     </RelativeLayout>
+
+    <ImageButton
+        android:id="@+id/answer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="end"
+        android:alpha="?attr/icon_alpha"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_reply_circle_black_24dp"
+        android:visibility="gone" />
+
 </merge> 

@@ -280,11 +280,12 @@ public class ExportBackupService extends Service {
         Cursor cursor;
         if (runsTwentySix()) {
             // not select and create column Message.FILE_DELETED to be compareable with conversations
+            // in C Message.DELETED = Message.FILE_DELETED in PAM so do not select this column, too.
             cursor = db.rawQuery("select messages." + String.join(", messages.", new String[]{
                     Message.UUID, Message.CONVERSATION, Message.TIME_SENT, Message.COUNTERPART, Message.TRUE_COUNTERPART,
                     Message.BODY, Message.ENCRYPTION, Message.STATUS, Message.TYPE, Message.RELATIVE_FILE_PATH,
                     Message.SERVER_MSG_ID, Message.FINGERPRINT, Message.CARBON, Message.EDITED, Message.READ,
-                    Message.DELETED, Message.OOB, Message.ERROR_MESSAGE, Message.READ_BY_MARKERS, Message.MARKABLE,
+                    Message.OOB, Message.ERROR_MESSAGE, Message.READ_BY_MARKERS, Message.MARKABLE,
                     Message.REMOTE_MSG_ID, Message.CONVERSATION
             }) + " from messages join conversations on conversations.uuid=messages.conversationUuid where conversations.accountUuid=?", new String[]{uuid});
         } else {
@@ -400,7 +401,7 @@ public class ExportBackupService extends Service {
                 uris.add(FileBackend.getUriForFile(this, file));
             }
             intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             intent.setType(MIME_TYPE);
             final Intent chooser = Intent.createChooser(intent, getString(R.string.share_backup_files));
             shareFilesIntent = PendingIntent.getActivity(this, 190, chooser, PendingIntent.FLAG_UPDATE_CURRENT);

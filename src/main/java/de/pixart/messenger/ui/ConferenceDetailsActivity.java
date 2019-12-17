@@ -413,9 +413,14 @@ public class ConferenceDetailsActivity extends XmppActivity implements OnConvers
     protected void deleteBookmark() {
         final Account account = mConversation.getAccount();
         final Bookmark bookmark = mConversation.getBookmark();
-        bookmark.setConversation(null);
-        xmppConnectionService.deleteBookmark(account, bookmark);
-        updateView();
+        try {
+            bookmark.setConversation(null);
+            xmppConnectionService.deleteBookmark(account, bookmark);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            updateView();
+        }
     }
 
     @Override
@@ -476,6 +481,7 @@ public class ConferenceDetailsActivity extends XmppActivity implements OnConvers
         } else {
             this.binding.detailsAccount.setVisibility(View.GONE);
         }
+        //todo add edit overlay to avatar and change layout
         AvatarWorkerTask.loadAvatar(mConversation, binding.detailsMucAvatar, R.dimen.avatar_big);
         AvatarWorkerTask.loadAvatar(mConversation.getAccount(), binding.yourPhoto, R.dimen.avatar_on_details_screen_size);
 

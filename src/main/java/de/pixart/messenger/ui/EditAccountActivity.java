@@ -83,7 +83,7 @@ import de.pixart.messenger.xmpp.pep.Avatar;
 import rocks.xmpp.addr.Jid;
 
 import static de.pixart.messenger.utils.PermissionUtils.allGranted;
-import static de.pixart.messenger.utils.PermissionUtils.writeGranted;
+import static de.pixart.messenger.utils.PermissionUtils.readGranted;
 
 public class EditAccountActivity extends OmemoActivity implements OnAccountUpdate, OnUpdateBlocklist,
         OnKeyStatusUpdated, OnCaptchaRequested, KeyChainAliasCallback, XmppConnectionService.OnShowErrorToast, XmppConnectionService.OnMamPreferencesFetched {
@@ -212,20 +212,21 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
                     removeErrorsOnAllBut(binding.hostnameLayout);
                     return;
                 }
-                try {
-                    numericPort = Integer.parseInt(port);
-                    if (numericPort < 0 || numericPort > 65535) {
+                if (!hostname.isEmpty()) {
+                    try {
+                        numericPort = Integer.parseInt(port);
+                        if (numericPort < 0 || numericPort > 65535) {
+                            binding.portLayout.setError(getString(R.string.not_a_valid_port));
+                            removeErrorsOnAllBut(binding.portLayout);
+                            binding.port.requestFocus();
+                            return;
+                        }
+                    } catch (NumberFormatException e) {
                         binding.portLayout.setError(getString(R.string.not_a_valid_port));
                         removeErrorsOnAllBut(binding.portLayout);
                         binding.port.requestFocus();
                         return;
                     }
-
-                } catch (NumberFormatException e) {
-                    binding.portLayout.setError(getString(R.string.not_a_valid_port));
-                    removeErrorsOnAllBut(binding.portLayout);
-                    binding.port.requestFocus();
-                    return;
                 }
             }
 
@@ -510,8 +511,13 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
     }
 
     private void updatePortLayout() {
-        String hostname = this.binding.hostname.getText().toString();
-        this.binding.portLayout.setEnabled(!TextUtils.isEmpty(hostname));
+        final String hostname = this.binding.hostname.getText().toString();
+        if (TextUtils.isEmpty(hostname)) {
+            this.binding.portLayout.setEnabled(false);
+            this.binding.portLayout.setError(null);
+        } else {
+            this.binding.portLayout.setEnabled(true);
+        }
     }
 
     protected void updateSaveButton() {
@@ -601,11 +607,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
 
     @Override
     protected String getShareableUri(boolean http) {
-        if (mAccount != null) {
-            return http ? mAccount.getShareableLink() : mAccount.getShareableUri();
-        } else {
-            return null;
-        }
+        return null;
     }
 
     @Override
@@ -1517,7 +1519,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
                 Toast.makeText(this, R.string.no_storage_permission, Toast.LENGTH_SHORT).show();
             }
         }
-        if (writeGranted(grantResults, permissions)) {
+        if (readGranted(grantResults, permissions)) {
             if (xmppConnectionService != null) {
                 xmppConnectionService.restartFileObserver();
             }

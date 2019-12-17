@@ -25,6 +25,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -81,7 +82,7 @@ import de.pixart.messenger.entities.Presences;
 import de.pixart.messenger.services.AvatarService;
 import de.pixart.messenger.services.BarcodeProvider;
 import de.pixart.messenger.services.EmojiService;
-import de.pixart.messenger.services.UpdateService;
+import de.pixart.messenger.services.PushSettingsService;
 import de.pixart.messenger.services.XmppConnectionService;
 import de.pixart.messenger.services.XmppConnectionService.XmppConnectionBinder;
 import de.pixart.messenger.ui.util.PresenceSelector;
@@ -422,6 +423,23 @@ public abstract class XmppActivity extends ActionBarActivity {
         return ThemeHelper.isDark(mTheme);
     }
 
+    public boolean isOrangeTheme() {
+        return getStringPreference("theme_color", R.string.theme_color).equals("orange");
+    }
+
+    public String getThemeColor() {
+        return getStringPreference("theme_color", R.string.theme_color);
+    }
+
+    public void setBubbleColor(final View v, final int backgroundColor, final int borderColor) {
+        GradientDrawable shape = (GradientDrawable) v.getBackground();
+        shape.setColor(backgroundColor);
+        if (borderColor != -1) {
+            shape.setStroke(2, borderColor);
+        }
+        v.setBackground(shape);
+    }
+
     public int getThemeResource(int r_attr_name, int r_drawable_def) {
         int[] attrs = {r_attr_name};
         TypedArray ta = this.getTheme().obtainStyledAttributes(attrs);
@@ -465,6 +483,10 @@ public abstract class XmppActivity extends ActionBarActivity {
 
     protected boolean getBooleanPreference(String name, @BoolRes int res) {
         return getPreferences().getBoolean(name, getResources().getBoolean(res));
+    }
+
+    protected String getStringPreference(String name, int res) {
+        return getPreferences().getString(name, getResources().getString(res));
     }
 
     public void switchToConversation(Conversation conversation) {
@@ -558,7 +580,7 @@ public abstract class XmppActivity extends ActionBarActivity {
         Intent intent = new Intent(this, XmppConnectionService.class);
         intent.setAction(Intent.ACTION_SEND);
         intent.setData(uri);
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         try {
             startService(intent);
         } catch (Exception e) {
@@ -760,8 +782,8 @@ public abstract class XmppActivity extends ActionBarActivity {
 
     protected boolean hasStoragePermission(int requestCode) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, requestCode);
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, requestCode);
                 return false;
             } else {
                 return true;
@@ -1249,15 +1271,15 @@ public abstract class XmppActivity extends ActionBarActivity {
                 } catch (ActivityNotFoundException e) {
                     Toast.makeText(XmppActivity.this, R.string.device_does_not_support_unknown_source_op, Toast.LENGTH_SHORT).show();
                 } finally {
-                    UpdateService task = new UpdateService(this, xmppConnectionService.installedFrom(), xmppConnectionService);
-                    task.executeOnExecutor(UpdateService.THREAD_POOL_EXECUTOR, ShowToast);
+                    PushSettingsService task = new PushSettingsService(this, xmppConnectionService.installedFrom(), xmppConnectionService);
+                    task.executeOnExecutor(PushSettingsService.THREAD_POOL_EXECUTOR, ShowToast);
                     Log.d(Config.LOGTAG, "AppUpdater started");
                 }
             });
             builder.create().show();
         } else {
-            UpdateService task = new UpdateService(this, xmppConnectionService.installedFrom(), xmppConnectionService);
-            task.executeOnExecutor(UpdateService.THREAD_POOL_EXECUTOR, ShowToast);
+            PushSettingsService task = new PushSettingsService(this, xmppConnectionService.installedFrom(), xmppConnectionService);
+            task.executeOnExecutor(PushSettingsService.THREAD_POOL_EXECUTOR, ShowToast);
             Log.d(Config.LOGTAG, "AppUpdater started");
         }
     }

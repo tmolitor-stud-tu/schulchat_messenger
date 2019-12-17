@@ -25,15 +25,15 @@ import de.pixart.messenger.ui.UpdaterActivity;
 
 import static de.pixart.messenger.http.HttpConnectionManager.getProxy;
 
-public class UpdateService extends AsyncTask<String, Object, UpdateService.Wrapper> {
+public class PushSettingsService extends AsyncTask<String, Object, PushSettingsService.Wrapper> {
     private boolean mUseTor;
     private Context context;
     private String store;
     private NotificationService getNotificationService;
-    public UpdateService() {
+    public PushSettingsService() {
     }
 
-    public UpdateService(Context context, String Store, XmppConnectionService mXmppConnectionService) {
+    public PushSettingsService(Context context, String Store, XmppConnectionService mXmppConnectionService) {
         this.context = context;
         this.store = Store;
         this.mUseTor = mXmppConnectionService.useTorToConnect();

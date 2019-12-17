@@ -168,6 +168,7 @@ import de.pixart.messenger.xmpp.stanzas.PresencePacket;
 import me.leolin.shortcutbadger.ShortcutBadger;
 import rocks.xmpp.addr.Jid;
 
+import static de.pixart.messenger.ui.SettingsActivity.ALLOW_MESSAGE_CORRECTION;
 import static de.pixart.messenger.ui.SettingsActivity.CHAT_STATES;
 import static de.pixart.messenger.ui.SettingsActivity.CONFIRM_MESSAGES;
 import static de.pixart.messenger.ui.SettingsActivity.ENABLE_MULTI_ACCOUNTS;
@@ -1546,6 +1547,9 @@ public class XmppConnectionService extends Service {
     }
 
     private void sendMessage(final Message message, final boolean resend, final boolean delay) {
+        if (resend) {
+            message.setTime(System.currentTimeMillis());
+        }
         final Account account = message.getConversation().getAccount();
         if (account.setShowErrorNotification(true)) {
             databaseBackend.updateAccount(account);
@@ -4081,6 +4085,22 @@ public class XmppConnectionService extends Service {
         mDatabaseWriterExecutor.execute(() -> databaseBackend.updateConversation(conversation));
     }
 
+    private void reconnectAccount(final Account account) {
+        account.setOption(Account.OPTION_DISABLED, true);
+        if (!updateAccount(account)) {
+            Log.d(Config.LOGTAG, getString(R.string.unable_to_update_account));
+        }
+        account.setOption(Account.OPTION_DISABLED, false);
+        final XmppConnection connection = account.getXmppConnection();
+        if (connection != null) {
+            connection.resetEverything();
+        }
+        if (!updateAccount(account)) {
+            Log.d(Config.LOGTAG, getString(R.string.unable_to_update_account));
+        }
+    }
+
+
     private void reconnectAccount(final Account account, final boolean force, final boolean interactive) {
         synchronized (account) {
             XmppConnection connection = account.getXmppConnection();
@@ -4219,7 +4239,7 @@ public class XmppConnectionService extends Service {
     }
 
     public boolean allowMessageCorrection() {
-        return getBooleanPreference("allow_message_correction", R.bool.allow_message_correction);
+        return getBooleanPreference(ALLOW_MESSAGE_CORRECTION, R.bool.allow_message_correction);
     }
 
     public boolean sendChatStates() {
@@ -4244,6 +4264,11 @@ public class XmppConnectionService extends Service {
 
     public boolean warnUnecryptedChat() {
         return getBooleanPreference(SettingsActivity.WARN_UNENCRYPTED_CHAT, R.bool.warn_unencrypted_chat);
+    }
+
+
+    public boolean hideYouAreNotParticipating() {
+        return getBooleanPreference(SettingsActivity.HIDE_YOU_ARE_NOT_PARTICIPATING, R.bool.hide_you_are_not_participating);
     }
 
     public boolean broadcastLastActivity() {
@@ -4474,7 +4499,7 @@ public class XmppConnectionService extends Service {
             for (final Contact contact : account.getRoster().getContacts()) {
                 if (contact.showInRoster()) {
                     final String server = contact.getServer();
-                    if (server != null && !hosts.contains(server)) {
+                    if (server != null) {
                         hosts.add(server);
                     }
                 }
@@ -4757,6 +4782,9 @@ public class XmppConnectionService extends Service {
                     if (packet.getType() == IqPacket.TYPE.RESULT) {
                         account.getBlocklist().remove(jid);
                         updateBlocklistUi(OnUpdateBlocklist.Status.UNBLOCKED);
+                        if (blockable.getJid().isFullJid()) {
+                            reconnectAccount(account);
+                        }
                     }
                 }
             });

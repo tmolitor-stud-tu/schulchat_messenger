@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,7 +23,10 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -124,13 +128,14 @@ import de.pixart.messenger.xmpp.jingle.JingleConnection;
 import rocks.xmpp.addr.Jid;
 
 import static de.pixart.messenger.entities.Message.DELETED_MESSAGE_BODY;
+import static de.pixart.messenger.ui.SettingsActivity.HIDE_YOU_ARE_NOT_PARTICIPATING;
 import static de.pixart.messenger.ui.SettingsActivity.WARN_UNENCRYPTED_CHAT;
 import static de.pixart.messenger.ui.XmppActivity.EXTRA_ACCOUNT;
 import static de.pixart.messenger.ui.XmppActivity.REQUEST_INVITE_TO_CONVERSATION;
 import static de.pixart.messenger.ui.util.SoftKeyboardUtils.hideSoftKeyboard;
 import static de.pixart.messenger.utils.PermissionUtils.allGranted;
 import static de.pixart.messenger.utils.PermissionUtils.getFirstDenied;
-import static de.pixart.messenger.utils.PermissionUtils.writeGranted;
+import static de.pixart.messenger.utils.PermissionUtils.readGranted;
 import static de.pixart.messenger.xmpp.Patches.ENCRYPTION_EXCEPTIONS;
 
 public class ConversationFragment extends XmppFragment implements EditMessage.KeyboardListener, MessageAdapter.OnContactPictureLongClicked, MessageAdapter.OnContactPictureClicked {
@@ -333,7 +338,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
                     return false;
                 }
             }
-            if (hasPermissions(REQUEST_ADD_EDITOR_CONTENT, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            if (hasPermissions(REQUEST_ADD_EDITOR_CONTENT, Manifest.permission.WRITE_EXTERNAL_STORAGE) && hasPermissions(REQUEST_ADD_EDITOR_CONTENT, Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 attachEditorContentToConversation(inputContentInfo.getContentUri());
             } else {
                 mPendingEditorContent = inputContentInfo.getContentUri();
@@ -481,6 +486,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
                             } else {
                                 binding.textinput.setText("");
                             }
+                            updateChatMsgHint();
                             updateSendButton();
                             updateEditablity();
                         }
@@ -493,6 +499,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
             }
         }
     };
+
     private View.OnLongClickListener mSendButtonLongListener = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
@@ -503,6 +510,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
             return true;
         }
     };
+
     private int completionIndex = 0;
     private int lastCompletionLength = 0;
     private String incomplete;
@@ -914,20 +922,25 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
             this.binding.textInputHint.setVisibility(View.VISIBLE);
             this.binding.textInputHint.setText(R.string.send_corrected_message);
             this.binding.textinput.setHint(R.string.send_corrected_message);
-        } else if (multi && conversation.getNextCounterpart() != null) {
+        } else if (isPrivateMessage()) {
             this.binding.textinput.setHint(R.string.send_unencrypted_message);
             this.binding.textInputHint.setVisibility(View.VISIBLE);
-            this.binding.textInputHint.setText(getString(
-                    R.string.send_private_message_to,
-                    conversation.getNextCounterpart().getResource()));
+            SpannableStringBuilder hint = new SpannableStringBuilder(getString(R.string.send_private_message_to, conversation.getNextCounterpart().getResource()));
+            hint.setSpan(new StyleSpan(Typeface.BOLD), 0, hint.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            this.binding.textInputHint.setText(hint);
         } else if (multi && !conversation.getMucOptions().participating()) {
-            this.binding.textInputHint.setVisibility(View.GONE);
+            this.binding.textInputHint.setVisibility(View.VISIBLE);
+            this.binding.textInputHint.setText(R.string.ask_for_writeaccess);
             this.binding.textinput.setHint(R.string.you_are_not_participating);
         } else {
             this.binding.textInputHint.setVisibility(View.GONE);
             this.binding.textinput.setHint(UIHelper.getMessageHint(getActivity(), conversation));
             getActivity().invalidateOptionsMenu();
         }
+    }
+
+    private boolean isPrivateMessage() {
+        return conversation != null && conversation.getMode() == Conversation.MODE_MULTI && conversation.getNextCounterpart() != null;
     }
 
     public void setupIme() {
@@ -992,7 +1005,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
     }
 
     private void commitAttachments() {
-        if (!hasPermissions(REQUEST_COMMIT_ATTACHMENTS, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        if (!hasPermissions(REQUEST_COMMIT_ATTACHMENTS, Manifest.permission.WRITE_EXTERNAL_STORAGE) && hasPermissions(REQUEST_COMMIT_ATTACHMENTS, Manifest.permission.READ_EXTERNAL_STORAGE)) {
             return;
         }
         if (conversation.getNextEncryption() == Message.ENCRYPTION_AXOLOTL && trustKeysIfNeeded(REQUEST_TRUST_KEYS_ATTACHMENTS)) {
@@ -1142,7 +1155,6 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
         binding.textinput.addTextChangedListener(new StylingHelper.MessageEditorStyler(binding.textinput));
         binding.textinput.setOnEditorActionListener(mEditorActionListener);
         binding.textinput.setRichContentListener(new String[]{"image/*"}, mEditorContentListener);
-        binding.messageInputBox.setBackgroundResource(messageInputBubble());
 
         binding.textSendButton.setOnClickListener(this.mSendButtonListener);
         binding.textSendButton.setOnLongClickListener(this.mSendButtonLongListener);
@@ -1156,15 +1168,12 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
         messageListAdapter = new MessageAdapter((XmppActivity) getActivity(), this.messageList);
         messageListAdapter.setOnContactPictureClicked(this);
         messageListAdapter.setOnContactPictureLongClicked(this);
-        messageListAdapter.setOnQuoteListener(text -> quoteText(text, getUsername(selectedMessage)));
+        messageListAdapter.setOnQuoteListener(ConversationFragment.this::quoteText);
         binding.messagesView.setAdapter(messageListAdapter);
-
         registerForContextMenu(binding.messagesView);
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             this.binding.textinput.setCustomInsertionActionModeCallback(new EditMessageActionModeCallback(this.binding.textinput));
         }
-
         return binding.getRoot();
     }
 
@@ -1330,11 +1339,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
         try {
             final Contact contact = selectedMessage.getContact();
             if (conversation.getMode() == Conversation.MODE_MULTI) {
-                if (contact != null) {
-                    user = contact.getDisplayName();
-                } else {
-                    user = UIHelper.getDisplayedMucCounterpart(selectedMessage.getCounterpart());
-                }
+                user = UIHelper.getDisplayedMucCounterpart(selectedMessage.getCounterpart());
             } else {
                 user = contact != null ? contact.getDisplayName() : null;
             }
@@ -1541,11 +1546,11 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
 
     public void attachFile(final int attachmentChoice) {
         if (attachmentChoice == ATTACHMENT_CHOICE_RECORD_VOICE) {
-            if (!hasPermissions(attachmentChoice, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO)) {
+            if (!hasPermissions(attachmentChoice, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.RECORD_AUDIO)) {
                 return;
             }
         } else if (attachmentChoice == ATTACHMENT_CHOICE_TAKE_PHOTO || attachmentChoice == ATTACHMENT_CHOICE_RECORD_VIDEO) {
-            if (!hasPermissions(attachmentChoice, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)) {
+            if (!hasPermissions(attachmentChoice, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.CAMERA)) {
                 return;
             }
         } else if (attachmentChoice == ATTACHMENT_CHOICE_LOCATION) {
@@ -1553,7 +1558,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
                 return;
             }
         } else if (attachmentChoice == ATTACHMENT_CHOICE_CHOOSE_FILE || attachmentChoice == ATTACHMENT_CHOICE_CHOOSE_IMAGE || attachmentChoice == ATTACHMENT_CHOICE_CHOOSE_VIDEO) {
-            if (!hasPermissions(attachmentChoice, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            if (!hasPermissions(attachmentChoice, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 return;
             }
         }
@@ -1650,7 +1655,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
                 Toast.makeText(getActivity(), res, Toast.LENGTH_SHORT).show();
             }
         }
-        if (writeGranted(grantResults, permissions)) {
+        if (readGranted(grantResults, permissions)) {
             if (activity != null && activity.xmppConnectionService != null) {
                 activity.xmppConnectionService.restartFileObserver();
             }
@@ -1659,7 +1664,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
     }
 
     public void startDownloadable(Message message) {
-        if (!hasPermissions(REQUEST_START_DOWNLOAD, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+        if (!hasPermissions(REQUEST_START_DOWNLOAD, Manifest.permission.WRITE_EXTERNAL_STORAGE) && !hasPermissions(REQUEST_START_DOWNLOAD, Manifest.permission.READ_EXTERNAL_STORAGE)) {
             this.mPendingDownloadableMessage = message;
             return;
         }
@@ -1714,7 +1719,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             final List<String> missingPermissions = new ArrayList<>();
             for (String permission : permissions) {
-                if (Config.ONLY_INTERNAL_STORAGE && permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                if (Config.ONLY_INTERNAL_STORAGE && permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE) && permission.equals(Manifest.permission.READ_EXTERNAL_STORAGE)) {
                     continue;
                 }
                 if (activity.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
@@ -1757,8 +1762,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
                 final Uri uri = activity.xmppConnectionService.getFileBackend().getTakePhotoUri();
                 pendingTakePhotoUri.push(uri);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                intent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION & Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 intent.setAction(MediaStore.ACTION_IMAGE_CAPTURE);
                 break;
             case ATTACHMENT_CHOICE_CHOOSE_FILE:
@@ -2004,6 +2008,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
         }
         this.binding.textinput.setText("");
         this.conversation.setNextCounterpart(counterpart);
+        updateChatMsgHint();
         updateSendButton();
         updateEditablity();
     }
@@ -2216,7 +2221,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
         messageListAdapter.updatePreferences();
         refresh(false);
         this.conversation.messagesLoaded.set(true);
-
+        hasWriteAccessInMUC();
         Log.d(Config.LOGTAG, "scrolledToBottomAndNoPending=" + Boolean.toString(scrolledToBottomAndNoPending));
 
         if (hasExtras || scrolledToBottomAndNoPending) {
@@ -2243,6 +2248,34 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
         //TODO if we only do this when this fragment is running on main it won't *bing* in tablet layout which might be unnecessary since we can *see* it
         activity.xmppConnectionService.getNotificationService().setOpenConversation(this.conversation);
         return true;
+    }
+
+    private void hasWriteAccessInMUC() {
+        if ((conversation.getMode() == Conversation.MODE_MULTI && !conversation.getMucOptions().participating()) && !activity.xmppConnectionService.hideYouAreNotParticipating()) {
+            activity.runOnUiThread(() -> {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle(getString(R.string.you_are_not_participating));
+                builder.setMessage(getString(R.string.no_write_access_in_public_muc));
+                builder.setNegativeButton(getString(R.string.hide_warning),
+                        (dialog, which) -> {
+                            SharedPreferences preferences = activity.getPreferences();
+                            preferences.edit().putBoolean(HIDE_YOU_ARE_NOT_PARTICIPATING, true).apply();
+                            hideSnackbar();
+                        });
+                builder.setPositiveButton(getString(R.string.ok),
+                        (dialog, which) -> {
+                            Intent intent = new Intent(getActivity(), ConferenceDetailsActivity.class);
+                            intent.setAction(ConferenceDetailsActivity.ACTION_VIEW_MUC);
+                            intent.putExtra("uuid", conversation.getUuid());
+                            startActivity(intent);
+                            activity.overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
+                        });
+                builder.create().show();
+            });
+
+
+            showSnackbar(R.string.no_write_access_in_public_muc, R.string.ok, clickToMuc);
+        }
     }
 
     private void resetUnreadMessagesCount() {
@@ -2443,9 +2476,6 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
                     hideSnackbar();
                     break;
             }
-        } else if ((mode == Conversation.MODE_MULTI
-                && !conversation.getMucOptions().participating())) {
-            showSnackbar(R.string.no_write_access_in_public_muc, R.string.ok, clickToMuc);
         } else if (account.hasPendingPgpIntent(conversation)) {
             showSnackbar(R.string.openpgp_messages_found, R.string.decrypt, clickToDecryptListener);
         } else if (mode == Conversation.MODE_SINGLE
@@ -2591,7 +2621,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
     }
 
     public void updateSendButton() {
-        updateChatMsgHint();
+        messageListAdapter.setBubbleBackgroundColor(binding.messageInputBox, activity.getThemeColor(), 0, isPrivateMessage(), true);
         boolean hasAttachments = mediaPreviewAdapter != null && mediaPreviewAdapter.hasAttachments();
         boolean useSendButtonToIndicateStatus = activity != null && PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("send_button_status", getResources().getBoolean(R.bool.send_button_status));
         final Conversation c = this.conversation;
@@ -3047,10 +3077,6 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
         }
     }
 
-    private int messageInputBubble() {
-        return activity.isDarkTheme() ? R.drawable.message_bubble_sent_dark : R.drawable.message_bubble_sent;
-    }
-
     public Conversation getConversation() {
         return conversation;
     }
@@ -3110,7 +3136,10 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
         popupMenu.show();
     }
 
-    private String getUsername(Message message) {
+    public String getUsername(Message message) {
+        if (message == null) {
+            return null;
+        }
         String user;
         try {
             final Contact contact = message.getContact();

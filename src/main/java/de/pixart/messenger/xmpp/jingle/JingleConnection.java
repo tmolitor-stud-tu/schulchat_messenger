@@ -73,6 +73,8 @@ public class JingleConnection implements Transferable {
     private Element fileOffer;
     private DownloadableFile file = null;
 
+    private boolean proxyActivationFailed = false;
+
     private String contentName;
     private String contentCreator;
     private Transport initialTransport;
@@ -95,7 +97,11 @@ public class JingleConnection implements Transferable {
 
     private OnIqPacketReceived responseListener = (account, packet) -> {
         if (packet.getType() != IqPacket.TYPE.RESULT) {
-            fail(IqParser.extractErrorMessage(packet));
+            if (mJingleStatus != JINGLE_STATUS_FAILED && mJingleStatus != JINGLE_STATUS_FINISHED) {
+                fail(IqParser.extractErrorMessage(packet));
+            } else {
+                Log.d(Config.LOGTAG,"ignoring late delivery of jingle packet to jingle session with status="+mJingleStatus+": "+packet.toString());
+            }
         }
     };
     private byte[] expectedHash = new byte[0];
@@ -177,6 +183,7 @@ public class JingleConnection implements Transferable {
         @Override
         public void failed() {
             Log.d(Config.LOGTAG, account.getJid().asBareJid() + ": proxy activation failed");
+            proxyActivationFailed = true;
             if (initiating()) {
                 sendFallbackToIbb();
             }
@@ -522,10 +529,11 @@ public class JingleConnection implements Transferable {
                 //expect the cipher text size. so we just + 16 bytes (auth tag size) here
                 this.file.setExpectedSize(size + (remoteIsUsingJet ? 16 : 0));
                 respondToIq(packet, true);
-                if (mJingleConnectionManager.hasStoragePermission()
+                if (account.getRoster().getContact(from).showInContactList()
+                        && mJingleConnectionManager.hasStoragePermission()
                         && size < this.mJingleConnectionManager.getAutoAcceptFileSize()
                         && mXmppConnectionService.isDataSaverDisabled()) {
-                    Log.d(Config.LOGTAG, "auto accepting file from " + packet.getFrom());
+                    Log.d(Config.LOGTAG, "auto accepting file from " + from);
                     this.acceptedAutomatically = true;
                     this.sendAccept();
                 } else {
@@ -688,7 +696,7 @@ public class JingleConnection implements Transferable {
     }
 
     private void sendAcceptIbb() {
-        this.transport = new JingleInbandTransport(this, this.transportId, this.ibbBlockSize);
+        this.transport = new JingleInBandTransport(this, this.transportId, this.ibbBlockSize);
         final JinglePacket packet = bootstrapPacket("session-accept");
         final Content content = new Content(contentCreator, contentName);
         content.setFileOffer(fileOffer, ftVersion);
@@ -718,6 +726,11 @@ public class JingleConnection implements Transferable {
     }
 
     private void receiveAccept(JinglePacket packet) {
+        if (responding()) {
+            Log.d(Config.LOGTAG, account.getJid().asBareJid() + ": received out of order session-accept (we were responding)");
+            respondToIqWithOutOfOrder(packet);
+            return;
+        }
         if (this.mJingleStatus != JINGLE_STATUS_INITIATED) {
             Log.d(Config.LOGTAG, account.getJid().asBareJid() + ": received out of order session-accept");
             respondToIqWithOutOfOrder(packet);
@@ -743,7 +756,7 @@ public class JingleConnection implements Transferable {
                 }
             }
             respondToIq(packet, true);
-            this.transport = new JingleInbandTransport(this, this.transportId, this.ibbBlockSize);
+            this.transport = new JingleInBandTransport(this, this.transportId, this.ibbBlockSize);
             this.transport.connect(onIbbTransportConnected);
         } else {
             respondToIq(packet, false);
@@ -927,6 +940,18 @@ public class JingleConnection implements Transferable {
 
 
     private void receiveFallbackToIbb(JinglePacket packet) {
+        if (initiating()) {
+            Log.d(Config.LOGTAG, account.getJid().asBareJid() + ": received out of order transport-replace (we were initiating)");
+            respondToIqWithOutOfOrder(packet);
+            return;
+        }
+        final boolean validState = mJingleStatus == JINGLE_STATUS_ACCEPTED || (proxyActivationFailed && mJingleStatus == JINGLE_STATUS_TRANSMITTING);
+        if (!validState) {
+            Log.d(Config.LOGTAG, account.getJid().asBareJid() + ": received out of order transport-replace");
+            respondToIqWithOutOfOrder(packet);
+            return;
+        }
+        this.proxyActivationFailed = false; //fallback received; now we no longer need to accept another one;
         Log.d(Config.LOGTAG, account.getJid().asBareJid() + ": receiving fallback to ibb");
         final String receivedBlockSize = packet.getJingleContent().ibbTransport().getAttribute("block-size");
         if (receivedBlockSize != null) {
@@ -940,7 +965,7 @@ public class JingleConnection implements Transferable {
             }
         }
         this.transportId = packet.getJingleContent().getTransportId();
-        this.transport = new JingleInbandTransport(this, this.transportId, this.ibbBlockSize);
+        this.transport = new JingleInBandTransport(this, this.transportId, this.ibbBlockSize);
 
         final JinglePacket answer = bootstrapPacket("transport-accept");
 
@@ -965,6 +990,18 @@ public class JingleConnection implements Transferable {
     }
 
     private void receiveTransportAccept(JinglePacket packet) {
+        if (responding()) {
+            Log.d(Config.LOGTAG, account.getJid().asBareJid() + ": received out of order transport-accept (we were responding)");
+            respondToIqWithOutOfOrder(packet);
+            return;
+        }
+        final boolean validState = mJingleStatus == JINGLE_STATUS_ACCEPTED || (proxyActivationFailed && mJingleStatus == JINGLE_STATUS_TRANSMITTING);
+        if (!validState) {
+            Log.d(Config.LOGTAG, account.getJid().asBareJid() + ": received out of order transport-accept");
+            respondToIqWithOutOfOrder(packet);
+            return;
+        }
+        this.proxyActivationFailed = false; //fallback accepted; now we no longer need to accept another one;
         if (packet.getJingleContent().hasIbbTransport()) {
             final Element ibbTransport = packet.getJingleContent().ibbTransport();
             final String receivedBlockSize = ibbTransport.getAttribute("block-size");
@@ -979,7 +1016,7 @@ public class JingleConnection implements Transferable {
                     Log.d(Config.LOGTAG, account.getJid().asBareJid() + ": unable to parse block size in transport-accept");
                 }
             }
-            this.transport = new JingleInbandTransport(this, this.transportId, this.ibbBlockSize);
+            this.transport = new JingleInBandTransport(this, this.transportId, this.ibbBlockSize);
 
             if (sid == null || !sid.equals(this.transportId)) {
                 Log.w(Config.LOGTAG, String.format("%s: sid in transport-accept (%s) did not match our sid (%s) ", account.getJid().asBareJid(), sid, transportId));
@@ -988,8 +1025,6 @@ public class JingleConnection implements Transferable {
             //might be receive instead if we are not initiating
             if (initiating()) {
                 this.transport.connect(onIbbTransportConnected);
-            } else {
-                this.transport.receive(file, onFileTransmissionStatusChanged);
             }
         } else {
             Log.d(Config.LOGTAG, account.getJid().asBareJid() + ": received invalid transport-accept");
@@ -1002,7 +1037,7 @@ public class JingleConnection implements Transferable {
             this.mJingleStatus = JINGLE_STATUS_FINISHED;
             this.mXmppConnectionService.markMessage(this.message, Message.STATUS_SEND_RECEIVED);
             this.disconnectSocks5Connections();
-            if (this.transport instanceof JingleInbandTransport) {
+            if (this.transport instanceof JingleInBandTransport) {
                 this.transport.disconnect();
             }
             this.message.setTransferable(null);
@@ -1020,7 +1055,7 @@ public class JingleConnection implements Transferable {
 
     void abort(final String reason) {
         this.disconnectSocks5Connections();
-        if (this.transport instanceof JingleInbandTransport) {
+        if (this.transport instanceof JingleInBandTransport) {
             this.transport.disconnect();
         }
         sendSessionTerminate(reason);
@@ -1044,7 +1079,7 @@ public class JingleConnection implements Transferable {
     private void fail(String errorMessage) {
         this.mJingleStatus = JINGLE_STATUS_FAILED;
         this.disconnectSocks5Connections();
-        if (this.transport instanceof JingleInbandTransport) {
+        if (this.transport instanceof JingleInBandTransport) {
             this.transport.disconnect();
         }
         FileBackend.close(mFileInputStream);

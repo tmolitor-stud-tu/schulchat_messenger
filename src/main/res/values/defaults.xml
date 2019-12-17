@@ -39,6 +39,7 @@
     <bool name="validate_hostname">false</bool>
     <bool name="show_foreground_service">true</bool>
     <bool name="warn_unencrypted_chat">false</bool>
+    <bool name="hide_you_are_not_participating">false</bool>
     <bool name="use_bundled_emoji">true</bool>
     <bool name="enable_multi_accounts">false</bool>
     <bool name="show_qr_code_scan">true</bool>
@@ -54,6 +55,7 @@
     <bool name="use_internal_updater">false</bool>
     <bool name="show_own_accounts">false</bool>
     <bool name="vibrate_in_chat">true</bool>
+    <bool name="enable_otr">false</bool>
     <integer name="auto_accept_filesize_wifi">10485760</integer>
     <integer name="auto_accept_filesize_mobile">524288</integer>
     <integer name="auto_accept_filesize_roaming">0</integer>
@@ -67,6 +69,7 @@
     <string name="quick_action">recent</string>
     <string name="omemo_setting_default">always_off</string>
     <string name="theme">auto</string>
+    <string name="theme_color">blue</string>
     <string name="default_font_size">small</string>
     <string name="default_channel_discovery">LOCAL_SERVER</string>
 

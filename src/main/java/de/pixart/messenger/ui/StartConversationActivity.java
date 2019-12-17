@@ -47,7 +47,6 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -204,9 +203,7 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
             spinner.setAdapter(adapter);
             spinner.setEnabled(true);
         } else {
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(context,
-                    R.layout.simple_list_item,
-                    Arrays.asList(context.getString(R.string.no_accounts)));
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.simple_list_item, Collections.singletonList(context.getString(R.string.no_accounts)));
             adapter.setDropDownViewResource(R.layout.simple_list_item);
             spinner.setAdapter(adapter);
             spinner.setEnabled(false);
@@ -262,7 +259,6 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
         });
         mListPagerAdapter = new ListPagerAdapter(getSupportFragmentManager());
         binding.startConversationViewPager.setAdapter(mListPagerAdapter);
-
         mConferenceAdapter = new ListItemAdapter(this, conferences);
         mContactsAdapter = new ListItemAdapter(this, contacts);
         mContactsAdapter.setOnTagClickedListener(this.mOnTagClickedListener);
@@ -568,15 +564,6 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
             this.mPostponedActivityResult = null;
         }
         this.mActivatedAccounts.addAll(AccountUtils.getEnabledAccounts(xmppConnectionService));
-        for (Account account : xmppConnectionService.getAccounts()) {
-            if (account.getStatus() != Account.State.DISABLED) {
-                if (Config.DOMAIN_LOCK != null) {
-                    this.mActivatedAccounts.add(account.getJid().getLocal());
-                } else {
-                    this.mActivatedAccounts.add(account.getJid().asBareJid().toString());
-                }
-            }
-        }
         configureHomeButton();
         if (mSearchEditText != null) {
             filter(mSearchEditText.getText().toString());

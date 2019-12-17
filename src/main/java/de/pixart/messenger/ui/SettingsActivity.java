@@ -53,7 +53,9 @@ public class SettingsActivity extends XmppActivity implements
     public static final String AUTOMATIC_MESSAGE_DELETION = "automatic_message_deletion";
     public static final String BROADCAST_LAST_ACTIVITY = "last_activity";
     public static final String WARN_UNENCRYPTED_CHAT = "warn_unencrypted_chat";
+    public static final String HIDE_YOU_ARE_NOT_PARTICIPATING = "hide_you_are_not_participating";
     public static final String THEME = "theme";
+    public static final String THEME_COLOR = "theme_color";
     public static final String SHOW_DYNAMIC_TAGS = "show_dynamic_tags";
     public static final String OMEMO_SETTING = "omemo";
     public static final String SHOW_FOREGROUND_SERVICE = "show_foreground_service";
@@ -72,6 +74,8 @@ public class SettingsActivity extends XmppActivity implements
     public static final String CONFIRM_MESSAGES = "confirm_messages";
     public static final String INDICATE_RECEIVED = "indicate_received";
     public static final String USE_INVIDIOUS = "use_invidious";
+    public static final String ALLOW_MESSAGE_CORRECTION = "allow_message_correction";
+    public static final String ENABLE_OTR_ENCRYPTION = "enable_otr_encryption";
 
     public static final int REQUEST_CREATE_BACKUP = 0xbf8701;
     Preference multiAccountPreference;
@@ -480,7 +484,7 @@ public class SettingsActivity extends XmppActivity implements
                 CONFIRM_MESSAGES,
                 DND_ON_SILENT_MODE,
                 AWAY_WHEN_SCREEN_IS_OFF,
-                "allow_message_correction",
+                ALLOW_MESSAGE_CORRECTION,
                 TREAT_VIBRATE_AS_SILENT,
                 MANUALLY_CHANGE_PRESENCE,
                 BROADCAST_LAST_ACTIVITY);
@@ -505,7 +509,7 @@ public class SettingsActivity extends XmppActivity implements
             xmppConnectionService.reinitializeMuclumbusService();
         } else if (name.equals(AUTOMATIC_MESSAGE_DELETION)) {
             xmppConnectionService.expireOldMessages(true);
-        } else if (name.equals(THEME)) {
+        } else if (name.equals(THEME) || name.equals(THEME_COLOR)) {
             updateTheme();
         }
     }

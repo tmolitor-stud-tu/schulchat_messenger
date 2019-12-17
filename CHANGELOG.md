@@ -1,6 +1,24 @@
 ### Changelog
 
-#### WIP
+#### Version 2.3.5
+* start removing OTR
+#### Version 2.3.4
+* fixes for Jingle IBB file transfer
+* fixes for repeated corrections filling up the database
+* switched to Last Message Correction v1.1
+* increase mam messages catchup
+* bug fixes
+
+#### Version 2.3.3
+* fix missing send button
+
+#### Version 2.3.2
+* fix shareWithActivity
+
+#### Version 2.3.1
+* bug fixes
+
+#### Version 2.3.0
 * show name in quotes (PAM)
 * introduce theme based on systems theme (PAM)
 * increase default video quality (720p instead of 360p)
@@ -9,8 +27,9 @@
 * introduce app intro and some help screens (PAM)
 * fixed minor security issues
 * share XMPP uri from channel search by long pressing a result
-* jingle file transfer fixes
 * fixed OMEMO self healing (after backup restore) on servers w/o MAM
+* introduce expert setting to perform channel discovery on local server instead of [search.jabber.network](https://search.jabber.network)
+* introduce new orange theme color (PAM)
 * bug fixes
 
 #### Version 2.2.9

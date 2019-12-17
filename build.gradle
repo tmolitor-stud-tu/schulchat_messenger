@@ -34,8 +34,6 @@ repositories {
 
 configurations {
     playstoreImplementation
-    gitImplementation
-    playstoreschulchatImplementation
 }
 
 dependencies {
@@ -66,8 +64,6 @@ dependencies {
     implementation 'androidx.exifinterface:exifinterface:1.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.emoji:emoji:1.0.0'
-    gitImplementation 'androidx.emoji:emoji-appcompat:1.0.0'
-    gitImplementation 'androidx.emoji:emoji-bundled:1.0.0'
     implementation 'androidx.exifinterface:exifinterface:1.0.0'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
@@ -143,11 +139,6 @@ android {
     productFlavors {
         playstore {
             dimension "distribution"
-            versionNameSuffix "-playstore"
-        }
-        git {
-            dimension "distribution"
-            versionNameSuffix "-git"
         }
     }
     if (project.hasProperty('mStoreFile') &&
