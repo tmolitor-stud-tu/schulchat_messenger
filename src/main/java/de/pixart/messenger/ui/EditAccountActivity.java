@@ -1211,7 +1211,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
             if (pgpKeyId != 0 && Config.supportOpenPgp()) {
                 OnClickListener openPgp = view -> launchOpenKeyChain(pgpKeyId);
                 OnClickListener delete = view -> showDeletePgpDialog();
-                this.binding.pgpFingerprintBox.setVisibility(View.VISIBLE);
+                this.binding.pgpFingerprintBox.setVisibility(View.GONE); //Schulchat: set visibility to GONE
                 this.binding.pgpFingerprint.setText(OpenPgpUtils.convertKeyIdToHex(pgpKeyId));
                 this.binding.pgpFingerprint.setOnClickListener(openPgp);
                 if ("pgp".equals(messageFingerprint)) {
@@ -1227,7 +1227,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
                 if ("otr".equals(messageFingerprint)) {
                     this.binding.otrFingerprintDesc.setTextColor(ContextCompat.getColor(this, R.color.accent));
                 }
-                this.binding.otrFingerprintBox.setVisibility(View.VISIBLE);
+                this.binding.otrFingerprintBox.setVisibility(View.GONE); //Schulchat: set visibility to GONE
                 this.binding.otrFingerprint.setText(CryptoHelper.prettifyFingerprint(otrFingerprint));
                 this.binding.actionCopyToClipboard.setVisibility(View.VISIBLE);
                 this.binding.actionCopyToClipboard.setOnClickListener(v -> {
@@ -1243,7 +1243,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
             }
             final String ownAxolotlFingerprint = this.mAccount.getAxolotlService().getOwnFingerprint();
             if (ownAxolotlFingerprint != null && Config.supportOmemo()) {
-                this.binding.axolotlFingerprintBox.setVisibility(View.VISIBLE);
+                this.binding.axolotlFingerprintBox.setVisibility(View.GONE); //Schulchat: set visibility to GONE
                 if (ownAxolotlFingerprint.equals(messageFingerprint)) {
                     this.binding.ownFingerprintDesc.setTextAppearance(this, R.style.TextAppearance_Conversations_Caption_Highlight);
                     this.binding.ownFingerprintDesc.setText(R.string.omemo_fingerprint_selected_message);
@@ -1267,7 +1267,8 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
                 }
             }
             if (hasKeys && Config.supportOmemo()) { //TODO: either the button should be visible if we print an active device or the device list should be fed with reactived devices
-                this.binding.otherDeviceKeysCard.setVisibility(View.VISIBLE);
+                //Schulchat: set visibility to GONE
+                this.binding.otherDeviceKeysCard.setVisibility(View.GONE);
                 Set<Integer> otherDevices = mAccount.getAxolotlService().getOwnDeviceIds();
                 if (otherDevices == null || otherDevices.isEmpty()) {
                     binding.clearDevices.setVisibility(View.GONE);

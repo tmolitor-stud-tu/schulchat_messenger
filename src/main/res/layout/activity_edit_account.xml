@@ -651,7 +651,8 @@
                             android:id="@+id/pgp_fingerprint_box"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:layout_marginTop="32dp">
+                            android:layout_marginTop="32dp"
+                            android:visibility="gone">
 
                             <ImageButton
                                 android:id="@+id/action_delete_pgp"
@@ -695,7 +696,8 @@
                             android:id="@+id/otr_fingerprint_box"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:layout_marginTop="24dp">
+                            android:layout_marginTop="24dp"
+                            android:visibility="gone">
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
@@ -747,7 +749,8 @@
                             android:id="@+id/axolotl_fingerprint_box"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:layout_marginTop="24dp">
+                            android:layout_marginTop="24dp"
+                            android:visibility="gone">
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
