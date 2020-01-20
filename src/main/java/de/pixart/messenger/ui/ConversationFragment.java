@@ -256,7 +256,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
         }
 
         @Override
-        public void onScroll(final AbsListView view, int firstVisibleItem, int visibleItemCount, final int totalItemCount) {
+        public void onScroll(final AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
             toggleScrollDownButton(view);
             synchronized (ConversationFragment.this.messageList) {
                 if (firstVisibleItem < 5 && conversation != null && conversation.messagesLoaded.compareAndSet(true, false) && messageList.size() > 0) {
@@ -1117,7 +1117,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
                 menuInviteContact.setVisible(false);
                 menuArchiveChat.setTitle(R.string.action_end_conversation);
             }
-            Fragment secondaryFragment = getFragmentManager().findFragmentById(R.id.secondary_fragment);
+            Fragment secondaryFragment = activity.getFragmentManager().findFragmentById(R.id.secondary_fragment);
             if (secondaryFragment instanceof ConversationFragment) {
                 if (conversation.getMode() == Conversation.MODE_MULTI) {
                     menuGroupDetails.setTitle(conversation.getMucOptions().isPrivateAndNonAnonymous() ? R.string.action_group_details : R.string.channel_details);
@@ -1678,8 +1678,10 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
                 Log.d(Config.LOGTAG, "type: " + transferable.getClass().getName());
                 Toast.makeText(getActivity(), R.string.not_connected_try_again, Toast.LENGTH_SHORT).show();
             }
-        } else if (message.treatAsDownloadable() || message.hasFileOnRemoteHost()) {
+        } else if (message.treatAsDownloadable() || message.hasFileOnRemoteHost() || MessageUtils.unInitiatedButKnownSize(message)) {
             createNewConnection(message);
+        } else {
+            Log.d(Config.LOGTAG, message.getConversation().getAccount() + ": unable to start downloadable");
         }
     }
 
@@ -2003,6 +2005,11 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
     }
 
     public void privateMessageWith(final Jid counterpart) {
+        final Jid tcp = conversation.getMucOptions().getTrueCounterpart(counterpart);
+        if (!getConversation().getMucOptions().isUserInRoom(counterpart) && getConversation().getMucOptions().findUserByRealJid(tcp == null ? null : tcp.asBareJid()) == null) {
+            Toast.makeText(getActivity(), activity.getString(R.string.user_has_left_conference, counterpart.getResource()), Toast.LENGTH_SHORT).show();
+            return;
+        }
         if (conversation.setOutgoingChatState(Config.DEFAULT_CHATSTATE)) {
             activity.xmppConnectionService.sendChatState(conversation);
         }

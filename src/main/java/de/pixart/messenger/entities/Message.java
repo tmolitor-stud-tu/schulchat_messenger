@@ -460,7 +460,7 @@ public class Message extends AbstractEntity implements AvatarService.Avatarable 
     }
 
     boolean remoteMsgIdMatchInEdit(String id) {
-        for(Edit edit : this.edits) {
+        for (Edit edit : this.edits) {
             if (id.equals(edit.getEditedId())) {
                 return true;
             }
@@ -679,6 +679,10 @@ public class Message extends AbstractEntity implements AvatarService.Avatarable 
         }
     }
 
+    public boolean isOOb() {
+        return oob;
+    }
+
     public static class MergeSeparator {
     }
 
@@ -843,7 +847,7 @@ public class Message extends AbstractEntity implements AvatarService.Avatarable 
             if (this.transferable != null) {
                 fileParams.size = this.transferable.getFileSize();
             }
-            String[] parts = body == null ? new String[0] : body.split("\\|");
+            final String[] parts = body == null ? new String[0] : body.split("\\|");
             switch (parts.length) {
                 case 1:
                     try {
