@@ -2,7 +2,9 @@ package de.pixart.messenger.ui;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -13,9 +15,16 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
 import de.pixart.messenger.Config;
 import de.pixart.messenger.R;
 import de.pixart.messenger.entities.Account;
+import de.pixart.messenger.utils.PhoneHelper;
 import rocks.xmpp.addr.Jid;
 
 import static de.pixart.messenger.utils.PermissionUtils.allGranted;
@@ -24,7 +33,9 @@ public class WelcomeActivity extends XmppActivity {
 
     private static final int REQUEST_SCAN_QR_CODE = 0x54fb;
     private static final int REQUEST_CAMERA_PERMISSIONS_TO_SCAN = 0x6774;
+    private String domain;
     Button scanQRCode = null;
+    private static final String algo = "HmacSHA256";
 
     @Override
     protected void refreshUiReal() {
@@ -87,15 +98,72 @@ public class WelcomeActivity extends XmppActivity {
         if (requestCode == REQUEST_SCAN_QR_CODE && resultCode == RESULT_OK) {
             String result = intent.getStringExtra(ScanActivity.INTENT_EXTRA_RESULT);
             if (result != null) {
-                if (result.startsWith("domain=" + Config.MAGIC_CREATE_DOMAIN)) {
+                if (getRootDomain(result).equalsIgnoreCase(Config.MAGIC_CREATE_DOMAIN)) {
                     String[] strings = result.split("&");
                     final String domain = strings[0].substring(("domain=").length());
                     final String username = strings[1].substring(("user=").length());
                     final String password = strings[2].substring(("token=").length());
-                    addAccount(domain, username, password);
+                    addAccount(domain, username, createPassword(password));
                 }
             }
         }
+    }
+
+    private String createPassword(final String password) {
+        StringBuilder pw = new StringBuilder("");
+        String deviceID = PhoneHelper.getAndroidId(this);
+        String deviceName = getDeviceName();
+        try {
+            pw.append(deviceID);
+            pw.append("|");
+            pw.append(deviceName);
+            pw.append("|");
+            pw.append(hash_hmac(algo, hash_hmac(algo, deviceID + "|" + deviceName, password), getString(R.string.app_secret)));
+            return pw.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return password;
+    }
+
+    public static String hash_hmac(String algo, String text, String password) throws NoSuchAlgorithmException {
+        Mac sha256_HMAC = null;
+        try {
+            sha256_HMAC = Mac.getInstance(algo);
+            SecretKeySpec secret_key = new SecretKeySpec(password.getBytes(), algo);
+            sha256_HMAC.init(secret_key);
+            return bytesToString(sha256_HMAC.doFinal(text.getBytes()));
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private static String bytesToString(byte[] bytes) {
+        StringBuilder result = new StringBuilder();
+        for (byte b : bytes) result.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
+        return result.toString();
+    }
+
+    public String getDeviceName() {
+        String manufacturer = Build.MANUFACTURER;
+        String model = Build.MODEL;
+        if (model.startsWith(manufacturer)) {
+            return model;
+        } else {
+            return manufacturer + " " + model;
+        }
+    }
+
+    private String getRootDomain(final String result) {
+        String fulldomain = "";
+        String rootdomain = "";
+        if (result.startsWith("domain=")) {
+            String[] results = result.split("&");
+            fulldomain = results[0].substring(("domain=").length());
+            rootdomain = fulldomain.substring(fulldomain.indexOf(".") + 1);
+        }
+        return rootdomain;
     }
 
     private void addAccount(final String domain, final String username, final String password) {
