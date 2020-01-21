@@ -371,14 +371,6 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
                 binding.statusMessage.setText(EmojiWrapper.transform(builder));
             }
 
-            String resources = contact.getPresences().getMostAvailableResource();
-            if (resources.length() == 0) {
-                binding.resource.setVisibility(View.GONE);
-            } else {
-                binding.resource.setVisibility(View.VISIBLE);
-                binding.resource.setText(resources);
-            }
-
             if (contact.getOption(Contact.Options.FROM)) {
                 binding.detailsSendPresence.setText(R.string.send_presence_updates);
                 binding.detailsSendPresence.setChecked(true);
