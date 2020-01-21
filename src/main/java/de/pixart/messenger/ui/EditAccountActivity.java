@@ -67,6 +67,7 @@ import de.pixart.messenger.ui.util.AvatarWorkerTask;
 import de.pixart.messenger.ui.util.PendingItem;
 import de.pixart.messenger.ui.util.SoftKeyboardUtils;
 import de.pixart.messenger.utils.CryptoHelper;
+import de.pixart.messenger.utils.FirstStartManager;
 import de.pixart.messenger.utils.MenuDoubleTabUtil;
 import de.pixart.messenger.utils.Resolver;
 import de.pixart.messenger.utils.SignupUtils;
@@ -326,10 +327,21 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
 
     private void next() {
         if (redirectInProgress.compareAndSet(false, true)) {
-            Intent intent = new Intent(this, EnterNameActivity.class);
-            intent.putExtra(EXTRA_ACCOUNT, mAccount.getJid().asBareJid().toString());
-            startActivity(intent);
-            overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
+            FirstStartManager firstStartManager = new FirstStartManager(this);
+            if (mAccount != null) {
+                if (firstStartManager.isFirstTimeLaunch()) {
+                    Intent intent = new Intent(this, SetSettingsActivity.class);
+                    intent.putExtra("setup", true);
+                    startActivity(intent);
+                    overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
+                } else {
+                    Intent intent = new Intent(this, PublishProfilePictureActivity.class);
+                    intent.putExtra(PublishProfilePictureActivity.EXTRA_ACCOUNT, mAccount.getJid().asBareJid().toEscapedString());
+                    intent.putExtra("setup", true);
+                    startActivity(intent);
+                    overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
+                }
+            }
             finish();
         }
     }
@@ -747,14 +759,18 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
             this.mInitMode = init || this.jidToEdit == null;
             this.mExisting = existing;
             this.messageFingerprint = intent.getStringExtra("fingerprint");
+            this.binding.accountJidLayout.setVisibility(View.GONE);
+            this.binding.accountPasswordLayout.setVisibility(View.GONE);
             if (mExisting) {
                 this.binding.accountRegisterNew.setVisibility(View.GONE);
             }
             if (!mInitMode) {
                 this.binding.accountRegisterNew.setVisibility(View.GONE);
+                this.binding.proceed.setVisibility(View.GONE);
                 setTitle(getString(R.string.account_details));
                 configureActionBar(getSupportActionBar(), !openedFromNotification);
             } else {
+                this.binding.proceed.setVisibility(View.VISIBLE);
                 this.binding.yourNameBox.setVisibility(View.GONE);
                 this.binding.yourStatusBox.setVisibility(View.GONE);
                 this.binding.avater.setVisibility(View.GONE);
@@ -869,12 +885,6 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
             return false;
         }
         switch (item.getItemId()) {
-            case R.id.action_import_backup:
-                if (hasStoragePermission(REQUEST_IMPORT_BACKUP)) {
-                    startActivity(new Intent(this, ImportBackupActivity.class));
-                }
-                overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
-                break;
             case R.id.mgmt_account_reconnect:
                 XmppConnection connection = mAccount.getXmppConnection();
                 if (connection != null) {
@@ -1125,12 +1135,12 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
             }
             this.binding.accountRegisterNew.setVisibility(View.GONE);
         } else if (this.mAccount.isOptionSet(Account.OPTION_REGISTER) && mForceRegister == null) {
-            this.binding.accountRegisterNew.setVisibility(View.VISIBLE);
+            this.binding.accountRegisterNew.setVisibility(View.GONE);
         } else if (mExisting) {
             this.binding.accountRegisterNew.setVisibility(View.GONE);
         } else {
             if (mInitMode) {
-                this.binding.accountRegisterNew.setVisibility(View.VISIBLE);
+                this.binding.accountRegisterNew.setVisibility(View.GONE);
             } else {
                 this.binding.accountRegisterNew.setVisibility(View.GONE);
             }
@@ -1468,12 +1478,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
     }
 
     public void onShowErrorToast(final int resId) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(EditAccountActivity.this, resId, Toast.LENGTH_SHORT).show();
-            }
-        });
+        runOnUiThread(() -> Toast.makeText(EditAccountActivity.this, resId, Toast.LENGTH_SHORT).show());
     }
 
     @Override

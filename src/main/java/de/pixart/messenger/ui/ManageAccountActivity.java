@@ -195,12 +195,6 @@ public class ManageAccountActivity extends XmppActivity implements OnAccountUpda
                 startActivity(new Intent(this, EditAccountActivity.class));
                 overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
                 break;
-            case R.id.action_import_backup:
-                if (hasStoragePermission(REQUEST_IMPORT_BACKUP)) {
-                    startActivity(new Intent(this, ImportBackupActivity.class));
-                }
-                overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
-                break;
             case R.id.action_add_account_with_cert:
                 addAccountFromKey();
                 break;

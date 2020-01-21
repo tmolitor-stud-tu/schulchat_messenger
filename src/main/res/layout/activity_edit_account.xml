@@ -175,6 +175,14 @@
                                 android:visibility="gone" />
                         </LinearLayout>
 
+                        <TextView
+                            android:id="@+id/proceed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/register_account_proceed"
+                            android:gravity="center_horizontal"
+                            android:textAppearance="@style/TextAppearance.Conversations.Body1" />
+
                         <RelativeLayout
                             android:id="@+id/your_name_box"
                             android:layout_width="wrap_content"
@@ -194,7 +202,7 @@
                                 android:background="?attr/selectableItemBackgroundBorderless"
                                 android:padding="@dimen/image_button_padding"
                                 android:src="?attr/icon_edit_body"
-                                android:visibility="visible" />
+                                android:visibility="gone" />
 
                             <LinearLayout
                                 android:layout_width="wrap_content"
