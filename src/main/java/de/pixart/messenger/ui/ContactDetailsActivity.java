@@ -83,7 +83,6 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
     private Conversation mConversation;
     ActivityContactDetailsBinding binding;
     private MediaAdapter mMediaAdapter;
-    private boolean mAdvancedMode = false;
     private DialogInterface.OnClickListener removeFromRoster = new DialogInterface.OnClickListener() {
 
         @Override
@@ -214,7 +213,6 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.mAdvancedMode = getPreferences().getBoolean("advanced_mode", false);
         showInactiveOmemo = savedInstanceState != null && savedInstanceState.getBoolean("show_inactive_omemo", false);
         if (getIntent().getAction().equals(ACTION_VIEW_CONTACT)) {
             try {
@@ -275,57 +273,14 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
             case android.R.id.home:
                 finish();
                 break;
-            case R.id.action_share_http:
-                shareLink(true);
             case R.id.action_block:
                 BlockContactDialog.show(this, contact);
                 break;
-            case R.id.action_share_uri:
-                shareLink(false);
-                break;
-            case R.id.action_advanced_mode:
-                this.mAdvancedMode = !menuItem.isChecked();
-                menuItem.setChecked(this.mAdvancedMode);
-                getPreferences().edit().putBoolean("advanced_mode", mAdvancedMode).apply();
-                invalidateOptionsMenu();
-                refreshUi();
             case R.id.action_unblock:
                 BlockContactDialog.show(this, contact);
                 break;
         }
         return super.onOptionsItemSelected(menuItem);
-    }
-
-    private void editContact() {
-        Uri systemAccount = contact.getSystemAccount();
-        if (systemAccount == null) {
-            quickEdit(contact.getServerName(), R.string.contact_name, value -> {
-                contact.setServerName(value);
-                ContactDetailsActivity.this.xmppConnectionService.pushContactToServer(contact);
-                populateView();
-                return null;
-            }, true);
-        } else {
-            Intent intent = new Intent(Intent.ACTION_EDIT);
-            intent.setDataAndType(systemAccount, Contacts.CONTENT_ITEM_TYPE);
-            intent.putExtra("finishActivityOnSaveCompleted", true);
-            try {
-                startActivity(intent);
-                overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
-            } catch (ActivityNotFoundException e) {
-                Toast.makeText(ContactDetailsActivity.this, R.string.no_application_found_to_view_contact, Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem menuItemAdvancedMode = menu.findItem(R.id.action_advanced_mode);
-        menuItemAdvancedMode.setChecked(mAdvancedMode);
-        if (mConversation == null) {
-            return true;
-        }
-        return true;
     }
 
     @Override
@@ -477,15 +432,6 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
                 binding.detailsLastseen.setVisibility(View.GONE);
             }
         }
-
-        binding.jid.setText(IrregularUnicodeDetector.style(this, contact.getJid()));
-        String account;
-        if (Config.DOMAIN_LOCK != null) {
-            account = contact.getAccount().getJid().getLocal();
-        } else {
-            account = contact.getAccount().getJid().asBareJid().toString();
-        }
-        binding.detailsAccount.setText(getString(R.string.using_account, account));
         AvatarWorkerTask.loadAvatar(contact, binding.detailsContactBadge, R.dimen.avatar_on_details_screen_size);
         binding.detailsContactBadge.setOnLongClickListener(v -> {
             ImageView view = new ImageView(ContactDetailsActivity.this);
@@ -500,11 +446,6 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
             builder.create().show();
             return true;
         });
-        if (xmppConnectionService.multipleAccounts()) {
-            binding.detailsAccount.setVisibility(View.VISIBLE);
-        } else {
-            binding.detailsAccount.setVisibility(View.GONE);
-        }
 
         binding.detailsContactKeys.removeAllViews();
         boolean hasKeys = false;
