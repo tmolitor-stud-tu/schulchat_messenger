@@ -78,6 +78,7 @@ import de.pixart.messenger.services.XmppConnectionService;
 import de.pixart.messenger.utils.CryptoHelper;
 import de.pixart.messenger.utils.Namespace;
 import de.pixart.messenger.utils.Patterns;
+import de.pixart.messenger.utils.PhoneHelper;
 import de.pixart.messenger.utils.Resolver;
 import de.pixart.messenger.utils.SSLSocketHelper;
 import de.pixart.messenger.utils.SocksSocketFactory;
@@ -194,12 +195,9 @@ public class XmppConnection implements Runnable {
 
     private static void fixResource(Context context, Account account) {
         String resource = account.getResource();
-        int fixedPartLength = context.getString(R.string.app_name).length() + 1; //include the trailing dot
-        int randomPartLength = 4; // 3 bytes
-        if (resource != null && resource.length() > fixedPartLength + randomPartLength) {
-            if (validBase64(resource.substring(fixedPartLength, fixedPartLength + randomPartLength))) {
-                account.setResource(resource.substring(0, fixedPartLength + randomPartLength));
-            }
+        int fixedPartLength = PhoneHelper.getAndroidId(context).length(); //include the trailing dot
+        if (resource != null && resource.length() != fixedPartLength) {
+            account.setResource(resource.substring(0, fixedPartLength));
         }
     }
 
@@ -1396,7 +1394,7 @@ public class XmppConnection implements Runnable {
     }
 
     private String createNewResource() {
-        return mXmppConnectionService.getString(R.string.app_name) + '.' + nextRandomId(true);
+        return PhoneHelper.getAndroidId(mXmppConnectionService.getApplicationContext());
     }
 
     private String nextRandomId() {
