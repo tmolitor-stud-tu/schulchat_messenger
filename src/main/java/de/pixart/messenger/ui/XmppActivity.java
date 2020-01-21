@@ -365,9 +365,6 @@ public abstract class XmppActivity extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_create_issue:
-                createIssue();
-                break;
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
                 overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
@@ -970,14 +967,6 @@ public abstract class XmppActivity extends ActionBarActivity {
 
     protected String getShareableUri(boolean http) {
         return null;
-    }
-
-    private void createIssue() {
-        String IssueURL = Config.ISSUE_URL;
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(IssueURL));
-        startActivity(intent);
-        overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
     }
 
     protected void shareLink(boolean http) {
