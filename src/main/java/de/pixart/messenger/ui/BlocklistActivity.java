@@ -4,6 +4,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import android.text.Editable;
+import android.view.View;
 import android.widget.Toast;
 
 import java.util.Collections;
@@ -27,8 +28,6 @@ public class BlocklistActivity extends AbstractSearchableListItemActivity implem
             BlockContactDialog.show(BlocklistActivity.this, (Blockable) getListItems().get(position));
             return true;
         });
-        this.binding.fab.show();
-        this.binding.fab.setOnClickListener((v) -> showEnterJidDialog());
     }
 
     @Override
@@ -64,34 +63,6 @@ public class BlocklistActivity extends AbstractSearchableListItemActivity implem
             Collections.sort(getListItems());
         }
         getListItemAdapter().notifyDataSetChanged();
-    }
-
-    protected void showEnterJidDialog() {
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        Fragment prev = getSupportFragmentManager().findFragmentByTag("dialog");
-        if (prev != null) {
-            ft.remove(prev);
-        }
-        ft.addToBackStack(null);
-        EnterJidDialog dialog = EnterJidDialog.newInstance(
-                null,
-                getString(R.string.block_jabber_id),
-                getString(R.string.block),
-                null,
-                account.getJid().asBareJid().toString(),
-                true,
-                xmppConnectionService.multipleAccounts(),
-                false
-        );
-
-        dialog.setOnEnterJidDialogPositiveListener((accountJid, contactJid) -> {
-            Blockable blockable = new RawBlockable(account, contactJid);
-            if (xmppConnectionService.sendBlockRequest(blockable, false)) {
-                Toast.makeText(BlocklistActivity.this, R.string.corresponding_conversations_closed, Toast.LENGTH_SHORT).show();
-            }
-            return true;
-        });
-        dialog.show(ft, "dialog");
     }
 
     protected void refreshUiReal() {
