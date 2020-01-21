@@ -615,6 +615,10 @@ public class Conversation extends AbstractEntity implements Blockable, Comparabl
         return this.account;
     }
 
+    public String getDisplayName() {
+        return this.account.getDisplayName();
+    }
+
     public void setAccount(final Account account) {
         this.account = account;
     }

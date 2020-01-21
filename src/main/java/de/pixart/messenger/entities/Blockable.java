@@ -12,4 +12,6 @@ public interface Blockable {
     Jid getJid();
 
     Account getAccount();
+
+    String getDisplayName();
 }

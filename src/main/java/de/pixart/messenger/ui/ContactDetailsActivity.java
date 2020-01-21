@@ -277,6 +277,8 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
                 break;
             case R.id.action_share_http:
                 shareLink(true);
+            case R.id.action_block:
+                BlockContactDialog.show(this, contact);
                 break;
             case R.id.action_share_uri:
                 shareLink(false);
@@ -287,6 +289,8 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
                 getPreferences().edit().putBoolean("advanced_mode", mAdvancedMode).apply();
                 invalidateOptionsMenu();
                 refreshUi();
+            case R.id.action_unblock:
+                BlockContactDialog.show(this, contact);
                 break;
         }
         return super.onOptionsItemSelected(menuItem);
@@ -327,8 +331,21 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.contact_details, menu);
+        MenuItem block = menu.findItem(R.id.action_block);
+        MenuItem unblock = menu.findItem(R.id.action_unblock);
         if (contact == null) {
             return true;
+        }
+        final XmppConnection connection = contact.getAccount().getXmppConnection();
+        if (connection != null && connection.getFeatures().blocking()) {
+            if (this.contact.isBlocked()) {
+                block.setVisible(false);
+            } else {
+                unblock.setVisible(false);
+            }
+        } else {
+            unblock.setVisible(false);
+            block.setVisible(false);
         }
         return super.onCreateOptionsMenu(menu);
     }
