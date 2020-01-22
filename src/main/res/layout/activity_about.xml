@@ -74,24 +74,6 @@
                         android:textAppearance="@style/TextAppearance.Conversations.Body1"
                         android:textSize="?attr/TextSizeBody"
                         android:typeface="monospace" />
-
-                    <Button
-                        android:id="@+id/show_privacy_policy"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
-                        android:text="@string/show_privacy" />
-
-                    <Button
-                        android:id="@+id/show_terms_of_use"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginBottom="4dp"
-                        android:text="@string/show_termsofuse" />
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
