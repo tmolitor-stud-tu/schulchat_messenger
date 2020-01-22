@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -24,6 +22,7 @@ import javax.crypto.spec.SecretKeySpec;
 import de.pixart.messenger.Config;
 import de.pixart.messenger.R;
 import de.pixart.messenger.entities.Account;
+import de.pixart.messenger.utils.FirstStartManager;
 import de.pixart.messenger.utils.PhoneHelper;
 import rocks.xmpp.addr.Jid;
 
@@ -104,8 +103,14 @@ public class WelcomeActivity extends XmppActivity {
                     final String username = strings[1].substring(("user=").length());
                     final String password = strings[2].substring(("token=").length());
                     addAccount(domain, username, createPassword(password));
+                } else {
+                    Toast.makeText(this, R.string.error_scanning_QR_code, Toast.LENGTH_SHORT).show();
                 }
+            } else {
+                Toast.makeText(this, R.string.error_scanning_QR_code, Toast.LENGTH_SHORT).show();
             }
+        } else {
+            Toast.makeText(this, R.string.error_scanning_QR_code, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -175,17 +180,25 @@ public class WelcomeActivity extends XmppActivity {
             if (account == null) {
                 account = new Account(jid, password);
                 account.setOption(Account.OPTION_REGISTER, false);
-                account.setOption(Account.OPTION_DISABLED, true);
+                account.setOption(Account.OPTION_DISABLED, false);
                 account.setOption(Account.OPTION_MAGIC_CREATE, false);
                 xmppConnectionService.createAccount(account);
+                FirstStartManager firstStartManager = new FirstStartManager(this);
+                if (firstStartManager.isFirstTimeLaunch()) {
+                    Intent intent = new Intent(this, SetSettingsActivity.class);
+                    intent.putExtra("setup", true);
+                    startActivity(intent);
+                    overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
+                } else {
+                    Intent intent = new Intent(this, PublishProfilePictureActivity.class);
+                    intent.putExtra(PublishProfilePictureActivity.EXTRA_ACCOUNT, account.getJid().asBareJid().toEscapedString());
+                    intent.putExtra("setup", true);
+                    startActivity(intent);
+                    overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
+                }
             }
-            Intent intent = new Intent(WelcomeActivity.this, EditAccountActivity.class);
-            intent.putExtra("jid", account.getJid().asBareJid().toString());
-            intent.putExtra("init", true);
-            intent.putExtra("existing", true);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
         }
+        finish();
     }
 
     public static void launch(AppCompatActivity activity) {

@@ -1,6 +1,5 @@
 package de.pixart.messenger.services;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
@@ -15,7 +14,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.ContentObserver;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
@@ -31,7 +29,6 @@ import android.os.PowerManager.WakeLock;
 import android.os.SystemClock;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
-import android.provider.ContactsContract;
 import android.security.KeyChain;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -42,7 +39,6 @@ import android.util.Pair;
 import androidx.annotation.BoolRes;
 import androidx.annotation.IntegerRes;
 import androidx.core.app.RemoteInput;
-import androidx.core.content.ContextCompat;
 
 import com.google.common.base.Strings;
 

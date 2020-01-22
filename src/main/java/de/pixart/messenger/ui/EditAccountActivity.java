@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.security.KeyChain;
 import android.security.KeyChainAliasCallback;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -26,7 +25,6 @@ import android.view.View.OnClickListener;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -56,7 +54,6 @@ import de.pixart.messenger.databinding.DialogPresenceBinding;
 import de.pixart.messenger.entities.Account;
 import de.pixart.messenger.entities.Presence;
 import de.pixart.messenger.entities.PresenceTemplate;
-import de.pixart.messenger.services.BarcodeProvider;
 import de.pixart.messenger.services.QuickConversationsService;
 import de.pixart.messenger.services.XmppConnectionService;
 import de.pixart.messenger.services.XmppConnectionService.OnAccountUpdate;
@@ -696,8 +693,6 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
         final MenuItem reconnect = menu.findItem(R.id.mgmt_account_reconnect);
         final MenuItem showMoreInfo = menu.findItem(R.id.action_server_info_show_more);
         final MenuItem mamPrefs = menu.findItem(R.id.action_mam_prefs);
-        final MenuItem actionShare = menu.findItem(R.id.action_share);
-        final MenuItem shareBarcode = menu.findItem(R.id.action_share_barcode);
         final MenuItem shareQRCode = menu.findItem(R.id.action_show_qr_code);
         if (mAccount != null && mAccount.isOnlineAndConnected()) {
             if (!mAccount.getXmppConnection().getFeatures().blocking()) {
@@ -710,8 +705,6 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
             showBlocklist.setVisible(false);
             showMoreInfo.setVisible(false);
             mamPrefs.setVisible(false);
-            actionShare.setVisible(false);
-            shareBarcode.setVisible(false);
             shareQRCode.setVisible(false);
         }
         return super.onCreateOptionsMenu(menu);
@@ -766,11 +759,9 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
             }
             if (!mInitMode) {
                 this.binding.accountRegisterNew.setVisibility(View.GONE);
-                this.binding.proceed.setVisibility(View.GONE);
                 setTitle(getString(R.string.account_details));
                 configureActionBar(getSupportActionBar(), !openedFromNotification);
             } else {
-                this.binding.proceed.setVisibility(View.VISIBLE);
                 this.binding.yourNameBox.setVisibility(View.GONE);
                 this.binding.yourStatusBox.setVisibility(View.GONE);
                 this.binding.avater.setVisibility(View.GONE);
@@ -901,15 +892,6 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
             case R.id.action_server_info_show_more:
                 changeMoreTableVisibility(!item.isChecked());
                 break;
-            case R.id.action_share_barcode:
-                shareBarcode();
-                break;
-            case R.id.action_share_http:
-                shareLink(true);
-                break;
-            case R.id.action_share_uri:
-                shareLink(false);
-                break;
             case R.id.action_mam_prefs:
                 editMamPrefs();
                 break;
@@ -918,17 +900,6 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private String getSupportSite(String domain) {
-        int i = -1;
-        for (String domains : getResources().getStringArray(R.array.support_domains)) {
-            i++;
-            if (domains.equals(domain)) {
-                return getResources().getStringArray(R.array.support_site)[i];
-            }
-        }
-        return domain;
     }
 
     private boolean inNeedOfSaslAccept() {
@@ -943,30 +914,8 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
         }
     }
 
-    private void shareBarcode() {
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.putExtra(Intent.EXTRA_STREAM, BarcodeProvider.getUriForAccount(this, mAccount));
-        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        intent.setType("image/png");
-        startActivity(Intent.createChooser(intent, getText(R.string.share_with)));
-    }
-
     private void changeMoreTableVisibility(boolean visible) {
         binding.serverInfoMore.setVisibility(visible ? View.VISIBLE : View.GONE);
-    }
-
-    private void gotoChangePassword(String newPassword) {
-        final Intent changePasswordIntent = new Intent(this, ChangePasswordActivity.class);
-        changePasswordIntent.putExtra(EXTRA_ACCOUNT, mAccount.getJid().toString());
-        if (newPassword != null) {
-            changePasswordIntent.putExtra("password", newPassword);
-        }
-        startActivity(changePasswordIntent);
-        overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
-    }
-
-    private void renewCertificate() {
-        KeyChain.choosePrivateKeyAlias(this, this, null, null, null, -1, null);
     }
 
     private void changePresence() {
@@ -1096,7 +1045,6 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
             this.binding.port.setText("");
             this.binding.port.getEditableText().append(String.valueOf(this.mAccount.getPort()));
             this.binding.namePort.setVisibility(mShowOptions ? View.VISIBLE : View.GONE);
-
         }
 
         final boolean editable = false;
@@ -1145,7 +1093,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
                 this.binding.accountRegisterNew.setVisibility(View.GONE);
             }
         }
-        this.binding.yourNameBox.setVisibility(mInitMode ? View.GONE : View.VISIBLE);
+        this.binding.yourNameBox.setVisibility(mInitMode ? View.GONE : View.GONE);
         this.binding.yourStatusBox.setVisibility(mInitMode ? View.GONE : View.VISIBLE);
         if (this.mAccount.isOnlineAndConnected() && !this.mFetchingAvatar) {
             Features features = this.mAccount.getXmppConnection().getFeatures();
@@ -1414,17 +1362,6 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
         this.mFetchingMamPrefsToast = Toast.makeText(this, R.string.fetching_mam_prefs, Toast.LENGTH_LONG);
         this.mFetchingMamPrefsToast.show();
         xmppConnectionService.fetchMamPreferences(mAccount, this);
-    }
-
-    private void showPassword() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View view = getLayoutInflater().inflate(R.layout.dialog_show_password, null);
-        TextView password = view.findViewById(R.id.password);
-        password.setText(mAccount.getPassword());
-        builder.setTitle(R.string.password);
-        builder.setView(view);
-        builder.setPositiveButton(R.string.cancel, null);
-        builder.create().show();
     }
 
     @Override
