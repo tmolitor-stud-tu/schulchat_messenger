@@ -693,7 +693,6 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
         final MenuItem reconnect = menu.findItem(R.id.mgmt_account_reconnect);
         final MenuItem showMoreInfo = menu.findItem(R.id.action_server_info_show_more);
         final MenuItem mamPrefs = menu.findItem(R.id.action_mam_prefs);
-        final MenuItem shareQRCode = menu.findItem(R.id.action_show_qr_code);
         if (mAccount != null && mAccount.isOnlineAndConnected()) {
             if (!mAccount.getXmppConnection().getFeatures().blocking()) {
                 showBlocklist.setVisible(false);
@@ -705,7 +704,6 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
             showBlocklist.setVisible(false);
             showMoreInfo.setVisible(false);
             mamPrefs.setVisible(false);
-            shareQRCode.setVisible(false);
         }
         return super.onCreateOptionsMenu(menu);
     }
