@@ -59,7 +59,7 @@
     <integer name="auto_accept_filesize_wifi">10485760</integer>
     <integer name="auto_accept_filesize_mobile">524288</integer>
     <integer name="auto_accept_filesize_roaming">0</integer>
-    <integer name="automatic_message_deletion">0</integer>
+    <integer name="automatic_message_deletion">31622400</integer>
     <integer name="grace_period">144</integer>
     <string name="default_resource" translatable="false">Phone</string>
     <string name="notification_ringtone">content://settings/system/notification_sound</string>
