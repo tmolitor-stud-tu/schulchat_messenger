@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/tools"
     xmlns:card_view="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
@@ -62,16 +63,15 @@
                                         android:layout_height="wrap_content"
                                         android:orientation="horizontal">
 
-                                        <QuickContactBadge
+                                        <com.makeramen.roundedimageview.RoundedImageView
                                             android:id="@+id/details_contact_badge"
                                             android:layout_width="@dimen/avatar_on_details_screen_size"
                                             android:layout_height="@dimen/avatar_on_details_screen_size"
                                             android:layout_marginEnd="@dimen/avatar_item_distance"
                                             android:layout_marginRight="@dimen/avatar_item_distance"
-                                            android:adjustViewBounds="true"
-                                            android:background="?attr/color_border"
                                             android:padding="1dp"
-                                            android:scaleType="centerCrop" />
+                                            android:scaleType="centerCrop"
+                                            app:riv_corner_radius="@dimen/rounded_image_border" />
 
                                         <LinearLayout
                                             android:layout_width="wrap_content"
@@ -136,25 +136,6 @@
                                     android:layout_marginTop="4dp"
                                     android:orientation="vertical">
 
-                                    <CheckBox
-                                        android:id="@+id/details_send_presence"
-                                        style="@style/Widget.Conversations.CheckBox"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginStart="-6dp"
-                                        android:layout_marginLeft="-6dp"
-                                        android:text="@string/send_presence_updates"
-                                        android:textAppearance="@style/TextAppearance.Conversations.Body1" />
-
-                                    <CheckBox
-                                        android:id="@+id/details_receive_presence"
-                                        style="@style/Widget.Conversations.CheckBox"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginStart="-6dp"
-                                        android:layout_marginLeft="-6dp"
-                                        android:text="@string/receive_presence_updates"
-                                        android:textAppearance="@style/TextAppearance.Conversations.Body1" />
                                 </LinearLayout>
 
                                 <RelativeLayout

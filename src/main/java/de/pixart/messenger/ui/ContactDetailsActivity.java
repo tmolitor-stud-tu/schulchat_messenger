@@ -331,13 +331,6 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
         invalidateOptionsMenu();
         binding.contactDisplayName.setText(contact.getDisplayName());
         if (contact.showInRoster()) {
-            binding.detailsSendPresence.setVisibility(View.VISIBLE);
-            binding.detailsSendPresence.setOnCheckedChangeListener(null);
-            binding.detailsReceivePresence.setVisibility(View.VISIBLE);
-            binding.detailsSendPresence.setOnCheckedChangeListener(null);
-            binding.detailsReceivePresence.setOnCheckedChangeListener(null);
-            binding.detailsSendPresence.setOnCheckedChangeListener(null);
-            binding.detailsReceivePresence.setOnCheckedChangeListener(null);
             List<String> statusMessages = contact.getPresences().getStatusMessages();
             if (statusMessages.size() == 0) {
                 binding.statusMessage.setVisibility(View.GONE);
@@ -361,44 +354,7 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
                 }
                 binding.statusMessage.setText(EmojiWrapper.transform(builder));
             }
-
-            if (contact.getOption(Contact.Options.FROM)) {
-                binding.detailsSendPresence.setText(R.string.send_presence_updates);
-                binding.detailsSendPresence.setChecked(true);
-            } else if (contact.getOption(Contact.Options.PENDING_SUBSCRIPTION_REQUEST)) {
-                binding.detailsSendPresence.setChecked(false);
-                binding.detailsSendPresence.setText(R.string.send_presence_updates);
-            } else {
-                binding.detailsSendPresence.setText(R.string.preemptively_grant);
-                if (contact.getOption(Contact.Options.PREEMPTIVE_GRANT)) {
-                    binding.detailsSendPresence.setChecked(true);
-                } else {
-                    binding.detailsSendPresence.setChecked(false);
-                }
-            }
-            if (contact.getOption(Contact.Options.TO)) {
-                binding.detailsReceivePresence.setText(R.string.receive_presence_updates);
-                binding.detailsReceivePresence.setChecked(true);
-            } else {
-                binding.detailsReceivePresence.setText(R.string.ask_for_presence_updates);
-                if (contact.getOption(Contact.Options.ASKING)) {
-                    binding.detailsReceivePresence.setChecked(true);
-                } else {
-                    binding.detailsReceivePresence.setChecked(false);
-                }
-            }
-            if (contact.getAccount().isOnlineAndConnected()) {
-                binding.detailsReceivePresence.setEnabled(true);
-                binding.detailsSendPresence.setEnabled(true);
-            } else {
-                binding.detailsReceivePresence.setEnabled(false);
-                binding.detailsSendPresence.setEnabled(false);
-            }
-            binding.detailsSendPresence.setOnCheckedChangeListener(this.mOnSendCheckedChange);
-            binding.detailsReceivePresence.setOnCheckedChangeListener(this.mOnReceiveCheckedChange);
         } else {
-            binding.detailsSendPresence.setVisibility(View.GONE);
-            binding.detailsReceivePresence.setVisibility(View.GONE);
             binding.statusMessage.setVisibility(View.GONE);
         }
 
