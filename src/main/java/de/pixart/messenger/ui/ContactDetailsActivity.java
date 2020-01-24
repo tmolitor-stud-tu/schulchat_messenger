@@ -371,21 +371,7 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
                 binding.detailsLastseen.setVisibility(View.GONE);
             }
         }
-        AvatarWorkerTask.loadAvatar(contact, binding.detailsContactBadge, R.dimen.avatar_on_details_screen_size);
-        binding.detailsContactBadge.setOnLongClickListener(v -> {
-            ImageView view = new ImageView(ContactDetailsActivity.this);
-            view.setAdjustViewBounds(true);
-            view.setMaxHeight(R.dimen.avatar_big);
-            view.setMaxWidth(R.dimen.avatar_big);
-            view.setBackgroundColor(Color.WHITE);
-            view.setScaleType(ImageView.ScaleType.FIT_XY);
-            AvatarWorkerTask.loadAvatar(mConversation, view, R.dimen.avatar_big);
-            AlertDialog.Builder builder = new AlertDialog.Builder(ContactDetailsActivity.this);
-            builder.setView(view);
-            builder.create().show();
-            return true;
-        });
-
+        AvatarWorkerTask.loadAvatar(contact, binding.detailsContactBadge, R.dimen.avatar_big);
         binding.detailsContactKeys.removeAllViews();
         boolean hasKeys = false;
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);

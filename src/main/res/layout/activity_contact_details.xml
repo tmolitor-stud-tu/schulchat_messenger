@@ -61,17 +61,7 @@
                                     <LinearLayout
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:orientation="horizontal">
-
-                                        <com.makeramen.roundedimageview.RoundedImageView
-                                            android:id="@+id/details_contact_badge"
-                                            android:layout_width="@dimen/avatar_on_details_screen_size"
-                                            android:layout_height="@dimen/avatar_on_details_screen_size"
-                                            android:layout_marginEnd="@dimen/avatar_item_distance"
-                                            android:layout_marginRight="@dimen/avatar_item_distance"
-                                            android:padding="1dp"
-                                            android:scaleType="centerCrop"
-                                            app:riv_corner_radius="@dimen/rounded_image_border" />
+                                        android:orientation="vertical">
 
                                         <LinearLayout
                                             android:layout_width="wrap_content"
@@ -85,6 +75,19 @@
                                                 android:textAppearance="@style/TextAppearance.Conversations.Title" />
 
                                         </LinearLayout>
+
+                                        <com.makeramen.roundedimageview.RoundedImageView
+                                            android:id="@+id/details_contact_badge"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_marginEnd="@dimen/avatar_item_distance"
+                                            android:layout_marginRight="@dimen/avatar_item_distance"
+                                            android:adjustViewBounds="true"
+                                            android:maxWidth="@dimen/avatar_big"
+                                            android:maxHeight="@dimen/avatar_big"
+                                            android:padding="1dp"
+                                            android:scaleType="centerCrop"
+                                            app:riv_corner_radius="@dimen/rounded_image_border" />
                                     </LinearLayout>
 
                                     <com.wefika.flowlayout.FlowLayout
