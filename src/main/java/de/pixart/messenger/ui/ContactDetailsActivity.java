@@ -115,7 +115,7 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
     };
     private Jid accountJid;
     private Jid contactJid;
-    private boolean showDynamicTags = false;
+    private boolean showDynamicTags = true;
     private boolean showLastSeen = false;
     private boolean showInactiveOmemo = false;
     private String messageFingerprint;
@@ -246,7 +246,7 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
             recreate();
         } else {
             final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            this.showDynamicTags = preferences.getBoolean(SettingsActivity.SHOW_DYNAMIC_TAGS, false);
+            this.showDynamicTags = preferences.getBoolean(SettingsActivity.SHOW_DYNAMIC_TAGS, true);
             this.showLastSeen = preferences.getBoolean("last_activity", false);
         }
         binding.mediaWrapper.setVisibility(Compatibility.hasStoragePermission(this) ? View.VISIBLE : View.GONE);
