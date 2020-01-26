@@ -54,6 +54,7 @@ public class PublishProfilePictureActivity extends XmppActivity implements XmppC
         runOnUiThread(() -> {
             if (mInitialAccountSetup) {
                 Intent intent = new Intent(getApplicationContext(), StartConversationActivity.class);
+                intent.putExtra(EXTRA_ACCOUNT, account.getJid().asBareJid().toEscapedString());
                 intent.putExtra("init", true);
                 startActivity(intent);
             }
@@ -95,10 +96,11 @@ public class PublishProfilePictureActivity extends XmppActivity implements XmppC
         });
         this.cancelButton.setOnClickListener(v -> {
             if (mInitialAccountSetup) {
-                Intent intent = new Intent(getApplicationContext(), StartConversationActivity.class);
+                final Intent intent = new Intent(getApplicationContext(), StartConversationActivity.class);
                 if (xmppConnectionService != null && xmppConnectionService.getAccounts().size() == 1) {
                     intent.putExtra("init", true);
                 }
+                intent.putExtra(EXTRA_ACCOUNT, account.getJid().asBareJid().toEscapedString());
                 startActivity(intent);
             }
             finish();

@@ -8,11 +8,21 @@ import de.pixart.messenger.entities.Account;
 import de.pixart.messenger.services.XmppConnectionService;
 import de.pixart.messenger.ui.ConversationsActivity;
 import de.pixart.messenger.ui.EditAccountActivity;
+import de.pixart.messenger.ui.MagicCreateActivity;
 import de.pixart.messenger.ui.ManageAccountActivity;
 import de.pixart.messenger.ui.StartConversationActivity;
 import de.pixart.messenger.ui.WelcomeActivity;
+import rocks.xmpp.addr.Jid;
 
 public class SignupUtils {
+
+    public static boolean isSupportTokenRegistry() {
+        return true;
+    }
+
+    public static Intent getSignUpIntent(Activity activity, boolean ignored) {
+        return getSignUpIntent(activity);
+    }
 
     public static Intent getSignUpIntent(final Activity activity) {
         final Intent intent = new Intent(activity, WelcomeActivity.class);

@@ -77,6 +77,8 @@ import rocks.xmpp.addr.Jid;
 
 public class StartConversationActivity extends XmppActivity implements XmppConnectionService.OnConversationUpdate, OnRosterUpdate, OnUpdateBlocklist, CreatePrivateGroupChatDialog.CreateConferenceDialogListener, JoinConferenceDialog.JoinConferenceDialogListener, CreatePublicChannelDialog.CreatePublicChannelDialogListener {
 
+    public static final String EXTRA_INVITE_URI = "de.pixart.messenger.invite_uri";
+
     private final int REQUEST_SYNC_CONTACTS = 0x28cf;
     private final int REQUEST_CREATE_CONFERENCE = 0x39da;
     private final PendingItem<Intent> pendingViewIntent = new PendingItem<>();
@@ -680,7 +682,7 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
             conferenceJid = Jid.of(input);
         } catch (final IllegalArgumentException e) {
             final XmppUri xmppUri = new XmppUri(input);
-            if (xmppUri.isJidValid() && xmppUri.isAction(XmppUri.ACTION_JOIN)) {
+            if (xmppUri.isValidJid() && xmppUri.isAction(XmppUri.ACTION_JOIN)) {
                 final Editable editable = jid.getEditableText();
                 editable.clear();
                 editable.append(xmppUri.getJid().toEscapedString());

@@ -626,6 +626,7 @@ public class XmppConnectionService extends Service {
         MessageSearchTask.search(this, term, onSearchResultsAvailable);
     }
 
+    @SuppressLint("InvalidWakeLockTag")
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         final String action = intent == null ? null : intent.getAction();
@@ -760,6 +761,9 @@ public class XmppConnectionService extends Service {
             }
         }
         synchronized (this) {
+            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M && Build.MANUFACTURER.equals("Huawei")) {
+                wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "LocationManagerService");
+            }
             WakeLockHelper.acquire(wakeLock);
             boolean pingNow = ConnectivityManager.CONNECTIVITY_ACTION.equals(action) || (Config.POST_CONNECTIVITY_CHANGE_PING_INTERVAL > 0 && ACTION_POST_CONNECTIVITY_CHANGE.equals(action));
             final HashSet<Account> pingCandidates = new HashSet<>();
@@ -1725,7 +1729,7 @@ public class XmppConnectionService extends Service {
             if (delay) {
                 mMessageGenerator.addDelay(packet, message.getTimeSent());
             }
-            if (conversation.setOutgoingChatState(Config.DEFAULT_CHATSTATE)) {
+            if (conversation.setOutgoingChatState(Config.DEFAULT_CHAT_STATE)) {
                 if (this.sendChatStates()) {
                     packet.addChild(ChatState.toElement(conversation.getOutgoingChatState()));
                 }
@@ -2781,7 +2785,7 @@ public class XmppConnectionService extends Service {
             if (conversation.getMode() == Conversation.MODE_MULTI) {
                 conversation.getMucOptions().resetChatState();
             } else {
-                conversation.setIncomingChatState(Config.DEFAULT_CHATSTATE);
+                conversation.setIncomingChatState(Config.DEFAULT_CHAT_STATE);
             }
         }
         for (Account account : getAccounts()) {

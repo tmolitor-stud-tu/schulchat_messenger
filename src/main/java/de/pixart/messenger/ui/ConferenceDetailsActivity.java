@@ -438,9 +438,9 @@ public class ConferenceDetailsActivity extends XmppActivity implements OnConvers
     }
 
     protected void deleteBookmark() {
-        final Account account = mConversation.getAccount();
-        final Bookmark bookmark = mConversation.getBookmark();
         try {
+            final Account account = mConversation.getAccount();
+            final Bookmark bookmark = mConversation.getBookmark();
             bookmark.setConversation(null);
             xmppConnectionService.deleteBookmark(account, bookmark);
         } catch (Exception e) {
@@ -572,6 +572,7 @@ public class ConferenceDetailsActivity extends XmppActivity implements OnConvers
             if (self.getAffiliation().ranks(MucOptions.Affiliation.OWNER)) {
                 if (mAdvancedMode) {
                     this.binding.destroy.getBackground().setColorFilter(getWarningButtonColor(), PorterDuff.Mode.MULTIPLY);
+                    this.binding.destroy.setTextColor(getWarningTextColor());
                     this.binding.destroy.setVisibility(View.VISIBLE);
                 } else {
                     this.binding.destroy.setVisibility(View.GONE);
@@ -641,6 +642,7 @@ public class ConferenceDetailsActivity extends XmppActivity implements OnConvers
         this.mUserPreviewAdapter.submitList(MucOptions.sub(users, GridManager.getCurrentColumnCount(binding.users)));
         this.binding.invite.setVisibility(mucOptions.canInvite() ? View.VISIBLE : View.GONE);
         this.binding.showUsers.setVisibility(users.size() > 0 ? View.VISIBLE : View.GONE);
+        this.binding.showUsers.setText(getResources().getQuantityString(R.plurals.view_users, users.size(), users.size()));
         this.binding.usersWrapper.setVisibility(users.size() > 0 || mucOptions.canInvite() ? View.VISIBLE : View.GONE);
         if (users.size() == 0) {
             this.binding.noUsersHints.setText(mucOptions.isPrivateAndNonAnonymous() ? R.string.no_users_hint_group_chat : R.string.no_users_hint_channel);

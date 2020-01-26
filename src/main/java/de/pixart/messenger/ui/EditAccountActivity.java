@@ -1,7 +1,6 @@
 package de.pixart.messenger.ui;
 
 import android.app.Activity;
-import android.app.AlertDialog.Builder;
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -359,8 +358,22 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
         if (mInitMode && mAccount != null && !mAccount.isOptionSet(Account.OPTION_LOGGED_IN_SUCCESSFULLY)) {
             xmppConnectionService.deleteAccount(mAccount);
         }
+
+        final boolean magicCreate = mAccount != null && mAccount.isOptionSet(Account.OPTION_MAGIC_CREATE) && !mAccount.isOptionSet(Account.OPTION_LOGGED_IN_SUCCESSFULLY);
+        final Jid jid = mAccount == null ? null : mAccount.getJid();
+
+        if (SignupUtils.isSupportTokenRegistry() && jid != null && magicCreate && !jid.getDomain().equals(Config.MAGIC_CREATE_DOMAIN)) {
+            final Jid preset;
+            if (mAccount.isOptionSet(Account.OPTION_FIXED_USERNAME)) {
+                preset = jid.asBareJid();
+            } else {
+                preset = Jid.ofDomain(jid.getDomain());
+            }
+            return;
+        }
+
         if (xmppConnectionService.getAccounts().size() == 0 && Config.MAGIC_CREATE_DOMAIN != null) {
-            Intent intent = SignupUtils.getSignUpIntent(this);
+            Intent intent = SignupUtils.getSignUpIntent(this, mForceRegister != null && mForceRegister);
             startActivity(intent);
             overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
         }
@@ -448,6 +461,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
                 if (wasFirstAccount) {
                     intent.putExtra("init", true);
                 }
+                intent.putExtra(EXTRA_ACCOUNT, mAccount.getJid().asBareJid().toEscapedString());
             } else {
                 intent = new Intent(getApplicationContext(), PublishProfilePictureActivity.class);
                 intent.putExtra(EXTRA_ACCOUNT, mAccount.getJid().asBareJid().toString());
@@ -1346,7 +1360,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
     }
 
     public void showWipePepDialog() {
-        Builder builder = new Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.clear_other_devices));
         builder.setIconAttribute(android.R.attr.alertDialogIcon);
         builder.setMessage(getString(R.string.clear_other_devices_desc));
@@ -1422,7 +1436,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
             if (mFetchingMamPrefsToast != null) {
                 mFetchingMamPrefsToast.cancel();
             }
-            Builder builder = new Builder(EditAccountActivity.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(EditAccountActivity.this);
             builder.setTitle(R.string.server_side_mam_prefs);
             String defaultAttr = prefs.getAttribute("default");
             final List<String> defaults = Arrays.asList("never", "roster", "always");
