@@ -162,8 +162,6 @@ public class Contact implements ListItem, Blockable {
         for (final String group : getGroups(true)) {
             tags.add(new Tag(group, UIHelper.getColorForName(group), 0, account));
         }
-        Presence.Status status = getShownStatus();
-        tags.add(UIHelper.getTagForStatus(context, status, account));
         if (isBlocked()) {
             tags.add(new Tag(context.getString(R.string.blocked), 0xff2e2f3b, 0, account));
         }
