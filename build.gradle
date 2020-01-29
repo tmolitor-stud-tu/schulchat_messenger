@@ -103,7 +103,7 @@ android {
         targetSdkVersion 29
 
         versionCode 1
-        versionName "1.0.0"
+        versionName "1.0.0 beta (2020-01-29)"
         //resConfigs "en"
 
         archivesBaseName += "-$versionName"
@@ -192,7 +192,6 @@ android {
                     disable 'AndroidGradlePluginVersion', 'MissingTranslation'
                 }
             }
-
         }
     }
 
