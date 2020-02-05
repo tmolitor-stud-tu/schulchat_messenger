@@ -83,8 +83,8 @@ public class Message extends AbstractEntity implements AvatarService.Avatarable 
     public static final String MARKABLE = "markable";
     public static final String FILE_DELETED = "file_deleted";
     public static final String ME_COMMAND = "/me";
-    public static final String ERROR_MESSAGE_CANCELLED = "de.schulchat.messenger.cancelled";
-    public static final String DELETED_MESSAGE_BODY = "de.schulchat.messenger.message_deleted";
+    public static final String ERROR_MESSAGE_CANCELLED = "de.kwo.messenger.cancelled";
+    public static final String DELETED_MESSAGE_BODY = "de.kwo.messenger.message_deleted";
 
     public boolean markable = false;
     protected String conversationUuid;

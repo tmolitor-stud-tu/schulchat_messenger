@@ -79,7 +79,7 @@ public class FileBackend {
     private static final SimpleDateFormat fileDateFormat = new SimpleDateFormat("yyyyMMdd_HHmmssSSS", Locale.US);
 
     private static final String FILE_PROVIDER = ".files";
-    private static final String APP_DIRECTORY = "Schulchat Messenger";
+    private static final String APP_DIRECTORY = "Kurswahl online Messenger";
 
     private XmppConnectionService mXmppConnectionService;
 

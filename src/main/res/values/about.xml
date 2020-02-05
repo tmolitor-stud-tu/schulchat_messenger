@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="pref_about_message" translatable="false"><b>Schulchat Messenger</b>
-			\n\nCopyright © 2019-%s Christian Schneppe
-			\n\nhttps://schulchat.de
+    <string name="pref_about_message" translatable="false"><b>Kurswahl online Messenger</b>
+			\n\nCopyright © 2020-%s Thilo Molitor
+			\n\nhttps://www.kurswahl-online.de/
 			\n\nThis program is free software: you can redistribute it and/or modify
 			it under the terms of the GNU General Public License as published by
 			the Free Software Foundation, either version 3 of the License, or
@@ -13,9 +13,10 @@
 			GNU General Public License for more details.
 			\n\nYou should have received a copy of the GNU General Public License
 			along with this program. If not, see https://www.gnu.org/licenses
-			\n\nSchulchat-Messenger is based on Conversations and Pix-Art Messenger
+			\n\nKurswahl online Messenger is based on Conversations and Pix-Art Messenger
 			\n\nDownload the full original source code at https://github.com/siacs/Conversations (Copyright © 2014-2019 Daniel Gultsch)
-			\n\nDownload the modified source code at https://github.com/kriztan/Pix-Art-Messenger (Copyright © 2014-2020 Christian Schneppe)
+			\n\nDownload the full original source code at https://github.com/kriztan/Pix-Art-Messenger (Copyright © 2014-2020 Christian Schneppe)
+			\n\nDownload the full modified source code at https://github.com/tmolitor-stud-tu/schulchat_messenger
 	</string>
     <string name="pref_about_libraries" translatable="false"><b>Libraries</b>
 			\n\nhttps://www.bouncycastle.org\n(The MIT License (MIT))
