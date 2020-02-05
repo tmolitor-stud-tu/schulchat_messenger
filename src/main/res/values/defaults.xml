@@ -27,7 +27,7 @@
     <bool name="last_activity">true</bool>
     <bool name="dont_trust_system_cas">false</bool>
     <bool name="btbv">true</bool>
-    <bool name="send_button_status">true</bool>
+    <bool name="send_button_status">false</bool>
     <bool name="display_enter_key">false</bool>
     <bool name="show_dynamic_tags">true</bool>
     <bool name="presence_colored_names">false</bool>
