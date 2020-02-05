@@ -438,14 +438,14 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.start_conversation, menu);
-        MenuItem menuHideOffline = menu.findItem(R.id.action_hide_offline);
+        //MenuItem menuHideOffline = menu.findItem(R.id.action_hide_offline);
         MenuItem menuActionAccounts = menu.findItem(R.id.action_accounts);
         if (xmppConnectionService != null && xmppConnectionService.getAccounts().size() == 1 && !xmppConnectionService.multipleAccounts()) {
             menuActionAccounts.setTitle(R.string.action_account);
         } else {
             menuActionAccounts.setTitle(R.string.action_accounts);
         }
-        menuHideOffline.setChecked(this.mHideOfflineContacts);
+        //menuHideOffline.setChecked(this.mHideOfflineContacts);
         mMenuSearchView = menu.findItem(R.id.action_search);
         mMenuSearchView.setOnActionExpandListener(mOnActionExpandListener);
         View mSearchView = mMenuSearchView.getActionView();
@@ -471,13 +471,13 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
             case android.R.id.home:
                 navigateBack();
                 return true;
-            case R.id.action_hide_offline:
+            /*case R.id.action_hide_offline:
                 mHideOfflineContacts = !item.isChecked();
                 getPreferences().edit().putBoolean("hide_offline", mHideOfflineContacts).commit();
                 if (mSearchEditText != null) {
                     filter(mSearchEditText.getText().toString());
                 }
-                invalidateOptionsMenu();
+                invalidateOptionsMenu();*/
         }
         return super.onOptionsItemSelected(item);
     }

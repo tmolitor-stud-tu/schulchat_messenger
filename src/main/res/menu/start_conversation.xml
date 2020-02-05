@@ -9,13 +9,13 @@
         app:actionLayout="@layout/actionview_search"
         app:showAsAction="collapseActionView|always" />
 
-    <item
+<!--<item
         android:id="@+id/action_hide_offline"
         android:checkable="true"
         android:checked="false"
         android:orderInCategory="85"
         android:title="@string/hide_offline"
-        app:showAsAction="never" />
+	app:showAsAction="never" /> -->
     <item
         android:id="@+id/action_accounts"
         android:orderInCategory="90"
