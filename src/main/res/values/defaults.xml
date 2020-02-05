@@ -48,7 +48,7 @@
     <bool name="show_record_voice_btn">true</bool>
     <bool name="quick_share_attachment_choice">true</bool>
     <bool name="screen_security">false</bool>
-    <bool name="play_gif_inside">false</bool>
+    <bool name="play_gif_inside">true</bool>
     <bool name="prefer_xmpp_avatar">true</bool>
     <bool name="show_links_inside">true</bool>
     <bool name="show_maps_inside">true</bool>
