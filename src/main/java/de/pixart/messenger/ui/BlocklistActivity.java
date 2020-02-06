@@ -1,11 +1,12 @@
 package de.pixart.messenger.ui;
 
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import android.text.Editable;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import java.util.Collections;
 
@@ -16,6 +17,7 @@ import de.pixart.messenger.entities.ListItem;
 import de.pixart.messenger.entities.RawBlockable;
 import de.pixart.messenger.ui.interfaces.OnBackendConnected;
 import de.pixart.messenger.xmpp.OnUpdateBlocklist;
+import me.drakeet.support.toast.ToastCompat;
 import rocks.xmpp.addr.Jid;
 
 public class BlocklistActivity extends AbstractSearchableListItemActivity implements OnUpdateBlocklist {
@@ -65,6 +67,35 @@ public class BlocklistActivity extends AbstractSearchableListItemActivity implem
         getListItemAdapter().notifyDataSetChanged();
     }
 
+    /*
+    protected void showEnterJidDialog() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+        EnterJidDialog dialog = EnterJidDialog.newInstance(
+                null,
+                getString(R.string.block_jabber_id),
+                getString(R.string.block),
+                null,
+                account.getJid().asBareJid().toString(),
+                true,
+                xmppConnectionService.multipleAccounts(),
+                false
+        );
+
+        dialog.setOnEnterJidDialogPositiveListener((accountJid, contactJid) -> {
+            Blockable blockable = new RawBlockable(account, contactJid);
+            if (xmppConnectionService.sendBlockRequest(blockable, false)) {
+                ToastCompat.makeText(BlocklistActivity.this, R.string.corresponding_conversations_closed, Toast.LENGTH_SHORT).show();
+            }
+            return true;
+        });
+        dialog.show(ft, "dialog");
+    }
+*/
     protected void refreshUiReal() {
         final Editable editable = getSearchEditText().getText();
         if (editable != null) {

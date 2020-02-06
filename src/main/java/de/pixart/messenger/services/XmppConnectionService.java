@@ -568,10 +568,9 @@ public class XmppConnectionService extends Service {
 
     public void attachImageToConversation(final Conversation conversation, final Uri uri, final UiCallback<Message> callback) {
         final String mimeType = MimeUtils.guessMimeTypeFromUri(this, uri);
-        final String compressPictures = getCompressPicturesPreference();
-
-        if ("never".equals(compressPictures)
-                || ("auto".equals(compressPictures) && getFileBackend().useImageAsIs(uri))
+        final boolean compressPictures = getCompressImageResolutionPreference() != 0;
+        if (!compressPictures
+                || getFileBackend().useImageAsIs(uri)
                 || (mimeType != null && mimeType.endsWith("/gif"))
                 || getFileBackend().unusualBounds(uri)) {
             Log.d(Config.LOGTAG, conversation.getAccount().getJid().asBareJid() + ": not compressing picture. sending as file");
@@ -692,7 +691,14 @@ public class XmppConnectionService extends Service {
                             restoredFromDatabaseLatch.await();
                             final Conversation c = findConversationByUuid(uuid);
                             if (c != null) {
-                                directReply(c, body.toString(), dismissNotification);
+                                boolean pn = false;
+                                if (c.getMode() == Conversational.MODE_MULTI) {
+                                    if (c.getLatestMessage().isPrivateMessage()) {
+                                        pn = true;
+                                        c.setNextCounterpart(c.getLatestMessage().getCounterpart());
+                                    }
+                                }
+                                directReply(c, body.toString(), dismissNotification, pn);
                             }
                         } catch (InterruptedException e) {
                             Log.d(Config.LOGTAG, "unable to process direct reply");
@@ -946,8 +952,11 @@ public class XmppConnectionService extends Service {
         }
     }
 
-    private void directReply(Conversation conversation, String body, final boolean dismissAfterReply) {
+    private void directReply(Conversation conversation, String body, final boolean dismissAfterReply, final boolean pn) {
         Message message = new Message(conversation, body, conversation.getNextEncryption());
+        if (pn) {
+            Message.configurePrivateMessage(message);
+        }
         message.markUnread();
         if (message.getEncryption() == Message.ENCRYPTION_PGP) {
             getPgpEngine().encrypt(message, new UiCallback<Message>() {
@@ -996,12 +1005,8 @@ public class XmppConnectionService extends Service {
         return getBooleanPreference(SettingsActivity.AWAY_WHEN_SCREEN_IS_OFF, R.bool.away_when_screen_off);
     }
 
-    private String getCompressPicturesPreference() {
-        return getPreferences().getString("picture_compression", getResources().getString(R.string.picture_compression));
-    }
-
     public int getCompressImageResolutionPreference() {
-        switch (getPreferences().getString("image_compression", getResources().getString(R.string.picture_compression))) {
+        switch (getPreferences().getString("image_compression", getResources().getString(R.string.image_compression))) {
             case "low":
                 return 720;
             case "mid":
@@ -1016,7 +1021,7 @@ public class XmppConnectionService extends Service {
     }
 
     public int getCompressImageSizePreference() {
-        switch (getPreferences().getString("image_compression", getResources().getString(R.string.picture_compression))) {
+        switch (getPreferences().getString("image_compression", getResources().getString(R.string.image_compression))) {
             case "low":
                 return 209715; // 0.2 * 1024 * 1024 = 209715 (0.2 MiB)
             case "mid":
@@ -2084,6 +2089,9 @@ public class XmppConnectionService extends Service {
         boolean deleted = false;
         for (Conversation conversation : getConversations()) {
             deleted |= conversation.markAsDeleted(uuids);
+        }
+        for (final String uuid : uuids) {
+            evictPreview(uuid);
         }
         if (deleted) {
             updateConversationUi();
@@ -5018,6 +5026,12 @@ public class XmppConnectionService extends Service {
         IqPacket set = new IqPacket(IqPacket.TYPE.SET);
         set.addChild(prefs);
         sendIqPacket(account, set, null);
+    }
+
+    public void evictPreview(String uuid) {
+        if (mBitmapCache.remove(uuid) != null) {
+            Log.d(Config.LOGTAG, "deleted cached preview");
+        }
     }
 
     public interface OnMamPreferencesFetched {

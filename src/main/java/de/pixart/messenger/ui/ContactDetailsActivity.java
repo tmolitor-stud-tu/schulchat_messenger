@@ -63,6 +63,7 @@ import de.pixart.messenger.utils.XmppUri;
 import de.pixart.messenger.xmpp.OnKeyStatusUpdated;
 import de.pixart.messenger.xmpp.OnUpdateBlocklist;
 import de.pixart.messenger.xmpp.XmppConnection;
+import me.drakeet.support.toast.ToastCompat;
 import rocks.xmpp.addr.Jid;
 
 import static de.pixart.messenger.ui.util.IntroHelper.showIntro;
@@ -121,6 +122,51 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
     private String messageFingerprint;
     private TextView mNotifyStatusText;
     private ImageButton mNotifyStatusButton;
+
+    /*
+    private DialogInterface.OnClickListener addToPhonebook = new DialogInterface.OnClickListener() {
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            Intent intent = new Intent(Intent.ACTION_INSERT_OR_EDIT);
+            intent.setType(Contacts.CONTENT_ITEM_TYPE);
+            intent.putExtra(Intents.Insert.IM_HANDLE, contact.getJid().toEscapedString());
+            intent.putExtra(Intents.Insert.IM_PROTOCOL, CommonDataKinds.Im.PROTOCOL_JABBER);
+            intent.putExtra("finishActivityOnSaveCompleted", true);
+            try {
+                ContactDetailsActivity.this.startActivityForResult(intent, 0);
+            } catch (ActivityNotFoundException e) {
+                ToastCompat.makeText(ContactDetailsActivity.this, R.string.no_application_found_to_view_contact, Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
+
+    private OnClickListener onBadgeClick = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            Uri systemAccount = contact.getSystemAccount();
+            if (systemAccount == null) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(
+                        ContactDetailsActivity.this);
+                builder.setTitle(getString(R.string.action_add_phone_book));
+                builder.setMessage(getString(R.string.add_phone_book_text, contact.getJid().toString()));
+                builder.setNegativeButton(getString(R.string.cancel), null);
+                builder.setPositiveButton(getString(R.string.add), addToPhonebook);
+                builder.create().show();
+            } else {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(systemAccount);
+                try {
+                    startActivity(intent);
+                    overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
+                } catch (ActivityNotFoundException e) {
+                    ToastCompat.makeText(ContactDetailsActivity.this, R.string.no_application_found_to_view_contact, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    };
+*/
 
     private OnClickListener mNotifyStatusClickListener = new OnClickListener() {
         @Override
@@ -274,6 +320,39 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
         return super.onOptionsItemSelected(menuItem);
     }
 
+    /*
+    private void editContact() {
+        Uri systemAccount = contact.getSystemAccount();
+        if (systemAccount == null) {
+            quickEdit(contact.getServerName(), R.string.contact_name, value -> {
+                contact.setServerName(value);
+                ContactDetailsActivity.this.xmppConnectionService.pushContactToServer(contact);
+                populateView();
+                return null;
+            }, true);
+        } else {
+            Intent intent = new Intent(Intent.ACTION_EDIT);
+            intent.setDataAndType(systemAccount, Contacts.CONTENT_ITEM_TYPE);
+            intent.putExtra("finishActivityOnSaveCompleted", true);
+            try {
+                startActivity(intent);
+                overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
+            } catch (ActivityNotFoundException e) {
+                ToastCompat.makeText(ContactDetailsActivity.this, R.string.no_application_found_to_view_contact, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem menuItemAdvancedMode = menu.findItem(R.id.action_advanced_mode);
+        menuItemAdvancedMode.setChecked(mAdvancedMode);
+        if (mConversation == null) {
+            return true;
+        }
+        return true;
+    }
+*/
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.contact_details, menu);
@@ -515,10 +594,10 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
     protected void processFingerprintVerification(XmppUri uri) {
         if (contact != null && contact.getJid().asBareJid().equals(uri.getJid()) && uri.hasFingerprints()) {
             if (xmppConnectionService.verifyFingerprints(contact, uri.getFingerprints())) {
-                Toast.makeText(this, R.string.verified_fingerprints, Toast.LENGTH_SHORT).show();
+                ToastCompat.makeText(this, R.string.verified_fingerprints, Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(this, R.string.invalid_barcode, Toast.LENGTH_SHORT).show();
+            ToastCompat.makeText(this, R.string.invalid_barcode, Toast.LENGTH_SHORT).show();
         }
     }
 

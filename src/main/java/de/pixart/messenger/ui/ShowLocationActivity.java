@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -20,7 +19,7 @@ import android.view.MenuItem;
 import android.webkit.WebView;
 import android.widget.Toast;
 
-import org.jetbrains.annotations.Nullable;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -29,6 +28,7 @@ import java.util.Locale;
 import de.pixart.messenger.Config;
 import de.pixart.messenger.R;
 import de.pixart.messenger.utils.MenuDoubleTabUtil;
+import me.drakeet.support.toast.ToastCompat;
 
 public class ShowLocationActivity extends XmppActivity {
     FloatingActionButton fab;
@@ -40,8 +40,8 @@ public class ShowLocationActivity extends XmppActivity {
         double latitude = location.getLatitude();
         String address = "";
         if (latitude != 0 && longitude != 0) {
-            Geocoder geoCoder = new Geocoder(context, Locale.getDefault());
             try {
+                Geocoder geoCoder = new Geocoder(context, Locale.getDefault());
                 List<Address> addresses = geoCoder.getFromLocation(latitude, longitude, 1);
                 if (addresses != null && addresses.size() > 0) {
                     Address Address = addresses.get(0);
@@ -162,7 +162,7 @@ public class ShowLocationActivity extends XmppActivity {
             startActivity(intent);
             overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(this, R.string.no_application_found_to_display_location, Toast.LENGTH_SHORT).show();
+            ToastCompat.makeText(this, R.string.no_application_found_to_display_location, Toast.LENGTH_SHORT).show();
         }
     }
 

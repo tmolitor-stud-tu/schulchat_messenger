@@ -24,6 +24,13 @@ import de.pixart.messenger.R;
 import de.pixart.messenger.entities.Account;
 import de.pixart.messenger.utils.FirstStartManager;
 import de.pixart.messenger.utils.PhoneHelper;
+/*
+import de.pixart.messenger.ui.util.IntroHelper;
+import de.pixart.messenger.utils.InstallReferrerUtils;
+import de.pixart.messenger.utils.SignupUtils;
+import de.pixart.messenger.utils.XmppUri;
+import me.drakeet.support.toast.ToastCompat;
+*/
 import rocks.xmpp.addr.Jid;
 
 import static de.pixart.messenger.utils.PermissionUtils.allGranted;
@@ -219,7 +226,16 @@ public class WelcomeActivity extends XmppActivity {
                 }
             } else {
                 Toast.makeText(this, R.string.no_camera_permission, Toast.LENGTH_SHORT).show();
+            /*
+	    } else if (Arrays.asList(permissions).contains(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                ToastCompat.makeText(this, R.string.no_storage_permission, Toast.LENGTH_SHORT).show();
             }
+        }
+        if (readGranted(grantResults, permissions)) {
+            if (xmppConnectionService != null) {
+                xmppConnectionService.restartFileObserver();
+            */
+	    }
         }
     }
 }

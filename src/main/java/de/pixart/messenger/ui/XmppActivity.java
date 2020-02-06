@@ -3,7 +3,6 @@ package de.pixart.messenger.ui;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.AlertDialog.Builder;
 import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
@@ -94,6 +93,7 @@ import de.pixart.messenger.utils.ThemeHelper;
 import de.pixart.messenger.xmpp.OnKeyStatusUpdated;
 import de.pixart.messenger.xmpp.OnUpdateBlocklist;
 import de.pixart.messenger.xmpp.XmppConnection;
+import me.drakeet.support.toast.ToastCompat;
 import pl.droidsonroids.gif.GifDrawable;
 import rocks.xmpp.addr.Jid;
 
@@ -126,7 +126,7 @@ public abstract class XmppActivity extends ActionBarActivity {
     protected boolean mUsingEnterKey = false;
 
     protected Toast mToast;
-    protected Runnable onOpenPGPKeyPublished = () -> Toast.makeText(XmppActivity.this, R.string.openpgp_has_been_published, Toast.LENGTH_SHORT).show();
+    protected Runnable onOpenPGPKeyPublished = () -> ToastCompat.makeText(XmppActivity.this, R.string.openpgp_has_been_published, Toast.LENGTH_SHORT).show();
     protected ConferenceInvite mPendingConferenceInvite = null;
     protected ServiceConnection mConnection = new ServiceConnection() {
 
@@ -211,7 +211,7 @@ public abstract class XmppActivity extends ActionBarActivity {
 
     protected void replaceToast(String msg, boolean showlong) {
         hideToast();
-        mToast = Toast.makeText(this, msg, showlong ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
+        mToast = ToastCompat.makeText(this, msg, showlong ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT);
         mToast.show();
     }
 
@@ -929,7 +929,7 @@ public abstract class XmppActivity extends ActionBarActivity {
             mPendingConferenceInvite = ConferenceInvite.parse(data);
             if (xmppConnectionServiceBound && mPendingConferenceInvite != null) {
                 if (mPendingConferenceInvite.execute(this)) {
-                    mToast = Toast.makeText(this, R.string.creating_conference, Toast.LENGTH_LONG);
+                    mToast = ToastCompat.makeText(this, R.string.creating_conference, Toast.LENGTH_LONG);
                     mToast.show();
                 }
                 mPendingConferenceInvite = null;
@@ -965,10 +965,6 @@ public abstract class XmppActivity extends ActionBarActivity {
         return false;
     }
 
-    protected boolean neverCompressPictures() {
-        return getPreferences().getString("picture_compression", getResources().getString(R.string.picture_compression)).equals("never");
-    }
-
     protected boolean manuallyChangePresence() {
         return getBooleanPreference(SettingsActivity.MANUALLY_CHANGE_PRESENCE, R.bool.manually_change_presence);
     }
@@ -980,7 +976,143 @@ public abstract class XmppActivity extends ActionBarActivity {
     protected String getShareableUri(boolean http) {
         return null;
     }
+/*
+    public void inviteUser() {
+        if (!xmppConnectionServiceBound) {
+            ToastCompat.makeText(this, R.string.not_connected_try_again, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (xmppConnectionService.getAccounts() == null) {
+            ToastCompat.makeText(this, R.string.no_accounts, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (!xmppConnectionService.multipleAccounts()) {
+            Account mAccount = xmppConnectionService.getAccounts().get(0);
+            String user = Jid.ofEscaped(mAccount.getJid()).getLocal();
+            String domain = Jid.ofEscaped(mAccount.getJid()).getDomain();
+            String inviteURL;
+            try {
+                inviteURL = new getAdHocInviteUri(mAccount.getXmppConnection(), mAccount).execute().get();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+                inviteURL = Config.inviteUserURL + user + "/" + domain;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                inviteURL = Config.inviteUserURL + user + "/" + domain;
+            }
+            if (inviteURL == null) {
+                inviteURL = Config.inviteUserURL + user + "/" + domain;
+            }
+            Log.d(Config.LOGTAG, "Invite uri = " + inviteURL);
+            String inviteText = getString(R.string.InviteText, user);
+            Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_SUBJECT, user + " " + getString(R.string.inviteUser_Subject) + " " + getString(R.string.app_name));
+            intent.putExtra(Intent.EXTRA_TEXT, inviteText + "\n\n" + inviteURL);
+            startActivity(Intent.createChooser(intent, getString(R.string.invite_contact)));
+            overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
+        } else {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.chooce_account);
+            final View dialogView = this.getLayoutInflater().inflate(R.layout.choose_account_dialog, null);
+            final Spinner spinner = dialogView.findViewById(R.id.account);
+            builder.setView(dialogView);
+            List<String> mActivatedAccounts = new ArrayList<>();
+            for (Account account : xmppConnectionService.getAccounts()) {
+                if (account.getStatus() != Account.State.DISABLED) {
+                    if (Config.DOMAIN_LOCK != null) {
+                        mActivatedAccounts.add(account.getJid().getLocal());
+                    } else {
+                        mActivatedAccounts.add(account.getJid().asBareJid().toString());
+                    }
+                }
+            }
+            StartConversationActivity.populateAccountSpinner(this, mActivatedAccounts, spinner);
+            builder.setPositiveButton(R.string.ok,
+                    (dialog, id) -> {
+                        String selection = spinner.getSelectedItem().toString();
+                        Account mAccount = xmppConnectionService.findAccountByJid(Jid.of(selection).asBareJid());
+                        String user = Jid.of(mAccount.getJid()).getLocal();
+                        String domain = Jid.of(mAccount.getJid()).getDomain();
+                        String inviteURL;
+                        try {
+                            inviteURL = new getAdHocInviteUri(mAccount.getXmppConnection(), mAccount).execute().get();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                            inviteURL = Config.inviteUserURL + user + "/" + domain;
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                            inviteURL = Config.inviteUserURL + user + "/" + domain;
+                        }
+                        if (inviteURL == null) {
+                            inviteURL = Config.inviteUserURL + user + "/" + domain;
+                        }
+                        Log.d(Config.LOGTAG, "Invite uri = " + inviteURL);
+                        String inviteText = getString(R.string.InviteText, user);
+                        Intent intent = new Intent(Intent.ACTION_SEND);
+                        intent.setType("text/plain");
+                        intent.putExtra(Intent.EXTRA_SUBJECT, user + " " + getString(R.string.inviteUser_Subject) + " " + getString(R.string.app_name));
+                        intent.putExtra(Intent.EXTRA_TEXT, inviteText + "\n\n" + inviteURL);
+                        startActivity(Intent.createChooser(intent, getString(R.string.invite_contact)));
+                        overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
+                    });
+            builder.setNegativeButton(R.string.cancel, null);
+            builder.create().show();
+        }
+    }
 
+    private class getAdHocInviteUri extends AsyncTask<XmppConnection, Account, String> {
+
+        private XmppConnection connection;
+        private Account account;
+
+        public getAdHocInviteUri(XmppConnection c, Account a) {
+            this.connection = c;
+            this.account = a;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(XmppConnection... params) {
+            String uri = null;
+            if (this.connection != null) {
+                XmppConnection.Features features = connection.getFeatures();
+                if (features.adhocinvite) {
+                    int i = 0;
+                    uri = this.connection.getAdHocInviteUrl(Jid.ofDomain(this.account.getJid().getDomain()));
+                    try {
+                        while (uri == null && i++ < 10) {
+                            uri = this.connection.getAdHocInviteUrl(Jid.ofDomain(this.account.getJid().getDomain()));
+                            Thread.sleep(1000);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        features.adhocinviteURI = null;
+                    }
+                }
+            }
+            return uri;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+        }
+    }
+
+    private void createIssue() {
+        String IssueURL = Config.ISSUE_URL;
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(IssueURL));
+        startActivity(intent);
+        overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
+    }
+*/
     protected void shareLink(boolean http) {
         String uri = getShareableUri(http);
         if (uri == null || uri.isEmpty()) {
@@ -993,7 +1125,7 @@ public abstract class XmppActivity extends ActionBarActivity {
             startActivity(Intent.createChooser(intent, getText(R.string.share_uri_with)));
             overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(this, R.string.no_application_to_share_uri, Toast.LENGTH_SHORT).show();
+            ToastCompat.makeText(this, R.string.no_application_to_share_uri, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -1004,7 +1136,7 @@ public abstract class XmppActivity extends ActionBarActivity {
                     pgp.getIntentForKey(keyId).getIntentSender(), 0, null, 0,
                     0, 0);
         } catch (Throwable e) {
-            Toast.makeText(XmppActivity.this, R.string.openpgp_error, Toast.LENGTH_SHORT).show();
+            ToastCompat.makeText(XmppActivity.this, R.string.openpgp_error, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -1268,7 +1400,7 @@ public abstract class XmppActivity extends ActionBarActivity {
                 try {
                     startActivityForResult(intent, REQUEST_UNKNOWN_SOURCE_OP);
                 } catch (ActivityNotFoundException e) {
-                    Toast.makeText(XmppActivity.this, R.string.device_does_not_support_unknown_source_op, Toast.LENGTH_SHORT).show();
+                    ToastCompat.makeText(XmppActivity.this, R.string.device_does_not_support_unknown_source_op, Toast.LENGTH_SHORT).show();
                 } finally {
                     PushSettingsService task = new PushSettingsService(this, xmppConnectionService.installedFrom(), xmppConnectionService);
                     task.executeOnExecutor(PushSettingsService.THREAD_POOL_EXECUTOR, ShowToast);

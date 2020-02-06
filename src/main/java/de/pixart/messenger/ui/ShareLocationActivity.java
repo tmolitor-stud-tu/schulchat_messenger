@@ -12,11 +12,13 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import com.google.android.material.snackbar.Snackbar;
 import android.text.TextUtils;
 import android.webkit.WebView;
 import android.widget.Button;
+
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -42,8 +44,8 @@ public class ShareLocationActivity extends LocationActivity implements LocationL
         double latitude = location.getLatitude();
         String address = "";
         if (latitude != 0 && longitude != 0) {
-            Geocoder geoCoder = new Geocoder(context, Locale.getDefault());
             try {
+                Geocoder geoCoder = new Geocoder(context, Locale.getDefault());
                 List<Address> addresses = geoCoder.getFromLocation(latitude, longitude, 1);
                 if (addresses != null && addresses.size() > 0) {
                     Address Address = addresses.get(0);

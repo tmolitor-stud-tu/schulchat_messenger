@@ -47,7 +47,7 @@ dependencies {
     }
     playstoreImplementation 'com.android.installreferrer:installreferrer:1.1.1'
     implementation 'org.sufficientlysecure:openpgp-api:10.0'
-    implementation('com.theartofdev.edmodo:android-image-cropper:2.7.+') {
+    implementation('com.theartofdev.edmodo:android-image-cropper:2.8.0') {
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'com.android.support', module: 'exifinterface'
     }
@@ -68,9 +68,9 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.emoji:emoji:1.0.0'
     implementation 'com.google.android.material:material:1.0.0'
-    implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
-    implementation project(':libs:fullscreenvideoview')
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.11.1'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.11.1'
     implementation 'pub.devrel:easypermissions:3.0.0' // version >= 3.0.0 needs android X libraries
     implementation 'com.wefika:flowlayout:0.4.1'
     implementation 'com.googlecode.ez-vcard:ez-vcard:0.10.5'
@@ -79,14 +79,14 @@ dependencies {
     implementation 'org.conscrypt:conscrypt-android:2.2.1'
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.15' // 1.2.15 is last working version for minSDK 16
     implementation 'me.drakeet.support:toastcompat:1.1.0'
-    implementation 'org.osmdroid:osmdroid-android:6.1.0'
+    implementation 'org.osmdroid:osmdroid-android:6.1.5'
     implementation 'com.leinardi.android:speed-dial:3.1.1' // version >= 3.0.0 needs android X libraries
     implementation 'com.squareup.picasso:picasso:2.71828'
-    implementation 'com.squareup.okhttp3:okhttp:3.12.6' // versions > 3.12.x don't support API level < 21 anymore
-    implementation "com.squareup.retrofit2:retrofit:2.6.4" //retrofit needs to stick with 2.6.x (https://github.com/square/retrofit/blob/master/CHANGELOG.md)
-    implementation "com.squareup.retrofit2:converter-gson:2.6.4"
-    implementation 'com.google.guava:guava:28.1-android'
-    implementation ('com.github.AppIntro:AppIntro:5.1.0') {
+    implementation 'com.squareup.okhttp3:okhttp:3.12.8' // versions > 3.12.x don't support API level < 21 anymore
+    implementation 'com.squareup.retrofit2:retrofit:2.6.4' //retrofit needs to stick with 2.6.x (https://github.com/square/retrofit/blob/master/CHANGELOG.md)
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.4'
+    implementation 'com.google.guava:guava:28.2-android'
+    implementation('com.github.AppIntro:AppIntro:5.1.0') {
         exclude group: 'org.jetbrains' , module:'annotations'
     }
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.0.0'
@@ -106,7 +106,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
 
-        versionCode 2
+        versionCode 3
         versionName "1.0"
         //resConfigs "en"
 
@@ -124,6 +124,15 @@ android {
 
     dataBinding {
         enabled true
+    }
+
+    packagingOptions {
+        //X86
+        exclude "lib/x86/**"
+        //X86_64
+        exclude "lib/x86_64/**"
+        //armeabi
+        exclude "lib/armeabi/**"
     }
 
     dexOptions {
@@ -163,8 +172,7 @@ android {
                 signingConfig = signingConfigs.release
                 minifyEnabled true
                 shrinkResources true
-                //android.enableR8.fullMode=true
-                //runProguard true
+                runProguard true
                 proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             }
 
@@ -173,8 +181,7 @@ android {
                 buildTypes.release.signingConfig = null
                 minifyEnabled true
                 shrinkResources true
-                //android.enableR8.fullMode=true
-                //runProguard true
+                runProguard true
                 proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             }
 

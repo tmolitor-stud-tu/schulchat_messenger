@@ -77,6 +77,7 @@ import de.pixart.messenger.xmpp.XmppConnection;
 import de.pixart.messenger.xmpp.XmppConnection.Features;
 import de.pixart.messenger.xmpp.forms.Data;
 import de.pixart.messenger.xmpp.pep.Avatar;
+import me.drakeet.support.toast.ToastCompat;
 import rocks.xmpp.addr.Jid;
 
 import static de.pixart.messenger.utils.PermissionUtils.allGranted;
@@ -123,7 +124,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
             if (mAccount != null && mAccount.getStatus() == Account.State.DISABLED && !accountInfoEdited) {
                 mAccount.setOption(Account.OPTION_DISABLED, false);
                 if (!xmppConnectionService.updateAccount(mAccount)) {
-                    Toast.makeText(EditAccountActivity.this, R.string.unable_to_update_account, Toast.LENGTH_SHORT).show();
+                    ToastCompat.makeText(EditAccountActivity.this, R.string.unable_to_update_account, Toast.LENGTH_SHORT).show();
                 }
                 return;
             }
@@ -153,7 +154,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
             if (inNeedOfSaslAccept()) {
                 mAccount.setKey(Account.PINNED_MECHANISM_KEY, String.valueOf(-1));
                 if (!xmppConnectionService.updateAccount(mAccount)) {
-                    Toast.makeText(EditAccountActivity.this, R.string.unable_to_update_account, Toast.LENGTH_SHORT).show();
+                    ToastCompat.makeText(EditAccountActivity.this, R.string.unable_to_update_account, Toast.LENGTH_SHORT).show();
                 }
                 return;
             }
@@ -167,7 +168,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
                     overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
                     return;
                 } catch (ActivityNotFoundException e) {
-                    Toast.makeText(EditAccountActivity.this, R.string.application_found_to_open_website, Toast.LENGTH_SHORT).show();
+                    ToastCompat.makeText(EditAccountActivity.this, R.string.application_found_to_open_website, Toast.LENGTH_SHORT).show();
                     return;
                 }
             }
@@ -239,7 +240,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
             }
             if (registerNewAccount) {
                 if (XmppConnection.errorMessage != null) {
-                    Toast.makeText(EditAccountActivity.this, XmppConnection.errorMessage, Toast.LENGTH_LONG).show();
+                    ToastCompat.makeText(EditAccountActivity.this, XmppConnection.errorMessage, Toast.LENGTH_LONG).show();
                 }
             }
             if (mAccount != null) {
@@ -257,7 +258,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
                 mAccount.setPassword(password);
                 mAccount.setOption(Account.OPTION_REGISTER, registerNewAccount);
                 if (!xmppConnectionService.updateAccount(mAccount)) {
-                    Toast.makeText(EditAccountActivity.this, R.string.unable_to_update_account, Toast.LENGTH_SHORT).show();
+                    ToastCompat.makeText(EditAccountActivity.this, R.string.unable_to_update_account, Toast.LENGTH_SHORT).show();
                     return;
                 }
             } else {
@@ -288,13 +289,9 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
 
         }
     };
-    private final OnClickListener mCancelButtonClickListener = new OnClickListener() {
-
-        @Override
-        public void onClick(final View v) {
-            deleteAccountAndReturnIfNecessary();
-            finish();
-        }
+    private final OnClickListener mCancelButtonClickListener = v -> {
+        deleteAccountAndReturnIfNecessary();
+        finish();
     };
     private Toast mFetchingMamPrefsToast;
     private String mSavedInstanceAccount;
@@ -508,11 +505,11 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
     protected void processFingerprintVerification(XmppUri uri, boolean showWarningToast) {
         if (mAccount != null && mAccount.getJid().asBareJid().equals(uri.getJid()) && uri.hasFingerprints()) {
             if (xmppConnectionService.verifyFingerprints(mAccount, uri.getFingerprints())) {
-                Toast.makeText(this, R.string.verified_fingerprints, Toast.LENGTH_SHORT).show();
+                ToastCompat.makeText(this, R.string.verified_fingerprints, Toast.LENGTH_SHORT).show();
                 updateAccountInformation(false);
             }
         } else if (showWarningToast) {
-            Toast.makeText(this, R.string.invalid_barcode, Toast.LENGTH_SHORT).show();
+            ToastCompat.makeText(this, R.string.invalid_barcode, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -1204,7 +1201,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
                 this.binding.actionCopyToClipboard.setVisibility(View.VISIBLE);
                 this.binding.actionCopyToClipboard.setOnClickListener(v -> {
                     if (copyTextToClipboard(CryptoHelper.prettifyFingerprint(otrFingerprint), R.string.otr_fingerprint)) {
-                        Toast.makeText(
+                        ToastCompat.makeText(
                                 EditAccountActivity.this,
                                 R.string.toast_message_otr_fingerprint,
                                 Toast.LENGTH_SHORT).show();
@@ -1341,7 +1338,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
                 try {
                     startActivityForResult(intent, REQUEST_DATA_SAVER);
                 } catch (ActivityNotFoundException e) {
-                    Toast.makeText(EditAccountActivity.this, R.string.device_does_not_support_data_saver, Toast.LENGTH_SHORT).show();
+                    ToastCompat.makeText(EditAccountActivity.this, R.string.device_does_not_support_data_saver, Toast.LENGTH_SHORT).show();
                 }
             });
         } else if (showBatteryWarning && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
@@ -1355,7 +1352,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
                 try {
                     startActivityForResult(intent, REQUEST_BATTERY_OP);
                 } catch (ActivityNotFoundException e) {
-                    Toast.makeText(EditAccountActivity.this, R.string.device_does_not_support_battery_op, Toast.LENGTH_SHORT).show();
+                    ToastCompat.makeText(EditAccountActivity.this, R.string.device_does_not_support_battery_op, Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -1373,7 +1370,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
     }
 
     private void editMamPrefs() {
-        this.mFetchingMamPrefsToast = Toast.makeText(this, R.string.fetching_mam_prefs, Toast.LENGTH_LONG);
+        this.mFetchingMamPrefsToast = ToastCompat.makeText(this, R.string.fetching_mam_prefs, Toast.LENGTH_LONG);
         this.mFetchingMamPrefsToast.show();
         xmppConnectionService.fetchMamPreferences(mAccount, this);
     }
@@ -1429,7 +1426,12 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
     }
 
     public void onShowErrorToast(final int resId) {
-        runOnUiThread(() -> Toast.makeText(EditAccountActivity.this, resId, Toast.LENGTH_SHORT).show());
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ToastCompat.makeText(EditAccountActivity.this, resId, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -1459,7 +1461,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
             if (mFetchingMamPrefsToast != null) {
                 mFetchingMamPrefsToast.cancel();
             }
-            Toast.makeText(EditAccountActivity.this, R.string.unable_to_fetch_mam_prefs, Toast.LENGTH_LONG).show();
+            ToastCompat.makeText(EditAccountActivity.this, R.string.unable_to_fetch_mam_prefs, Toast.LENGTH_LONG).show();
         });
     }
 
@@ -1473,7 +1475,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
                         break;
                 }
             } else {
-                Toast.makeText(this, R.string.no_storage_permission, Toast.LENGTH_SHORT).show();
+                ToastCompat.makeText(this, R.string.no_storage_permission, Toast.LENGTH_SHORT).show();
             }
         }
         if (readGranted(grantResults, permissions)) {

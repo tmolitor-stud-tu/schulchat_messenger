@@ -20,6 +20,7 @@ import de.pixart.messenger.R;
 import de.pixart.messenger.persistance.DatabaseBackend;
 import de.pixart.messenger.utils.SignupUtils;
 import de.pixart.messenger.utils.XmppUri;
+import me.drakeet.support.toast.ToastCompat;
 import rocks.xmpp.addr.Jid;
 
 public class UriHandlerActivity extends AppCompatActivity {
@@ -49,7 +50,7 @@ public class UriHandlerActivity extends AppCompatActivity {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 scan(activity);
             } else {
-                Toast.makeText(activity, R.string.qr_code_scanner_needs_access_to_camera, Toast.LENGTH_SHORT).show();
+                ToastCompat.makeText(activity, R.string.qr_code_scanner_needs_access_to_camera, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -87,13 +88,34 @@ public class UriHandlerActivity extends AppCompatActivity {
         final Intent intent;
         final XmppUri xmppUri = new XmppUri(uri);
         final List<Jid> accounts = DatabaseBackend.getInstance(this).getAccountJids(true);
+        /*
+	if (SignupUtils.isSupportTokenRegistry() && xmppUri.isValidJid()) {
+            final String preauth = xmppUri.getParameter("preauth");
+            final Jid jid = xmppUri.getJid();
+            if (xmppUri.isAction(XmppUri.ACTION_REGISTER)) {
+                if (jid.getEscapedLocal() != null && accounts.contains(jid.asBareJid())) {
+                    ToastCompat.makeText(this, R.string.account_already_exists, Toast.LENGTH_LONG).show();
+                    return;
+                }
+                intent = SignupUtils.getTokenRegistrationIntent(this, jid, preauth);
+                startActivity(intent);
+                return;
+            }
+            if (xmppUri.isAction(XmppUri.ACTION_ROSTER) && "y".equals(xmppUri.getParameter("ibr"))) {
+                intent = SignupUtils.getTokenRegistrationIntent(this, Jid.ofDomain(jid.getDomain()), preauth);
+                intent.putExtra(StartConversationActivity.EXTRA_INVITE_URI, xmppUri.toString());
+                startActivity(intent);
+                return;
+            }
+        }
+	*/
         if (accounts.size() == 0) {
             if (xmppUri.isValidJid()) {
                 intent = SignupUtils.getSignUpIntent(this);
                 intent.putExtra(StartConversationActivity.EXTRA_INVITE_URI, xmppUri.toString());
                 startActivity(intent);
             } else {
-                Toast.makeText(this, R.string.invalid_jid, Toast.LENGTH_SHORT).show();
+                ToastCompat.makeText(this, R.string.invalid_jid, Toast.LENGTH_SHORT).show();
             }
             return;
         }
@@ -136,7 +158,7 @@ public class UriHandlerActivity extends AppCompatActivity {
             intent.putExtra("scanned", scanned);
             intent.setData(uri);
         } else {
-            Toast.makeText(this, R.string.invalid_jid, Toast.LENGTH_SHORT).show();
+            ToastCompat.makeText(this, R.string.invalid_jid, Toast.LENGTH_SHORT).show();
             return;
         }
         startActivity(intent);

@@ -95,6 +95,7 @@ import de.pixart.messenger.utils.UIHelper;
 import de.pixart.messenger.utils.XmppUri;
 import de.pixart.messenger.xmpp.OnUpdateBlocklist;
 import de.pixart.messenger.xmpp.chatstate.ChatState;
+import me.drakeet.support.toast.ToastCompat;
 import rocks.xmpp.addr.Jid;
 
 import static de.pixart.messenger.ui.ConversationFragment.REQUEST_DECRYPT_PGP;
@@ -291,7 +292,7 @@ public class ConversationsActivity extends XmppActivity implements OnConversatio
                 try {
                     startActivityForResult(intent, REQUEST_BATTERY_OP);
                 } catch (ActivityNotFoundException e) {
-                    Toast.makeText(this, R.string.device_does_not_support_battery_op, Toast.LENGTH_SHORT).show();
+                    ToastCompat.makeText(this, R.string.device_does_not_support_battery_op, Toast.LENGTH_SHORT).show();
                 }
             });
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -469,7 +470,7 @@ public class ConversationsActivity extends XmppActivity implements OnConversatio
     }
 
     private void displayToast(final String msg) {
-        runOnUiThread(() -> Toast.makeText(ConversationsActivity.this, msg, Toast.LENGTH_SHORT).show());
+        runOnUiThread(() -> ToastCompat.makeText(ConversationsActivity.this, msg, Toast.LENGTH_SHORT).show());
     }
 
     @Override
@@ -547,6 +548,21 @@ public class ConversationsActivity extends XmppActivity implements OnConversatio
                     return true;
                 }
                 break;
+            /*
+	    case R.id.action_scan_qr_code:
+                UriHandlerActivity.scan(this);
+                return true;
+            case R.id.action_check_updates:
+                if (xmppConnectionService.hasInternetConnection()) {
+                    openInstallFromUnknownSourcesDialogIfNeeded(true);
+                } else {
+                    ToastCompat.makeText(this, R.string.account_status_no_internet, Toast.LENGTH_LONG).show();
+                }
+                break;
+            case R.id.action_invite_user:
+                inviteUser();
+                break;
+	    */
         }
         return super.onOptionsItemSelected(item);
     }
@@ -776,7 +792,7 @@ public class ConversationsActivity extends XmppActivity implements OnConversatio
 
     public void verifyOtrSessionDialog(final Conversation conversation, View view) {
         if (!conversation.hasValidOtrSession() || conversation.getOtrSession().getSessionStatus() != SessionStatus.ENCRYPTED) {
-            Toast.makeText(this, R.string.otr_session_not_started, Toast.LENGTH_LONG).show();
+            ToastCompat.makeText(this, R.string.otr_session_not_started, Toast.LENGTH_LONG).show();
             return;
         }
         if (view == null) {
@@ -875,7 +891,7 @@ public class ConversationsActivity extends XmppActivity implements OnConversatio
 
     @Override
     public void onShowErrorToast(int resId) {
-        runOnUiThread(() -> Toast.makeText(this, resId, Toast.LENGTH_SHORT).show());
+        runOnUiThread(() -> ToastCompat.makeText(this, resId, Toast.LENGTH_SHORT).show());
     }
 
     protected void AppUpdate(String Store) {

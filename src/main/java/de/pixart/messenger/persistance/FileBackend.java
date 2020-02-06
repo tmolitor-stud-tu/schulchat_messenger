@@ -1155,7 +1155,7 @@ public class FileBackend {
                 //fall threw
             }
         } else if (audio) {
-            body.append("|0|0|").append(getMediaRuntime(file));
+            body.append("|0|0|").append(getMediaRuntime(file)).append('|').append(getAudioTitleArtist(file));
         } else if (vcard) {
             body.append("|0|0|0|").append(getVCard(file));
         } else if (apk) {
@@ -1179,6 +1179,47 @@ public class FileBackend {
             return Integer.parseInt(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
         } catch (RuntimeException e) {
             return 0;
+        }
+    }
+
+    private String getAudioTitleArtist(final File file) {
+        String artist;
+        String title;
+        StringBuilder builder = new StringBuilder();
+        try {
+            MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
+            mediaMetadataRetriever.setDataSource(file.toString());
+            artist = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+            if (artist == null) {
+                artist = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST);
+            }
+            if (artist == null) {
+                artist = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_COMPOSER);
+            }
+            title = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+            mediaMetadataRetriever.release();
+            boolean separator = false;
+            if (artist != null && artist.length() > 0) {
+                builder.append(artist);
+                separator = true;
+            }
+            if (title != null && title.length() > 0) {
+                if (separator) {
+                    builder.append(" - ");
+                }
+                builder.append(title);
+            }
+            try {
+                final String s = builder.substring(0, Math.min(128, builder.length()));
+                final byte[] data = s.trim().getBytes("UTF-8");
+                return Base64.encodeToString(data, Base64.DEFAULT);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                return "";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
         }
     }
 
