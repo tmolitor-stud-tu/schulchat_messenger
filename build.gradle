@@ -172,7 +172,7 @@ android {
                 signingConfig = signingConfigs.release
                 minifyEnabled true
                 shrinkResources true
-                runProguard true
+                minifyEnabled true
                 proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             }
 
@@ -181,7 +181,7 @@ android {
                 buildTypes.release.signingConfig = null
                 minifyEnabled true
                 shrinkResources true
-                runProguard true
+                minifyEnabled true
                 proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             }
 
