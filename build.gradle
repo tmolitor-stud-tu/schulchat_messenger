@@ -99,7 +99,7 @@ android {
     compileSdkVersion 29
 
     defaultConfig {
-        minSdkVersion 18
+        minSdkVersion 19
         targetSdkVersion 29
 
         versionCode 1
@@ -141,10 +141,10 @@ android {
             dimension "distribution"
         }
     }
-    /*if (project.hasProperty('mStoreFile') &&
+    if (project.hasProperty('mStoreFile') &&
             project.hasProperty('mStorePassword') &&
             project.hasProperty('mKeyAlias') &&
-            project.hasProperty('mKeyPassword')) {*/
+            project.hasProperty('mKeyPassword')) {
         signingConfigs {
             release {
                 storeFile file(mStoreFile)
@@ -175,7 +175,7 @@ android {
             }
 
         }
-    //}
+    }
 
     lintOptions {
         disable 'ExtraTranslation', 'MissingTranslation', 'InvalidPackage', 'MissingQuantity', 'AppCompatResource', 'RestrictedApi'
