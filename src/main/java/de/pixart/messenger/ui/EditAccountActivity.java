@@ -940,7 +940,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
             binding.statusMessage.append(current);
         }
         setAvailabilityRadioButton(mAccount.getPresenceStatus(), binding);
-        binding.show.setVisibility(manualStatus ? View.VISIBLE : View.GONE);
+        //binding.show.setVisibility(manualStatus ? View.VISIBLE : View.GONE);
         List<PresenceTemplate> templates = xmppConnectionService.getPresenceTemplates(mAccount);
         PresenceTemplateAdapter presenceTemplateAdapter = new PresenceTemplateAdapter(this, R.layout.simple_list_item, templates);
         binding.statusMessage.setAdapter(presenceTemplateAdapter);
@@ -987,7 +987,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
     }
 
     private static void setAvailabilityRadioButton(Presence.Status status, DialogPresenceBinding binding) {
-        if (status == null) {
+        /*if (status == null) {
             binding.online.setChecked(true);
             return;
         }
@@ -1004,10 +1004,11 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
             default:
                 binding.online.setChecked(true);
         }
+        */
     }
 
     private static Presence.Status getAvailabilityRadioButton(DialogPresenceBinding binding) {
-        if (binding.dnd.isChecked()) {
+        /*if (binding.dnd.isChecked()) {
             return Presence.Status.DND;
         } else if (binding.xa.isChecked()) {
             return Presence.Status.XA;
@@ -1015,7 +1016,8 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
             return Presence.Status.AWAY;
         } else {
             return Presence.Status.ONLINE;
-        }
+        }*/
+		return Presence.Status.ONLINE;
     }
 
     private String getPresenceStatus(Presence.Status status) {
@@ -1284,10 +1286,10 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
     }
 
     private void updatePresenceStatus(String presenceStatus, String presenceStatusMessage) {
-        String status = presenceStatus;
-        if (!TextUtils.isEmpty(presenceStatusMessage)) {
+        String status = presenceStatusMessage /*presenceStatus*/;
+        /*if (!TextUtils.isEmpty(presenceStatusMessage)) {
             status = presenceStatus + ": " + presenceStatusMessage;
-        }
+        }*/
         this.binding.yourStatus.setText(status);
         this.binding.yourStatus.setTextAppearance(this, R.style.TextAppearance_Conversations_Body1);
     }

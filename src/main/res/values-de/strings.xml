@@ -237,7 +237,7 @@
     <string name="connect">Verbinden</string>
     <string name="account_already_exists">Das Profil existiert bereits</string>
     <string name="next">Weiter</string>
-    <string name="server_info_session_established">Sitzung hergestellt</string>
+    <string name="server_info_session_established">Letzter Verbindungsaufbau</string>
     <string name="skip">Überspringen</string>
     <string name="disable_notifications">Benachrichtigungen deaktivieren</string>
     <string name="enable">Aktivieren</string>

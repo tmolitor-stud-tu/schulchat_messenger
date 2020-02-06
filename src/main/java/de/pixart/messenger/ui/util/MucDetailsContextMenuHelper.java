@@ -76,12 +76,12 @@ public final class MucDetailsContextMenuHelper {
         } else {
             title.setVisible(false);
         }
-        MenuItem sendPrivateMessage = menu.findItem(R.id.send_private_message);
+        //MenuItem sendPrivateMessage = menu.findItem(R.id.send_private_message);
         MenuItem blockUnblockMUCUser = menu.findItem(R.id.context_muc_contact_block_unblock);
         if (user != null && user.getRealJid() != null) {
             MenuItem showContactDetails = menu.findItem(R.id.action_contact_details);
             MenuItem startConversation = menu.findItem(R.id.start_conversation);
-            MenuItem addToRoster = menu.findItem(R.id.add_contact);
+            /*MenuItem addToRoster = menu.findItem(R.id.add_contact);
             MenuItem giveMembership = menu.findItem(R.id.give_membership);
             MenuItem removeMembership = menu.findItem(R.id.remove_membership);
             MenuItem giveAdminPrivileges = menu.findItem(R.id.give_admin_privileges);
@@ -94,25 +94,25 @@ public final class MucDetailsContextMenuHelper {
             MenuItem banFromConference = menu.findItem(R.id.ban_from_room);
             banFromConference.setTitle(isGroupChat ? R.string.ban_from_conference : R.string.ban_from_channel);
             MenuItem invite = menu.findItem(R.id.invite);
-            MenuItem highlightInMuc = menu.findItem(R.id.highlight_in_muc);
+            MenuItem highlightInMuc = menu.findItem(R.id.highlight_in_muc);*/
             startConversation.setVisible(true);
             final Jid jid = user.getRealJid();
             final Account account = conversation.getAccount();
             final Contact contact = jid == null ? null : account.getRoster().getContact(jid);
             final User self = conversation.getMucOptions().getSelf();
-            addToRoster.setVisible(contact != null && !contact.showInRoster());
+            //addToRoster.setVisible(contact != null && !contact.showInRoster());
             showContactDetails.setVisible(contact == null || !contact.isSelf());
 
             if ((activity instanceof ConferenceDetailsActivity || activity instanceof MucUsersActivity) && user.getRole() == MucOptions.Role.NONE) {
-                invite.setVisible(true);
+                //invite.setVisible(true);
             }
             if (activity instanceof ConversationsActivity) {
-                highlightInMuc.setVisible(false);
+                //highlightInMuc.setVisible(false);
             } else if (activity instanceof ConferenceDetailsActivity) {
-                highlightInMuc.setVisible(true);
+                //highlightInMuc.setVisible(true);
             }
             boolean managePermissionsVisible = false;
-            if ((self.getAffiliation().ranks(MucOptions.Affiliation.ADMIN) && self.getAffiliation().outranks(user.getAffiliation())) || self.getAffiliation() == MucOptions.Affiliation.OWNER) {
+            /*if ((self.getAffiliation().ranks(MucOptions.Affiliation.ADMIN) && self.getAffiliation().outranks(user.getAffiliation())) || self.getAffiliation() == MucOptions.Affiliation.OWNER) {
                 if (advancedMode) {
                     if (!user.getAffiliation().ranks(MucOptions.Affiliation.MEMBER)) {
                         managePermissionsVisible = true;
@@ -130,8 +130,8 @@ public final class MucDetailsContextMenuHelper {
                     removeFromRoom.setVisible(true);
                 }
 
-            }
-            if (self.getAffiliation().ranks(MucOptions.Affiliation.OWNER)) {
+            }*/
+            /*if (self.getAffiliation().ranks(MucOptions.Affiliation.OWNER)) {
                 if (isGroupChat || advancedMode || user.getAffiliation() == MucOptions.Affiliation.OWNER) {
                     if (!user.getAffiliation().ranks(MucOptions.Affiliation.OWNER)) {
                         managePermissionsVisible = true;
@@ -150,14 +150,14 @@ public final class MucDetailsContextMenuHelper {
                         removeAdminPrivileges.setVisible(true);
                     }
                 }
-            }
-            managePermissions.setVisible(managePermissionsVisible);
-            sendPrivateMessage.setVisible(true);
-            sendPrivateMessage.setEnabled(mucOptions.allowPm());
+            }*/
+            //managePermissions.setVisible(managePermissionsVisible);
+            //sendPrivateMessage.setVisible(true);
+            //sendPrivateMessage.setEnabled(mucOptions.allowPm());
             blockUnblockMUCUser.setVisible(true);
         } else {
-            sendPrivateMessage.setVisible(true);
-            sendPrivateMessage.setEnabled(user != null && mucOptions.allowPm() && user.getRole().ranks(MucOptions.Role.VISITOR));
+            //sendPrivateMessage.setVisible(true);
+            //sendPrivateMessage.setEnabled(user != null && mucOptions.allowPm() && user.getRole().ranks(MucOptions.Role.VISITOR));
             blockUnblockMUCUser.setVisible(user != null);
         }
     }
@@ -181,7 +181,7 @@ public final class MucDetailsContextMenuHelper {
             case R.id.start_conversation:
                 startConversation(user, activity);
                 return true;
-            case R.id.give_admin_privileges:
+            /*case R.id.give_admin_privileges:
                 activity.xmppConnectionService.changeAffiliationInConference(conversation, jid, MucOptions.Affiliation.ADMIN, onAffiliationChanged);
                 return true;
             case R.id.give_membership:
@@ -218,7 +218,7 @@ public final class MucDetailsContextMenuHelper {
                 } else {
                     activity.xmppConnectionService.invite(conversation, jid);
                 }
-                return true;
+                return true;*/
             case R.id.context_muc_contact_block_unblock:
                 try {
                     activity.xmppConnectionService.sendBlockRequest(new RawBlockable(account, user.getFullJid()), false);
@@ -228,9 +228,9 @@ public final class MucDetailsContextMenuHelper {
                     e.printStackTrace();
                 }
                 return true;
-            case R.id.highlight_in_muc:
+            /*case R.id.highlight_in_muc:
                 activity.highlightInMuc(conversation, user.getName());
-                return true;
+                return true;*/
             default:
                 return false;
         }

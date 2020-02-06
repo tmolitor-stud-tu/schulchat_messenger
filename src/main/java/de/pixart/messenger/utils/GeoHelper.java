@@ -42,7 +42,13 @@ public class GeoHelper {
         } catch (NumberFormatException nfe) {
             return null;
         }
-        return "https://xmpp.pix-art.de/staticmap/staticmap.php?center=" + latitude + "," + longitude + "&size=500x500&markers=" + latitude + "," + longitude + "&zoom= " + Config.DEFAULT_ZOOM;
+		return String.format("https://%1$s/xmpp.php?call=map&center=%2$s,%3$s&size=500x500&markers=%2$s,%3$s&zoom=%4$d",
+			message.getConversation().getAccount().getServer(),
+			latitude,
+			longitude,
+			Config.DEFAULT_ZOOM
+		);
+        //return "https://xmpp.pix-art.de/staticmap/staticmap.php?center=" + latitude + "," + longitude + "&size=500x500&markers=" + latitude + "," + longitude + "&zoom= " + Config.DEFAULT_ZOOM;
     }
 
     private static GeoPoint parseGeoPoint(String body) throws IllegalArgumentException {

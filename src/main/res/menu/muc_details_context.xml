@@ -6,7 +6,7 @@
         android:enabled="false"
         android:orderInCategory="1"
         android:visible="false" />
-    <item
+    <!--<item
         android:id="@+id/highlight_in_muc"
         android:orderInCategory="100"
         android:title="@string/highlight_in_muc"
@@ -15,7 +15,7 @@
         android:id="@+id/add_contact"
         android:orderInCategory="100"
         android:title="@string/add_to_contact_list"
-        android:visible="false" />
+        android:visible="false" />-->
     <item
         android:id="@+id/start_conversation"
         android:orderInCategory="100"
@@ -26,7 +26,7 @@
         android:orderInCategory="100"
         android:title="@string/action_contact_details"
         android:visible="false" />
-    <item
+    <!--<item
         android:id="@+id/invite"
         android:orderInCategory="100"
         android:title="@string/invite_again"
@@ -35,13 +35,13 @@
         android:id="@+id/send_private_message"
         android:orderInCategory="100"
         android:title="@string/send_private_message"
-        android:visible="false" />
+	android:visible="false" />-->
     <item
         android:id="@+id/context_muc_contact_block_unblock"
         android:orderInCategory="100"
         android:title="@string/action_block_participant"
         android:visible="false" />
-    <item
+    <!--<item
         android:id="@+id/manage_permissions"
         android:orderInCategory="100"
         android:title="@string/manage_permission"
@@ -78,7 +78,7 @@
                 android:title="@string/remove_owner_privileges"
                 android:visible="false" />
         </menu>
-    </item>
+	</item>
     <item
         android:id="@+id/kick_from_room"
         android:orderInCategory="100"
@@ -88,5 +88,5 @@
         android:id="@+id/ban_from_room"
         android:orderInCategory="100"
         android:title="@string/ban_from_conference"
-        android:visible="false" />
+	android:visible="false" />-->
 </menu>

@@ -3112,9 +3112,9 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
                         case R.id.action_contact_details:
                             activity.switchToContactDetails(message.getContact(), fingerprint);
                             break;
-                        case R.id.action_show_qr_code:
+                        /*case R.id.action_show_qr_code:
                             activity.showQrCode("xmpp:" + message.getContact().getJid().asBareJid().toEscapedString());
-                            break;
+                            break;*/
                     }
                     return true;
                 });
@@ -3124,9 +3124,9 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
             final Menu menu = popupMenu.getMenu();
             popupMenu.setOnMenuItemClickListener(item -> {
                 switch (item.getItemId()) {
-                    case R.id.action_show_qr_code:
+                    /*case R.id.action_show_qr_code:
                         activity.showQrCode(conversation.getAccount().getShareableUri());
-                        break;
+                        break;*/
                     case R.id.action_account_details:
                         activity.switchToAccount(message.getConversation().getAccount(), fingerprint);
                         break;
