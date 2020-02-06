@@ -987,4 +987,6 @@
     <string name="pref_theme_color_options">Designfarbe</string>
     <string name="error_scanning_QR_code">Fehler beim Scannen des QR Codes</string>
     <string name="scan_qr_code_text">Zum Einrichten der App einfach den QR Code scannen.</string>
+    <!--<string name="scan_qr_code_text">DIE APP IST AKTUELL NUR FÜR BETATESTER ZUGÄNGLICH!</string>-->
+    <string name="error_closed_beta">Sie gehören nicht zu den Betatestern.</string>
 </resources>
