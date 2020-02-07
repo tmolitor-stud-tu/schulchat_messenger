@@ -1210,7 +1210,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
         } else {
             binding.recordVoiceButton.setVisibility(View.GONE);
         }
-        binding.recordVoiceButton.setImageResource(activity.getThemeResource(R.attr.ic_send_voice_offline, R.drawable.ic_send_voice_offline));
+        binding.recordVoiceButton.setImageResource(R.drawable.ic_send_voice_online);
     }
 
     private void quoteMessage(Message message, @Nullable String user) {
