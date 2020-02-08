@@ -90,7 +90,7 @@ public class WelcomeActivity extends XmppActivity {
         }
         scanQRCode.setOnClickListener(v -> {
             scanQRCode();
-			//Toast.makeText(this, R.string.error_closed_beta, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, R.string.error_closed_beta, Toast.LENGTH_SHORT).show();
         });
     }
 
