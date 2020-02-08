@@ -926,26 +926,22 @@ public class NotificationService {
             if (accounts.size() == 1) {
                 mAccount = accounts.get(0);
                 if (mAccount.getStatus() == Account.State.ONLINE) {
-                    status = "(" + mXmppConnectionService.getString(R.string.account_status_online) + ")";
-                    status = " " + status;
+                    status = " (" + mXmppConnectionService.getString(R.string.account_status_online) + ")";
                     Log.d(Config.LOGTAG, "Status: " + status);
-                    mBuilder.setContentTitle(mXmppConnectionService.getString(R.string.conversations_foreground_service) + status);
+                    mBuilder.setContentTitle(mXmppConnectionService.getString(R.string.conversations_foreground_service));
                 } else if (mAccount.getStatus() == Account.State.CONNECTING) {
-                    status = "(" + mXmppConnectionService.getString(R.string.account_status_connecting) + ")";
-                    status = " " + status;
+                    status = " (" + mXmppConnectionService.getString(R.string.account_status_connecting) + ")";
                     Log.d(Config.LOGTAG, "Status: " + status);
                     mBuilder.setContentTitle(mXmppConnectionService.getString(R.string.conversations_foreground_service) + status);
                 } else {
-                    status = "(" + mXmppConnectionService.getString(R.string.account_status_offline) + ")";
-                    status = " " + status;
+                    status = " (" + mXmppConnectionService.getString(R.string.account_status_offline) + ")";
                     Log.d(Config.LOGTAG, "Status: " + status);
                     mBuilder.setContentTitle(mXmppConnectionService.getString(R.string.conversations_foreground_service) + status);
                 }
             } else if (accounts.size() > 1) {
                 mBuilder.setContentTitle(mXmppConnectionService.getString(R.string.conversations_foreground_service));
             } else {
-                status = "(" + mXmppConnectionService.getString(R.string.account_status_offline) + ")";
-                status = " " + status;
+                status = " (" + mXmppConnectionService.getString(R.string.account_status_offline) + ")";
                 Log.d(Config.LOGTAG, "Status: " + status);
                 mBuilder.setContentTitle(mXmppConnectionService.getString(R.string.conversations_foreground_service) + status);
             }

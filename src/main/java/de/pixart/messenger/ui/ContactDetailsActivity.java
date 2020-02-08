@@ -437,7 +437,7 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
             binding.statusMessage.setVisibility(View.GONE);
         }
 
-        if (contact.isBlocked() && !this.showDynamicTags) {
+        if (contact.isBlocked()/* && !this.showDynamicTags*/) {
             binding.detailsLastseen.setVisibility(View.VISIBLE);
             binding.detailsLastseen.setText(R.string.contact_blocked);
         } else {
@@ -446,8 +446,8 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
                     && contact.getPresences().allOrNonSupport(Namespace.IDLE)) {
                 binding.detailsLastseen.setVisibility(View.VISIBLE);
                 binding.detailsLastseen.setText(UIHelper.lastseen(getApplicationContext(), contact.isActive(), contact.getLastseen()));
-            } else {
-                binding.detailsLastseen.setText(getString(R.string.account_status_online));
+            /*} else {
+                binding.detailsLastseen.setText(getString(R.string.account_status_online));*/
             }
         }
         AvatarWorkerTask.loadAvatar(contact, binding.detailsContactBadge, R.dimen.avatar_big);

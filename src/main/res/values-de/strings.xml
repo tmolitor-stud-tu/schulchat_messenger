@@ -132,7 +132,7 @@
     <string name="account_status_disabled">Vorübergehend abgeschaltet</string>
     <string name="account_status_online">Online</string>
     <string name="account_status_connecting">Verbinde…</string>
-    <string name="account_status_offline">Offline</string>
+    <string name="account_status_offline">Nicht verbunden</string>
     <string name="account_status_unauthorized">Ungültige Zugangsdaten</string>
     <string name="account_status_not_found">Server nicht gefunden</string>
     <string name="account_status_no_internet">Keine Internetverbindung</string>
@@ -933,7 +933,7 @@
     <string name="waiting_for_transfer">Warte auf Übertragung</string>
     <string name="x_has_written">%s hat geschrieben:</string>
     <string name="i_have_written">Ich habe geschrieben:</string>
-    <string name="your_status">Dein Status</string>
+    <string name="your_status">Deine Statusnachricht</string>
     <string name="pref_use_invidious">Ersetze YouTube Links durch Invidious</string>
     <string name="pref_use_invidious_summary">Invidious ist eine datenschutzfreundliche Alternative zu YouTube</string>
     <string name="this_device">Dieses Gerät</string>

@@ -131,7 +131,7 @@
     <string name="account_status_disabled">Temporarily disabled</string>
     <string name="account_status_online">Online</string>
     <string name="account_status_connecting">Connecting\u2026</string>
-    <string name="account_status_offline">Offline</string>
+    <string name="account_status_offline">Not connected</string>
     <string name="account_status_unauthorized">Unauthorized</string>
     <string name="account_status_not_found">Server not found</string>
     <string name="account_status_no_internet">No connectivity</string>
@@ -938,7 +938,7 @@
     <string name="waiting_for_transfer">Waiting for transfer</string>
     <string name="x_has_written">%s has written:</string>
     <string name="i_have_written">I have written:</string>
-    <string name="your_status">Your status</string>
+    <string name="your_status">Your statusmessage:</string>
     <string name="pref_use_invidious">Replace YouTube links with Invidious</string>
     <string name="pref_use_invidious_summary">Invidious is a privacy friendly alternative to YouTube</string>
     <string name="this_device">This device</string>
