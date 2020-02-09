@@ -718,8 +718,8 @@ public class ConversationsActivity extends XmppActivity implements OnConversatio
                         } else {
                             if (showLastSeen && conversation.getContact().getLastseen() > 0 && conversation.getContact().getPresences().allOrNonSupport(Namespace.IDLE)) {
                                 absubtitle.setText(UIHelper.lastseen(getApplicationContext(), conversation.getContact().isActive(), conversation.getContact().getLastseen()));
-                            } else {
-                                absubtitle.setText(getString(R.string.account_status_online));
+                            /*} else {
+                                absubtitle.setText(getString(R.string.account_status_online));*/
                             }
                             absubtitle.setSelected(true);
                             absubtitle.setOnClickListener(view14 -> {
