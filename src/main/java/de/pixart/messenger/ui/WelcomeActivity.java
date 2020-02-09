@@ -2,7 +2,6 @@ package de.pixart.messenger.ui;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -13,17 +12,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-
 import de.pixart.messenger.Config;
 import de.pixart.messenger.R;
 import de.pixart.messenger.entities.Account;
 import de.pixart.messenger.utils.FirstStartManager;
-import de.pixart.messenger.utils.PhoneHelper;
 /*
 import de.pixart.messenger.ui.util.IntroHelper;
 import de.pixart.messenger.utils.InstallReferrerUtils;
@@ -41,7 +33,6 @@ public class WelcomeActivity extends XmppActivity {
     private static final int REQUEST_CAMERA_PERMISSIONS_TO_SCAN = 0x6774;
     private String domain;
     Button scanQRCode = null;
-    private static final String algo = "HmacSHA256";
 
     @Override
     protected void refreshUiReal() {
@@ -110,7 +101,7 @@ public class WelcomeActivity extends XmppActivity {
                     final String domain = strings[0].substring(("domain=").length());
                     final String username = strings[1].substring(("user=").length());
                     final String password = strings[2].substring(("token=").length());
-                    addAccount(domain, username, createPassword(password));
+                    addAccount(domain, username, password);
                 } else {
                     Toast.makeText(this, R.string.error_scanning_QR_code, Toast.LENGTH_SHORT).show();
                 }
@@ -119,52 +110,6 @@ public class WelcomeActivity extends XmppActivity {
             }
         } else {
             Toast.makeText(this, R.string.error_scanning_QR_code, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private String createPassword(final String password) {
-        StringBuilder pw = new StringBuilder("");
-        String deviceID = PhoneHelper.getAndroidId(this);
-        String deviceName = getDeviceName();
-        try {
-            pw.append(deviceID);
-            pw.append("|");
-            pw.append(deviceName);
-            pw.append("|");
-            pw.append(hash_hmac(algo, hash_hmac(algo, deviceID + "|" + deviceName, password), getString(R.string.app_secret)));
-            return pw.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return password;
-    }
-
-    public static String hash_hmac(String algo, String text, String password) throws NoSuchAlgorithmException {
-        Mac sha256_HMAC = null;
-        try {
-            sha256_HMAC = Mac.getInstance(algo);
-            SecretKeySpec secret_key = new SecretKeySpec(password.getBytes(), algo);
-            sha256_HMAC.init(secret_key);
-            return bytesToString(sha256_HMAC.doFinal(text.getBytes()));
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private static String bytesToString(byte[] bytes) {
-        StringBuilder result = new StringBuilder();
-        for (byte b : bytes) result.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
-        return result.toString();
-    }
-
-    public String getDeviceName() {
-        String manufacturer = Build.MANUFACTURER;
-        String model = Build.MODEL;
-        if (model.startsWith(manufacturer)) {
-            return model;
-        } else {
-            return manufacturer + " " + model;
         }
     }
 

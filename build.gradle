@@ -114,7 +114,8 @@ android {
         applicationId = 'de.kwo.messenger'
         multiDexEnabled true
 
-        buildConfigField("String", "DOMAIN_LOCK", '"kurswahl-online.de"')
+        buildConfigField("String", "APP_SECRET", '"' + mAppSecret + '"')
+	buildConfigField("String", "DOMAIN_LOCK", '"kurswahl-online.de"')
         buildConfigField("String", "MAGIC_CREATE_DOMAIN", '"kurswahl-online.de"')
         buildConfigField("String", "LOGTAG", '"KWO_Messenger"')
         buildConfigField("boolean", "SHOW_INTRO", "false")
