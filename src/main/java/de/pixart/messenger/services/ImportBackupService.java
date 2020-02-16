@@ -161,7 +161,7 @@ public class ImportBackupService extends Service {
 
     private boolean importBackup(Uri uri, String password) {
         Log.d(Config.LOGTAG, "importing backup from " + uri);
-        try {
+        /*try {
             SQLiteDatabase db = mDatabaseBackend.getWritableDatabase();
             final InputStream inputStream;
             if ("file".equals(uri.getScheme())) {
@@ -235,7 +235,9 @@ public class ImportBackupService extends Service {
             }
             Log.d(Config.LOGTAG, "error restoring backup " + uri, e);
             return false;
-        }
+        }*/
+		Log.d(Config.LOGTAG, "error restoring backup: not allowed");
+		return false;
     }
 
     private void notifySuccess() {

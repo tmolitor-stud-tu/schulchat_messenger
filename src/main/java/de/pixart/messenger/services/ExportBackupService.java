@@ -324,7 +324,7 @@ public class ExportBackupService extends Service {
         int count = 0;
         final int max = this.mAccounts.size();
         final SecureRandom secureRandom = new SecureRandom();
-        if (mAccounts.size() >= 1) {
+        /*if (mAccounts.size() >= 1) {
             if (ReadableLogsEnabled) {
                 List<Conversation> conversations = mDatabaseBackend.getConversations(Conversation.STATUS_AVAILABLE);
                 conversations.addAll(mDatabaseBackend.getConversations(Conversation.STATUS_ARCHIVED));
@@ -332,8 +332,9 @@ public class ExportBackupService extends Service {
                     writeToFile(conversation);
                 }
             }
-        }
+        }*/
         final List<File> files = new ArrayList<>();
+		/*
         for (Account account : this.mAccounts) {
             final String password = account.getPassword();
             if (password.isEmpty() || password.equals("")) {
@@ -377,7 +378,7 @@ public class ExportBackupService extends Service {
             writer.close();
             Log.d(Config.LOGTAG, "written backup to " + file.getAbsoluteFile());
             count++;
-        }
+        }*/
         return files;
     }
 
