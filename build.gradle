@@ -35,6 +35,7 @@ repositories {
 configurations {
     playstoreImplementation
     cleanedAnnotations
+    gitImplementation
     compile.exclude group: 'org.jetbrains' , module:'annotations'
 }
 

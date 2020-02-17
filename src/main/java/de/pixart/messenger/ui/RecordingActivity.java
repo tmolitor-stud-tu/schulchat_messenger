@@ -12,9 +12,11 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import java.io.File;
@@ -32,12 +34,13 @@ import de.pixart.messenger.persistance.FileBackend;
 import de.pixart.messenger.utils.ThemeHelper;
 import me.drakeet.support.toast.ToastCompat;
 
-public class RecordingActivity extends Activity implements View.OnClickListener {
+public class RecordingActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ActivityRecordingBinding binding;
 
     private MediaRecorder mRecorder;
     private long mStartTime = 0;
+    private boolean alternativeCodec = false;
 
     private CountDownLatch outputFileWrittenLatch = new CountDownLatch(1);
 
@@ -58,7 +61,9 @@ public class RecordingActivity extends Activity implements View.OnClickListener 
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(ThemeHelper.findDialog(this));
         super.onCreate(savedInstanceState);
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         this.binding = DataBindingUtil.setContentView(this, R.layout.activity_recording);
+        this.setTitle(R.string.attach_record_voice);
         this.binding.cancelButton.setOnClickListener(this);
         this.binding.shareButton.setOnClickListener(this);
         this.setFinishOnTouchOutside(false);
@@ -68,6 +73,8 @@ public class RecordingActivity extends Activity implements View.OnClickListener 
     @Override
     protected void onStart() {
         super.onStart();
+        Intent intent = getIntent();
+        alternativeCodec = intent != null && intent.getBooleanExtra("ALTERNATIVE_CODEC", getResources().getBoolean(R.bool.alternative_voice_settings));
         if (!startRecording()) {
             this.binding.shareButton.setEnabled(false);
             this.binding.timer.setTextAppearance(this, R.style.TextAppearance_Conversations_Title);
@@ -90,10 +97,15 @@ public class RecordingActivity extends Activity implements View.OnClickListener 
     private boolean startRecording() {
         mRecorder = new MediaRecorder();
         mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-        mRecorder.setAudioEncodingBitRate(96000);
-        mRecorder.setAudioSamplingRate(22050);
+        if (alternativeCodec) {
+            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        } else {
+            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+            mRecorder.setAudioEncodingBitRate(96000);
+            mRecorder.setAudioSamplingRate(22050);
+        }
         setupOutputFile();
         mRecorder.setOutputFile(mOutputFile.getAbsolutePath());
 
