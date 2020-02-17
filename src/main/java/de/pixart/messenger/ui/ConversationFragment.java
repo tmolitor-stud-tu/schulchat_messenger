@@ -506,7 +506,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
         public boolean onLongClick(View v) {
             final String body = binding.textinput.getText().toString();
             if (body.length() == 0) {
-                binding.textinput.getText().insert(0, Message.ME_COMMAND + " ");
+                //binding.textinput.getText().insert(0, Message.ME_COMMAND + " ");
             }
             return true;
         }
@@ -1102,19 +1102,26 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
         mOptionsMenu = menu;
         boolean hasAttachments = mediaPreviewAdapter != null && mediaPreviewAdapter.hasAttachments();
         menuInflater.inflate(R.menu.fragment_conversation, menu);
-        final MenuItem menuInviteContact = menu.findItem(R.id.action_invite);
+        //final MenuItem menuInviteContact = menu.findItem(R.id.action_invite);
         final MenuItem menuArchiveChat = menu.findItem(R.id.action_archive_chat);
         final MenuItem menuGroupDetails = menu.findItem(R.id.action_group_details);
         final MenuItem menuContactDetails = menu.findItem(R.id.action_contact_details);
         final MenuItem menuMediaBrowser = menu.findItem(R.id.action_mediabrowser);
 
         if (conversation != null) {
-            if (conversation.getMode() == Conversation.MODE_MULTI) {
+            /*if (conversation.getMode() == Conversation.MODE_MULTI) {
                 menuInviteContact.setVisible(conversation.getMucOptions().canInvite());
                 menuArchiveChat.setTitle(R.string.action_end_conversation_muc);
             } else {
                 menuInviteContact.setVisible(false);
                 menuArchiveChat.setTitle(R.string.action_end_conversation);
+            }*/
+			if (conversation.getMode() == Conversation.MODE_SINGLE) {
+				menuArchiveChat.setVisible(true);
+                menuArchiveChat.setTitle(R.string.action_end_conversation);
+            } else {
+				menuArchiveChat.setVisible(false);
+                menuArchiveChat.setTitle(R.string.action_end_conversation_muc);
             }
             Fragment secondaryFragment = activity.getFragmentManager().findFragmentById(R.id.secondary_fragment);
             if (secondaryFragment instanceof ConversationFragment) {
@@ -1134,7 +1141,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
             ConversationMenuConfigurator.configureAttachmentMenu(conversation, menu, activity.xmppConnectionService.getAttachmentChoicePreference(), hasAttachments);
             ConversationMenuConfigurator.configureEncryptionMenu(conversation, menu);
         } else {
-            menuInviteContact.setVisible(false);
+            //menuInviteContact.setVisible(false);
             menuGroupDetails.setVisible(false);
             menuContactDetails.setVisible(false);
             menuMediaBrowser.setVisible(false);
@@ -1423,7 +1430,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
             case R.id.action_archive_chat:
                 if (conversation.getMode() == Conversation.MODE_SINGLE) {
                     activity.xmppConnectionService.archiveConversation(conversation);
-                } else {
+                } /*else {
                     activity.runOnUiThread(() -> {
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                         builder.setTitle(getString(R.string.action_end_conversation_muc));
@@ -1435,11 +1442,11 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
                                 });
                         builder.create().show();
                     });
-                }
+                }*/
                 break;
-            case R.id.action_invite:
+            /*case R.id.action_invite:
                 startActivityForResult(ChooseContactActivity.create(activity, conversation), REQUEST_INVITE_TO_CONVERSATION);
-                break;
+                break;*/
             case R.id.action_clear_history:
                 clearHistoryDialog(conversation);
                 break;
@@ -3178,7 +3185,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
         if (received) {
             if (message.getConversation() instanceof Conversation && message.getConversation().getMode() == Conversation.MODE_MULTI) {
                 Jid tcp = message.getTrueCounterpart();
-                Jid user = message.getCounterpart();
+                /*Jid user = message.getCounterpart();
                 if (user != null && !user.isBareJid()) {
                     final MucOptions mucOptions = ((Conversation) message.getConversation()).getMucOptions();
                     if (mucOptions.participating() || ((Conversation) message.getConversation()).getNextCounterpart() != null) {
@@ -3189,7 +3196,13 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
                     } else {
                         ToastCompat.makeText(getActivity(), R.string.you_are_not_participating, Toast.LENGTH_SHORT).show();
                     }
-                }
+                }*/
+				final Jid jid = message.getTrueCounterpart();
+				final Account account = conversation.getAccount();
+				final Contact contact = jid == null ? null : account.getRoster().getContact(jid);
+				if (contact != null) {
+					activity.switchToContactDetails(contact, fingerprint);
+				}
                 return;
             } else {
                 if (!message.getContact().isSelf()) {

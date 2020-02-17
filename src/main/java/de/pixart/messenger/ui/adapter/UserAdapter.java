@@ -18,7 +18,9 @@ import org.openintents.openpgp.util.OpenPgpUtils;
 import de.pixart.messenger.R;
 import de.pixart.messenger.crypto.PgpEngine;
 import de.pixart.messenger.databinding.ContactBinding;
+import de.pixart.messenger.entities.Account;
 import de.pixart.messenger.entities.Contact;
+import de.pixart.messenger.entities.Conversation;
 import de.pixart.messenger.entities.MucOptions;
 import de.pixart.messenger.services.XmppConnectionService;
 import de.pixart.messenger.ui.ConferenceDetailsActivity;
@@ -70,9 +72,16 @@ public class UserAdapter extends ListAdapter<MucOptions.User, UserAdapter.ViewHo
         AvatarWorkerTask.loadAvatar(user, viewHolder.binding.contactPhoto, R.dimen.avatar);
         viewHolder.binding.getRoot().setOnClickListener(v -> {
             final XmppActivity activity = XmppActivity.find(v);
-            if (activity != null) {
-                activity.highlightInMuc(user.getConversation(), user.getName());
+			final Conversation conversation = user.getConversation();
+			final Jid jid = user.getRealJid();
+			final Account account = conversation.getAccount();
+			final Contact contact = jid == null ? null : account.getRoster().getContact(jid);
+            if (activity != null && contact != null) {
+				activity.switchToContactDetails(contact, null);
             }
+            /*if (activity != null) {
+                activity.highlightInMuc(user.getConversation(), user.getName());
+            }*/
         });
         viewHolder.binding.getRoot().setTag(user);
         viewHolder.binding.getRoot().setOnCreateContextMenuListener(this);

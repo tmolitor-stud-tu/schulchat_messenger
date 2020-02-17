@@ -709,7 +709,9 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
                 showBlocklist.setVisible(false);
             }
             reconnect.setVisible(true);
-            mamPrefs.setVisible(mAccount.getXmppConnection().getFeatures().mam());
+            //mamPrefs.setVisible(mAccount.getXmppConnection().getFeatures().mam());
+			mamPrefs.setVisible(false);
+			showMoreInfo.setVisible(false);
         } else {
             reconnect.setVisible(false);
             showBlocklist.setVisible(false);

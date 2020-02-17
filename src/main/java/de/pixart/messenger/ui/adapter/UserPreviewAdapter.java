@@ -13,9 +13,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import de.pixart.messenger.R;
 import de.pixart.messenger.databinding.UserPreviewBinding;
 import de.pixart.messenger.entities.MucOptions;
+import de.pixart.messenger.entities.Account;
+import de.pixart.messenger.entities.Contact;
+import de.pixart.messenger.entities.Conversation;
 import de.pixart.messenger.ui.XmppActivity;
 import de.pixart.messenger.ui.util.AvatarWorkerTask;
 import de.pixart.messenger.ui.util.MucDetailsContextMenuHelper;
+import rocks.xmpp.addr.Jid;
+
 
 public class UserPreviewAdapter extends ListAdapter<MucOptions.User, UserPreviewAdapter.ViewHolder> implements View.OnCreateContextMenuListener {
 
@@ -37,9 +42,16 @@ public class UserPreviewAdapter extends ListAdapter<MucOptions.User, UserPreview
         AvatarWorkerTask.loadAvatar(user, viewHolder.binding.avatar, R.dimen.media_size);
         viewHolder.binding.getRoot().setOnClickListener(v -> {
             final XmppActivity activity = XmppActivity.find(v);
-            if (activity != null) {
-                activity.highlightInMuc(user.getConversation(), user.getName());
+			final Conversation conversation = user.getConversation();
+			final Jid jid = user.getRealJid();
+			final Account account = conversation.getAccount();
+			final Contact contact = jid == null ? null : account.getRoster().getContact(jid);
+            if (activity != null && contact != null) {
+				activity.switchToContactDetails(contact, null);
             }
+            /*if (activity != null) {
+                activity.highlightInMuc(user.getConversation(), user.getName());
+            }*/
         });
         viewHolder.binding.getRoot().setOnCreateContextMenuListener(this);
         viewHolder.binding.getRoot().setTag(user);

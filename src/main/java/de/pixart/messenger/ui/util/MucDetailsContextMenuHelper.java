@@ -77,7 +77,7 @@ public final class MucDetailsContextMenuHelper {
             title.setVisible(false);
         }
         //MenuItem sendPrivateMessage = menu.findItem(R.id.send_private_message);
-        MenuItem blockUnblockMUCUser = menu.findItem(R.id.context_muc_contact_block_unblock);
+        //MenuItem blockUnblockMUCUser = menu.findItem(R.id.context_muc_contact_block_unblock);
         if (user != null && user.getRealJid() != null) {
             MenuItem showContactDetails = menu.findItem(R.id.action_contact_details);
             MenuItem startConversation = menu.findItem(R.id.start_conversation);
@@ -93,8 +93,8 @@ public final class MucDetailsContextMenuHelper {
             removeFromRoom.setTitle(isGroupChat ? R.string.kick_from_room : R.string.remove_from_channel);
             MenuItem banFromConference = menu.findItem(R.id.ban_from_room);
             banFromConference.setTitle(isGroupChat ? R.string.ban_from_conference : R.string.ban_from_channel);
-            MenuItem invite = menu.findItem(R.id.invite);
-            MenuItem highlightInMuc = menu.findItem(R.id.highlight_in_muc);*/
+            MenuItem invite = menu.findItem(R.id.invite);*/
+            MenuItem highlightInMuc = menu.findItem(R.id.highlight_in_muc);
             startConversation.setVisible(true);
             final Jid jid = user.getRealJid();
             final Account account = conversation.getAccount();
@@ -107,9 +107,9 @@ public final class MucDetailsContextMenuHelper {
                 //invite.setVisible(true);
             }
             if (activity instanceof ConversationsActivity) {
-                //highlightInMuc.setVisible(false);
+                highlightInMuc.setVisible(false);
             } else if (activity instanceof ConferenceDetailsActivity) {
-                //highlightInMuc.setVisible(true);
+                highlightInMuc.setVisible(false);
             }
             boolean managePermissionsVisible = false;
             /*if ((self.getAffiliation().ranks(MucOptions.Affiliation.ADMIN) && self.getAffiliation().outranks(user.getAffiliation())) || self.getAffiliation() == MucOptions.Affiliation.OWNER) {
@@ -154,11 +154,11 @@ public final class MucDetailsContextMenuHelper {
             //managePermissions.setVisible(managePermissionsVisible);
             //sendPrivateMessage.setVisible(true);
             //sendPrivateMessage.setEnabled(mucOptions.allowPm());
-            blockUnblockMUCUser.setVisible(true);
+            //blockUnblockMUCUser.setVisible(true);
         } else {
             //sendPrivateMessage.setVisible(true);
             //sendPrivateMessage.setEnabled(user != null && mucOptions.allowPm() && user.getRole().ranks(MucOptions.Role.VISITOR));
-            blockUnblockMUCUser.setVisible(user != null);
+            //blockUnblockMUCUser.setVisible(user != null);
         }
     }
 
@@ -219,7 +219,7 @@ public final class MucDetailsContextMenuHelper {
                     activity.xmppConnectionService.invite(conversation, jid);
                 }
                 return true;*/
-            case R.id.context_muc_contact_block_unblock:
+            /*case R.id.context_muc_contact_block_unblock:
                 try {
                     activity.xmppConnectionService.sendBlockRequest(new RawBlockable(account, user.getFullJid()), false);
                     activity.xmppConnectionService.leaveMuc(conversation);
@@ -227,10 +227,10 @@ public final class MucDetailsContextMenuHelper {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                return true;
-            /*case R.id.highlight_in_muc:
-                activity.highlightInMuc(conversation, user.getName());
                 return true;*/
+            case R.id.highlight_in_muc:
+                activity.highlightInMuc(conversation, user.getName());
+                return true;
             default:
                 return false;
         }
