@@ -692,6 +692,7 @@ public abstract class XmppActivity extends ActionBarActivity {
 
     }
 
+    /*
     public void showAddToRosterDialog(final Conversation conversation) {
         showAddToRosterDialog(conversation.getContact());
     }
@@ -707,6 +708,7 @@ public abstract class XmppActivity extends ActionBarActivity {
         builder.setPositiveButton(getString(R.string.add_contact), (dialog, which) -> xmppConnectionService.createContact(contact, true));
         builder.create().show();
     }
+    */
 
     private void showAskForPresenceDialog(final Contact contact) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);

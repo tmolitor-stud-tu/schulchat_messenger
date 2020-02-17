@@ -401,6 +401,7 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
         BlockContactDialog.show(this, (Contact) contacts.get(position));
     }
 
+    /*
     protected void deleteContact() {
         final int position = contact_context_id;
         final Contact contact = (Contact) contacts.get(position);
@@ -414,7 +415,9 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
         });
         builder.create().show();
     }
+    */
 
+    /*
     protected void deleteConference() {
         int position = conference_context_id;
         final Bookmark bookmark = (Bookmark) conferences.get(position);
@@ -431,6 +434,7 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
         builder.create().show();
 
     }
+    */
 
     //@SuppressLint("InflateParams")
     /*protected void showCreateContactDialog(final String prefilledJid, final Invite invite) {

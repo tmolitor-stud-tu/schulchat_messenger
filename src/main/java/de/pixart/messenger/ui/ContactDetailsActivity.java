@@ -450,16 +450,16 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
             }
         }
 
-        binding.jid.setText(IrregularUnicodeDetector.style(this, contact.getJid()));
+        //binding.jid.setText(IrregularUnicodeDetector.style(this, contact.getJid()));
         String account;
         if (Config.DOMAIN_LOCK != null) {
             account = contact.getAccount().getJid().getLocal();
         } else {
             account = contact.getAccount().getJid().asBareJid().toString();
         }
-        binding.detailsAccount.setText(getString(R.string.using_account, account));
+        //binding.detailsAccount.setText(getString(R.string.using_account, account));
         AvatarWorkerTask.loadAvatar(contact, binding.detailsContactBadge, R.dimen.avatar_on_details_screen_size);
-        binding.detailsContactBadge.setOnClickListener(this.onBadgeClick);
+        //binding.detailsContactBadge.setOnClickListener(this.onBadgeClick);
         binding.detailsContactBadge.setOnLongClickListener(v -> {
             final ImageView view = new ImageView(ContactDetailsActivity.this);
             view.setAdjustViewBounds(true);
@@ -473,12 +473,13 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
             builder.create().show();
             return true;
         });
+        /*
         if (xmppConnectionService.multipleAccounts()) {
             binding.detailsAccount.setVisibility(View.VISIBLE);
         } else {
             binding.detailsAccount.setVisibility(View.GONE);
         }
-
+        */
         binding.detailsContactKeys.removeAllViews();
         boolean hasKeys = false;
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);

@@ -1395,8 +1395,8 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
     private void showPassword() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final View view = getLayoutInflater().inflate(R.layout.dialog_show_password, null);
-        final TextView password = view.findViewById(R.id.password);
-        password.setText(mAccount.getPassword());
+        //final TextView password = view.findViewById(R.id.password);
+        //password.setText(mAccount.getPassword());
         builder.setTitle(R.string.password);
         builder.setView(view);
         builder.setPositiveButton(R.string.cancel, null);
