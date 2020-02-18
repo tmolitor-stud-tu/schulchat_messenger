@@ -105,7 +105,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
 
-        versionCode 7
+        versionCode 9
         versionName "1.0"
         resConfigs "de", "en"
 
