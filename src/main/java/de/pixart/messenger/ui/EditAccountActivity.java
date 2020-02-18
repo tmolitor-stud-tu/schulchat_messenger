@@ -909,7 +909,8 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
             case R.id.mgmt_account_announce_pgp:
                 publishOpenPGPPublicKey(mAccount);
                 return true;
-            /*case R.id.mgmt_account_password_forgotten:
+            /*
+            case R.id.mgmt_account_password_forgotten:
                 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle(R.string.password_forgotten_title);
                 builder.setMessage(R.string.password_forgotten_text);
@@ -923,7 +924,8 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
                         e.printStackTrace();
                     }
                 });
-                builder.create().show();*/
+                builder.create().show();
+        */
         }
         return super.onOptionsItemSelected(item);
     }
@@ -1392,6 +1394,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
         xmppConnectionService.fetchMamPreferences(mAccount, this);
     }
 
+    /*
     private void showPassword() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final View view = getLayoutInflater().inflate(R.layout.dialog_show_password, null);
@@ -1402,6 +1405,7 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
         builder.setPositiveButton(R.string.cancel, null);
         builder.create().show();
     }
+    */
 
     @Override
     public void onKeyStatusUpdated(AxolotlService.FetchStatus report) {

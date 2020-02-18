@@ -449,8 +449,9 @@ public class ContactDetailsActivity extends OmemoActivity implements OnAccountUp
                 binding.detailsLastseen.setText(getString(R.string.account_status_online));*/
             }
         }
-
-        //binding.jid.setText(IrregularUnicodeDetector.style(this, contact.getJid()));
+        AvatarWorkerTask.loadAvatar(contact, binding.detailsContactBadge, R.dimen.avatar_big);
+        /*
+        binding.jid.setText(IrregularUnicodeDetector.style(this, contact.getJid()));
         String account;
         if (Config.DOMAIN_LOCK != null) {
             account = contact.getAccount().getJid().getLocal();

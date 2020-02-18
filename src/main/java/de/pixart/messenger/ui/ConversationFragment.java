@@ -3160,8 +3160,6 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
             final Menu menu = popupMenu.getMenu();
             popupMenu.setOnMenuItemClickListener(item -> {
                 switch (item.getItemId()) {
-
-
                     /*case R.id.action_show_qr_code:
                         activity.showQrCode(conversation.getAccount().getShareableUri());
                         break;*/
