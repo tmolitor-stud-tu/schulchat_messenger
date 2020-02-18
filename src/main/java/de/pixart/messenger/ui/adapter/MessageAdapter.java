@@ -1232,8 +1232,9 @@ public class MessageAdapter extends ArrayAdapter<Message> implements CopyTextVie
                     } else {
                         displayDownloadableMessage(viewHolder,
                                 message,
-                                activity.getString(R.string.check_x_filesize,
-                                        UIHelper.getFileDescriptionString(activity, message)),
+                                activity.getString(R.string.check_x_filesize_on_host,
+                                        UIHelper.getFileDescriptionString(activity, message),
+                                        url.getHost()),
                                 darkBackground);
                     }
                 } catch (Exception e) {
