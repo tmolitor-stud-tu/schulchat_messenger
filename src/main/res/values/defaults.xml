@@ -71,6 +71,10 @@
     <string name="theme_color">blue</string>
     <string name="default_font_size">small</string>
     <string name="default_channel_discovery">LOCAL_SERVER</string>
+    <bool name="use_unicolored_chatbg">false</bool>
+    <bool name="alternative_voice_settings">false</bool>
+    <bool name="use_colored_muc_names">false</bool>
+    <bool name="show_videos_images_only">false</bool>
 
     <string-array name="domains"></string-array>
 

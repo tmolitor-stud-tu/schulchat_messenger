@@ -215,7 +215,6 @@
     <string name="channel_bare_jid_example">channel@conference.example.com</string>
     <string name="save_as_bookmark">Save as bookmark</string>
     <string name="delete_bookmark">Delete bookmark</string>
-    <string name="bookmark_already_exists">This bookmark already exists</string>
     <string name="topic">Topic</string>
     <string name="joining_conference">Joining group chat…</string>
     <string name="leave">Leave</string>
@@ -936,9 +935,9 @@
     <string name="please_enter_password">Please enter the password for this account</string>
     <string name="unable_to_perform_this_action">Unable to perform this action</string>
     <string name="waiting_for_transfer">Waiting for transfer</string>
-    <string name="x_has_written">%s has written:</string>
-    <string name="i_have_written">I have written:</string>
-    <string name="your_status">Your statusmessage:</string>
+    <string name="x_has_written">%s Wrote:</string>
+    <string name="i_have_written">I Wrote:</string>
+    <string name="your_status">Your status</string>
     <string name="pref_use_invidious">Replace YouTube links with Invidious</string>
     <string name="pref_use_invidious_summary">Invidious is a privacy friendly alternative to YouTube</string>
     <string name="this_device">This device</string>
@@ -1000,4 +999,14 @@
     <string name="scan_qr_code_text">Add your account by scanning your QR code</string>
     <!--<string name="scan_qr_code_text">THIS IS A CLOSED BETA</string>-->
     <string name="error_closed_beta">This is a closed beta</string>
+    <string name="pref_use_unicolored_chatbg_summary">Use unicolored background in chats.</string>
+    <string name="pref_use_unicolored_chatbg">Use unicolored background</string>
+    <string name="pref_alternative_voice_settings_summary">If you have problems during voice recording, use this setting to change the codec.</string>
+    <string name="pref_alternative_voice_settings">Alternative voice recording method</string>
+    <string name="pref_use_colored_muc_names_summary">Colorize nicknames in group chats or channels like default avatar backgrounds.</string>
+    <string name="pref_use_colored_muc_names">Colorize nicknames</string>
+    <string name="show_videos_images_only">Only images/videos</string>
+    <string name="show_avatar">Show avatar</string>
+    <string name="action_delete">Delete</string>
+    <string name="hosted_on">hosted on %s</string>
 </resources>

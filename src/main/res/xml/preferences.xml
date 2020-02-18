@@ -37,6 +37,16 @@
             android:title="@string/pref_font_size" />
         <!--
         <CheckBoxPreference
+            android:defaultValue="@bool/use_unicolored_chatbg"
+            android:key="unicolored_chatbg"
+            android:summary="@string/pref_use_unicolored_chatbg_summary"
+            android:title="@string/pref_use_unicolored_chatbg" />
+        <CheckBoxPreference
+            android:defaultValue="@bool/use_colored_muc_names"
+            android:key="colored_muc_names"
+            android:summary="@string/pref_use_colored_muc_names_summary"
+            android:title="@string/pref_use_colored_muc_names" />
+        <CheckBoxPreference
             android:defaultValue="@bool/send_button_status"
             android:key="send_button_status"
             android:summary="@string/pref_use_send_button_to_indicate_status_summary"
@@ -206,6 +216,99 @@
     </PreferenceScreen>
     <!--Attachments-->
     <PreferenceScreen
+        android:icon="?attr/ic_settings_attachments"
+        android:key="attachments"
+        android:title="@string/pref_attachments">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="de.pixart.messenger.ui.SettingsActivity"
+            android:targetPackage="@string/applicationId">
+            <extra
+                android:name="page"
+                android:value="attachments" />
+        </intent>
+        <ListPreference
+            android:defaultValue="@integer/auto_accept_filesize_wifi"
+            android:entries="@array/filesizes"
+            android:entryValues="@array/filesizes_values"
+            android:key="auto_accept_file_size_wifi"
+            android:summary="@string/pref_accept_files_summary_wifi"
+            android:title="@string/pref_accept_files_wifi" />
+        <ListPreference
+            android:defaultValue="@integer/auto_accept_filesize_mobile"
+            android:entries="@array/filesizes"
+            android:entryValues="@array/filesizes_values"
+            android:key="auto_accept_file_size_mobile"
+            android:summary="@string/pref_accept_files_summary_mobile"
+            android:title="@string/pref_accept_files_mobile" />
+        <ListPreference
+            android:defaultValue="@integer/auto_accept_filesize_roaming"
+            android:entries="@array/filesizes"
+            android:entryValues="@array/filesizes_values"
+            android:key="auto_accept_file_size_roaming"
+            android:summary="@string/pref_accept_files_summary_mobileroaming"
+            android:title="@string/pref_accept_files_mobileroaming" />
+        <ListPreference
+            android:defaultValue="@string/image_compression"
+            android:entries="@array/image_compression_entries"
+            android:entryValues="@array/image_compression_values"
+            android:key="image_compression"
+            android:summary="@string/pref_picture_quality_summary"
+            android:title="@string/pref_picture_quality" />
+        <ListPreference
+            android:defaultValue="@string/video_compression"
+            android:entries="@array/video_compression_entries"
+            android:entryValues="@array/video_compression_values"
+            android:key="video_compression"
+            android:summary="@string/pref_video_quality_summary"
+            android:title="@string/pref_video_quality" />
+        <CheckBoxPreference
+            android:defaultValue="@bool/alternative_voice_settings"
+            android:key="alternative_voice_settings"
+            android:summary="@string/pref_alternative_voice_settings_summary"
+            android:title="@string/pref_alternative_voice_settings" />
+    </PreferenceScreen>
+    <!--status-->
+    <PreferenceScreen
+        android:icon="?attr/ic_settings_status"
+        android:key="presence"
+        android:title="@string/pref_presence_settings">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="de.pixart.messenger.ui.SettingsActivity"
+            android:targetPackage="@string/applicationId">
+            <extra
+                android:name="page"
+                android:value="presence" />
+        </intent>
+        <CheckBoxPreference
+            android:defaultValue="@bool/manually_change_presence"
+            android:disableDependentsState="true"
+            android:key="manually_change_presence"
+            android:summary="@string/pref_manually_change_presence_summary"
+            android:title="@string/pref_manually_change_presence" />
+        <CheckBoxPreference
+            android:defaultValue="@bool/away_when_screen_off"
+            android:dependency="manually_change_presence"
+            android:key="away_when_screen_off"
+            android:summary="@string/pref_away_when_screen_off_summary"
+            android:title="@string/pref_away_when_screen_off" />
+        <CheckBoxPreference
+            android:defaultValue="@bool/dnd_on_silent_mode"
+            android:dependency="manually_change_presence"
+            android:key="dnd_on_silent_mode"
+            android:summary="@string/pref_dnd_on_silent_mode_summary"
+            android:title="@string/pref_dnd_on_silent_mode" />
+        <CheckBoxPreference
+            android:defaultValue="@bool/treat_vibrate_as_silent"
+            android:dependency="dnd_on_silent_mode"
+            android:key="treat_vibrate_as_silent"
+            android:summary="@string/pref_treat_vibrate_as_dnd_summary"
+            android:title="@string/pref_treat_vibrate_as_silent" />
+    </PreferenceScreen>
+    <!--Security and Privacy-->
+    <PreferenceScreen
+>>>>>>> PixArtMessenger/master
         android:icon="?attr/ic_settings_security"
         android:key="security"
         android:title="@string/pref_security_settings">

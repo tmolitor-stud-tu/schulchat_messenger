@@ -401,6 +401,130 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
         BlockContactDialog.show(this, (Contact) contacts.get(position));
     }
 
+    /*
+    protected void deleteContact() {
+        final int position = contact_context_id;
+        final Contact contact = (Contact) contacts.get(position);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setNegativeButton(R.string.cancel, null);
+        builder.setTitle(R.string.action_delete_contact);
+        builder.setMessage(JidDialog.style(this, R.string.remove_contact_text, contact.getJid().toEscapedString()));
+        builder.setPositiveButton(R.string.delete, (dialog, which) -> {
+            xmppConnectionService.deleteContactOnServer(contact);
+            filter(mSearchEditText.getText().toString());
+        });
+        builder.create().show();
+    }
+
+    protected void deleteConference() {
+        int position = conference_context_id;
+        final Bookmark bookmark = (Bookmark) conferences.get(position);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setNegativeButton(R.string.cancel, null);
+        builder.setTitle(R.string.delete_bookmark);
+        builder.setMessage(JidDialog.style(this, R.string.remove_bookmark_text, bookmark.getJid().toEscapedString()));
+        builder.setPositiveButton(R.string.delete, (dialog, which) -> {
+            bookmark.setConversation(null);
+            final Account account = bookmark.getAccount();
+            xmppConnectionService.deleteBookmark(account, bookmark);
+            filter(mSearchEditText.getText().toString());
+        });
+        builder.create().show();
+
+    }
+
+    @SuppressLint("InflateParams")
+    protected void showCreateContactDialog(final String prefilledJid, final Invite invite) {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG_DIALOG);
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        boolean multiAccount = false;
+        try {
+            multiAccount = xmppConnectionService.multipleAccounts();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        ft.addToBackStack(null);
+        EnterJidDialog dialog = EnterJidDialog.newInstance(
+                mActivatedAccounts,
+                getString(R.string.add_contact),
+                getString(R.string.add),
+                prefilledJid,
+                invite == null ? null : invite.account,
+                invite == null || !invite.hasFingerprints(),
+                multiAccount,
+                true
+        );
+
+        dialog.setOnEnterJidDialogPositiveListener((accountJid, contactJid) -> {
+            if (!xmppConnectionServiceBound) {
+                return false;
+            }
+
+            final Account account = xmppConnectionService.findAccountByJid(accountJid);
+            if (account == null) {
+                return true;
+            }
+
+            final Contact contact = account.getRoster().getContact(contactJid);
+            if (invite != null && invite.getName() != null) {
+                contact.setServerName(invite.getName());
+            }
+            if (contact.isSelf()) {
+                switchToConversation(contact);
+                return true;
+            } else if (contact.showInRoster()) {
+                throw new EnterJidDialog.JidError(getString(R.string.contact_already_exists));
+            } else {
+                xmppConnectionService.createContact(contact, true);
+                if (invite != null && invite.hasFingerprints()) {
+                    xmppConnectionService.verifyFingerprints(contact, invite.getFingerprints());
+                }
+                switchToConversationDoNotAppend(contact, invite == null ? null : invite.getBody());
+                return true;
+            }
+        });
+
+        dialog.show(ft, FRAGMENT_TAG_DIALOG);
+    }
+
+    @SuppressLint("InflateParams")
+    protected void showJoinConferenceDialog(final String prefilledJid) {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG_DIALOG);
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+        JoinConferenceDialog joinConferenceFragment = JoinConferenceDialog.newInstance(prefilledJid, mActivatedAccounts, xmppConnectionService.multipleAccounts());
+        joinConferenceFragment.show(ft, FRAGMENT_TAG_DIALOG);
+    }
+
+    private void showCreatePrivateGroupChatDialog() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG_DIALOG);
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+        CreatePrivateGroupChatDialog createConferenceFragment = CreatePrivateGroupChatDialog.newInstance(mActivatedAccounts, xmppConnectionService.multipleAccounts());
+        createConferenceFragment.show(ft, FRAGMENT_TAG_DIALOG);
+    }
+
+    private void showPublicChannelDialog() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment prev = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG_DIALOG);
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+        CreatePublicChannelDialog dialog = CreatePublicChannelDialog.newInstance(mActivatedAccounts);
+        dialog.show(ft, FRAGMENT_TAG_DIALOG);
+    }
+    */
+
     public static Account getSelectedAccount(Context context, Spinner spinner) {
         if (spinner == null || !spinner.isEnabled()) {
             return null;
@@ -556,7 +680,7 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
             if (checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
                 if (mRequestedContactsPermission.compareAndSet(false, true)) {
                     if (shouldShowRequestPermissionRationale(Manifest.permission.READ_CONTACTS)) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                         builder.setTitle(R.string.sync_with_contacts);
                         builder.setMessage(R.string.sync_with_contacts_long);
                         builder.setPositiveButton(R.string.next, (dialog, which) -> requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, REQUEST_SYNC_CONTACTS));
@@ -676,11 +800,11 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
     }
 
     private void displayVerificationWarningDialog(final Contact contact, final Invite invite) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.verify_omemo_keys);
-        View view = getLayoutInflater().inflate(R.layout.dialog_verify_fingerprints, null);
+        final View view = getLayoutInflater().inflate(R.layout.dialog_verify_fingerprints, null);
         final CheckBox isTrustedSource = view.findViewById(R.id.trusted_source);
-        TextView warning = view.findViewById(R.id.warning);
+        final TextView warning = view.findViewById(R.id.warning);
         warning.setText(JidDialog.style(this, R.string.verifying_omemo_keys_trusted_source, contact.getJid().asBareJid().toEscapedString(), contact.getDisplayName()));
         builder.setView(view);
         builder.setPositiveButton(R.string.confirm, (dialog, which) -> {
@@ -690,7 +814,7 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
             switchToConversationDoNotAppend(contact, invite.getBody());
         });
         builder.setNegativeButton(R.string.cancel, (dialog, which) -> StartConversationActivity.this.finish());
-        AlertDialog dialog = builder.create();
+        final AlertDialog dialog = builder.create();
         dialog.setCanceledOnTouchOutside(false);
         dialog.setOnCancelListener(dialog1 -> StartConversationActivity.this.finish());
         dialog.show();
@@ -812,10 +936,12 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
         }
 
         if (isBookmarkChecked) {
-            if (account.hasBookmarkFor(conferenceJid)) {
-                layout.setError(getString(R.string.bookmark_already_exists));
+            Bookmark bookmark = account.getBookmark(conferenceJid);
+            if (bookmark != null) {
+                dialog.dismiss();
+                openConversationsForBookmark(bookmark);
             } else {
-                final Bookmark bookmark = new Bookmark(account, conferenceJid.asBareJid());
+                bookmark = new Bookmark(account, conferenceJid.asBareJid());
                 bookmark.setAutojoin(getBooleanPreference("autojoin", R.bool.autojoin));
                 final String nick = conferenceJid.getResource();
                 if (nick != null && !nick.isEmpty() && !nick.equals(MucOptions.defaultNick(account))) {
@@ -909,6 +1035,10 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
             final AdapterView.AdapterContextMenuInfo acmi = (AdapterContextMenuInfo) menuInfo;
             if (mResContextMenu == R.menu.conference_context) {
                 activity.conference_context_id = acmi.position;
+                /*final Bookmark bookmark = (Bookmark) activity.conferences.get(acmi.position);
+                final Conversation conversation = bookmark.getConversation();
+                final MenuItem share = menu.findItem(R.id.context_share_uri);
+                share.setVisible(conversation == null || !conversation.isPrivateAndNonAnonymous());*/
             } else if (mResContextMenu == R.menu.contact_context) {
                 activity.contact_context_id = acmi.position;
                 final Contact contact = (Contact) activity.contacts.get(acmi.position);
@@ -917,7 +1047,10 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
                 if (contact.isSelf()) {
                     showContactDetailsItem.setVisible(false);
                 }
-                XmppConnection xmpp = contact.getAccount().getXmppConnection();
+                /*
+                deleteContactMenuItem.setVisible(contact.showInRoster() && !contact.getOption(Contact.Options.SYNCED_VIA_OTHER));
+                */
+                final XmppConnection xmpp = contact.getAccount().getXmppConnection();
                 if (xmpp != null && xmpp.getFeatures().blocking() && !contact.isSelf()) {
                     if (contact.isBlocked()) {
                         blockUnblockItem.setTitle(R.string.unblock_contact);

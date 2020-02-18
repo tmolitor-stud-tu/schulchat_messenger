@@ -14,6 +14,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.graphics.pdf.PdfRenderer;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -26,6 +27,7 @@ import android.system.Os;
 import android.system.StructStat;
 import android.util.Base64;
 import android.util.Base64OutputStream;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.LruCache;
 
@@ -63,6 +65,7 @@ import de.pixart.messenger.entities.Message;
 import de.pixart.messenger.services.AttachFileToConversationRunnable;
 import de.pixart.messenger.services.XmppConnectionService;
 import de.pixart.messenger.ui.util.Attachment;
+import de.pixart.messenger.utils.Compatibility;
 import de.pixart.messenger.utils.CryptoHelper;
 import de.pixart.messenger.utils.ExifHelper;
 import de.pixart.messenger.utils.FileUtils;
@@ -302,12 +305,12 @@ public class FileBackend {
         return true;
     }
 
-    public List<Attachment> convertToAttachments(List<DatabaseBackend.FilePath> relativeFilePaths) {
-        List<Attachment> attachments = new ArrayList<>();
+    public List<Attachment> convertToAttachments(final List<DatabaseBackend.FilePath> relativeFilePaths) {
+        final List<Attachment> attachments = new ArrayList<>();
         for (DatabaseBackend.FilePath relativeFilePath : relativeFilePaths) {
             final String mime = MimeUtils.guessMimeTypeFromExtension(MimeUtils.extractRelevantExtension(relativeFilePath.path));
             final File file = getFileForPath(relativeFilePath.path, mime);
-            if (file.exists() && mime != null && (mime.startsWith("image/") || mime.startsWith("video/"))) {
+            if (file.exists()) {
                 attachments.add(Attachment.of(relativeFilePath.uuid, file, mime));
             }
         }
@@ -649,9 +652,11 @@ public class FileBackend {
                 }
                 DownloadableFile file = getFile(message);
                 final String mime = file.getMimeType();
-                if (mime.startsWith("video/")) {
+                if ("application/pdf".equals(mime) && Compatibility.runsTwentyOne()) {
+                    thumbnail = getPDFPreview(file, size);
+                } else if (mime.startsWith("video/")) {
                     thumbnail = getVideoPreview(file, size);
-                } else {
+                } else if (mime.startsWith("image/")) {
                     Bitmap fullsize = getFullsizeImagePreview(file, size);
                     if (fullsize == null) {
                         throw new FileNotFoundException();
@@ -669,6 +674,46 @@ public class FileBackend {
             }
         }
         return thumbnail;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private Bitmap getPDFPreview(final File file, int size) {
+        try {
+            final ParcelFileDescriptor mFileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
+            if (mFileDescriptor == null) {
+                return null;
+            }
+            final PdfRenderer renderer = new PdfRenderer(mFileDescriptor);
+            final PdfRenderer.Page page = renderer.openPage(0);
+            final Dimensions dimensions = scalePdfDimensions(new Dimensions(page.getHeight(), page.getWidth()));
+            final Bitmap bitmap = Bitmap.createBitmap(dimensions.width, dimensions.height, Bitmap.Config.ARGB_8888);
+            bitmap.eraseColor(Color.WHITE);
+            page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
+            drawOverlay(bitmap, R.drawable.show_pdf, 0.75f);
+            page.close();
+            renderer.close();
+            return bitmap;
+        } catch (Exception e) {
+            e.printStackTrace();
+            final Bitmap placeholder = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+            placeholder.eraseColor(Color.WHITE);
+            drawOverlay(placeholder, R.drawable.show_pdf, 0.75f);
+            return placeholder;
+        }
+    }
+
+    private Dimensions scalePdfDimensions(final Dimensions dimensions) {
+        final DisplayMetrics displayMetrics = mXmppConnectionService.getResources().getDisplayMetrics();
+        final int target = (int) (displayMetrics.density * 288);
+        final int w, h;
+        if (dimensions.width <= dimensions.height) {
+            w = Math.max((int) (dimensions.width / ((double) dimensions.height / target)), 1);
+            h = target;
+        } else {
+            w = target;
+            h = Math.max((int) (dimensions.height / ((double) dimensions.width / target)), 1);
+        }
+        return new Dimensions(h, w);
     }
 
     private Bitmap getFullsizeImagePreview(File file, int size) {
@@ -752,8 +797,8 @@ public class FileBackend {
         }
     }
 
-    private Bitmap getVideoPreview(File file, int size) throws IOException {
-        MediaMetadataRetriever metadataRetriever = new MediaMetadataRetriever();
+    private Bitmap getVideoPreview(final File file, final int size) {
+        final MediaMetadataRetriever metadataRetriever = new MediaMetadataRetriever();
         Bitmap frame;
         try {
             metadataRetriever.setDataSource(file.getAbsolutePath());
@@ -1139,14 +1184,22 @@ public class FileBackend {
         final boolean audio = mime != null && mime.startsWith("audio/");
         final boolean vcard = mime != null && mime.contains("vcard");
         final boolean apk = mime != null && mime.equals("application/vnd.android.package-archive");
+        final boolean pdf = "application/pdf".equals(mime);
         final StringBuilder body = new StringBuilder();
         if (url != null) {
             body.append(url.toString());
         }
         body.append('|').append(file.getSize());
-        if (image || video) {
+        if (image || video || (pdf && Compatibility.runsTwentyOne())) {
             try {
-                Dimensions dimensions = image ? getImageDimensions(file) : getVideoDimensions(file);
+                final Dimensions dimensions;
+                if (video) {
+                    dimensions = getVideoDimensions(file);
+                } else if (pdf && Compatibility.runsTwentyOne()) {
+                    dimensions = getPDFDimensions(file);
+                } else {
+                    dimensions = getImageDimensions(file);
+                }
                 if (dimensions.valid()) {
                     body.append('|').append(dimensions.width).append('|').append(dimensions.height);
                 }
@@ -1164,6 +1217,31 @@ public class FileBackend {
         message.setBody(body.toString());
         message.setFileDeleted(false);
         message.setType(privateMessage ? Message.TYPE_PRIVATE_FILE : (image ? Message.TYPE_IMAGE : Message.TYPE_FILE));
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private Dimensions getPDFDimensions(final File file) {
+        final ParcelFileDescriptor fileDescriptor;
+        try {
+            fileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
+            if (fileDescriptor == null) {
+                return new Dimensions(0, 0);
+            }
+        } catch (FileNotFoundException e) {
+            return new Dimensions(0, 0);
+        }
+        try {
+            final PdfRenderer pdfRenderer = new PdfRenderer(fileDescriptor);
+            final PdfRenderer.Page page = pdfRenderer.openPage(0);
+            final int height = page.getHeight();
+            final int width = page.getWidth();
+            page.close();
+            pdfRenderer.close();
+            return scalePdfDimensions(new Dimensions(height, width));
+        } catch (IOException e) {
+            Log.d(Config.LOGTAG, "unable to get dimensions for pdf document", e);
+            return new Dimensions(0, 0);
+        }
     }
 
     public static void updateFileParams(Message message, URL url, long size) {
@@ -1305,7 +1383,10 @@ public class FileBackend {
         if (bitmap != null || cacheOnly) {
             return bitmap;
         }
-        if (attachment.getMime() != null && attachment.getMime().startsWith("video/")) {
+        DownloadableFile file = new DownloadableFile(attachment.getUri().getPath());
+        if ("application/pdf".equals(attachment.getMime()) && Compatibility.runsTwentyOne()) {
+            bitmap = cropCenterSquare(getPDFPreview(file, size), size);
+        } else if (attachment.getMime() != null && attachment.getMime().startsWith("video/")) {
             bitmap = cropCenterSquareVideo(attachment.getUri(), size);
             drawOverlay(bitmap, R.drawable.play_video, 0.75f);
         } else {

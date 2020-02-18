@@ -1,9 +1,14 @@
 package de.pixart.messenger.utils;
 
 import android.content.Context;
+import android.graphics.Typeface;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.format.DateFormat;
 import android.text.format.DateUtils;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.util.Pair;
 
 import androidx.annotation.ColorInt;
@@ -29,6 +34,7 @@ import de.pixart.messenger.entities.MucOptions;
 import de.pixart.messenger.entities.Presence;
 import de.pixart.messenger.entities.Transferable;
 import de.pixart.messenger.services.ExportBackupService;
+import de.pixart.messenger.services.XmppConnectionService;
 import rocks.xmpp.addr.Jid;
 
 import static de.pixart.messenger.entities.Message.DELETED_MESSAGE_BODY;
@@ -497,6 +503,16 @@ public class UIHelper {
         } else {
             return mime;
         }
+    }
+
+    public static SpannableString getColoredUsername(final XmppConnectionService service, final Message message) {
+        final SpannableString user;
+        user = SpannableString.valueOf(UIHelper.getMessageDisplayName(message));
+        user.setSpan(new StyleSpan(Typeface.BOLD), 0, user.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        if (service.colored_muc_names()) {
+            user.setSpan(new ForegroundColorSpan(message.getAvatarBackgroundColor()), 0, user.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
+        return user;
     }
 
     public static String getMessageDisplayName(final Message message) {

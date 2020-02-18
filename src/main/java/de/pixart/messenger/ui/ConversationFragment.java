@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
@@ -46,6 +47,7 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
@@ -58,6 +60,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.inputmethod.InputConnectionCompat;
 import androidx.core.view.inputmethod.InputContentInfoCompat;
 import androidx.databinding.DataBindingUtil;
@@ -100,6 +103,7 @@ import de.pixart.messenger.ui.adapter.MediaPreviewAdapter;
 import de.pixart.messenger.ui.adapter.MessageAdapter;
 import de.pixart.messenger.ui.util.ActivityResult;
 import de.pixart.messenger.ui.util.Attachment;
+import de.pixart.messenger.ui.util.AvatarWorkerTask;
 import de.pixart.messenger.ui.util.ConversationMenuConfigurator;
 import de.pixart.messenger.ui.util.DateSeparator;
 import de.pixart.messenger.ui.util.EditMessageActionModeCallback;
@@ -111,6 +115,7 @@ import de.pixart.messenger.ui.util.ScrollState;
 import de.pixart.messenger.ui.util.SendButtonAction;
 import de.pixart.messenger.ui.util.SendButtonTool;
 import de.pixart.messenger.ui.util.ShareUtil;
+import de.pixart.messenger.ui.util.StyledAttributes;
 import de.pixart.messenger.ui.util.ViewUtil;
 import de.pixart.messenger.ui.widget.EditMessage;
 import de.pixart.messenger.utils.Compatibility;
@@ -1432,7 +1437,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
                     activity.xmppConnectionService.archiveConversation(conversation);
                 } /*else {
                     activity.runOnUiThread(() -> {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                         builder.setTitle(getString(R.string.action_end_conversation_muc));
                         builder.setMessage(getString(R.string.leave_conference_warning));
                         builder.setNegativeButton(getString(R.string.cancel), null);
@@ -1663,6 +1668,16 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
         }
     }
 
+    private void updateChatBG() {
+        if (activity.unicoloredBG()) {
+            binding.conversationsFragment.setBackgroundResource(0);
+            binding.conversationsFragment.setBackgroundColor(StyledAttributes.getColor(activity, R.attr.color_background_tertiary));
+        } else {
+            binding.conversationsFragment.setBackgroundColor(0);
+            binding.conversationsFragment.setBackground(ContextCompat.getDrawable(activity, R.drawable.chatbg));
+        }
+    }
+
     public void startDownloadable(Message message) {
         if (!hasPermissions(REQUEST_START_DOWNLOAD, Manifest.permission.WRITE_EXTERNAL_STORAGE) && !hasPermissions(REQUEST_START_DOWNLOAD, Manifest.permission.READ_EXTERNAL_STORAGE)) {
             this.mPendingDownloadableMessage = message;
@@ -1695,7 +1710,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
 
     @SuppressLint("InflateParams")
     protected void clearHistoryDialog(final Conversation conversation) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getString(R.string.clear_conversation_history));
         final View dialogView = getActivity().getLayoutInflater().inflate(R.layout.dialog_clear_history, null);
         final CheckBox endConversationCheckBox = dialogView.findViewById(R.id.end_conversation_checkbox);
@@ -1778,6 +1793,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
                 break;
             case ATTACHMENT_CHOICE_RECORD_VOICE:
                 intent = new Intent(getActivity(), RecordingActivity.class);
+                intent.putExtra("ALTERNATIVE_CODEC", activity.xmppConnectionService.alternativeVoiceSettings());
                 break;
             case ATTACHMENT_CHOICE_LOCATION:
                 intent = new Intent(getActivity(), ShareLocationActivity.class);
@@ -1853,7 +1869,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
     }
 
     private void showErrorMessage(final Message message) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.error_message);
         final String errorMessage = message.getErrorMessage();
         final String[] errorMessageParts = errorMessage == null ? new String[0] : errorMessage.split("\\u001f");
@@ -1880,7 +1896,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
         while (relevantForCorrection.mergeable(relevantForCorrection.next())) {
             relevantForCorrection = relevantForCorrection.next();
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setNegativeButton(R.string.cancel, null);
         builder.setTitle(R.string.delete_message_dialog);
         builder.setMessage(R.string.delete_message_dialog_msg);
@@ -1909,7 +1925,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
     }
 
     private void deleteFile(final Message message) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setNegativeButton(R.string.cancel, null);
         builder.setTitle(R.string.delete_file_dialog);
         builder.setMessage(R.string.delete_file_dialog_msg);
@@ -2261,7 +2277,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
     private void hasWriteAccessInMUC() {
         if ((conversation.getMode() == Conversation.MODE_MULTI && !conversation.getMucOptions().participating()) && !activity.xmppConnectionService.hideYouAreNotParticipating()) {
             activity.runOnUiThread(() -> {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle(getString(R.string.you_are_not_participating));
                 builder.setMessage(getString(R.string.no_write_access_in_public_muc));
                 builder.setNegativeButton(getString(R.string.hide_warning),
@@ -2521,7 +2537,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
         @Override
         public void onClick(View v) {
             activity.runOnUiThread(() -> {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle(getString(R.string.message_encryption));
                 builder.setMessage(getString(R.string.enable_message_encryption));
                 builder.setNegativeButton(getString(R.string.cancel), null);
@@ -2552,6 +2568,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
                 return;
             }
         }
+        updateChatBG();
         this.refresh(true);
     }
 
@@ -2865,7 +2882,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
     }
 
     public void showNoPGPKeyDialog(boolean plural, DialogInterface.OnClickListener listener) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setIconAttribute(android.R.attr.alertDialogIcon);
         if (plural) {
             builder.setTitle(getString(R.string.no_pgp_keys));
@@ -3116,6 +3133,18 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
                 popupMenu.inflate(R.menu.one_on_one_context);
                 popupMenu.setOnMenuItemClickListener(item -> {
                     switch (item.getItemId()) {
+                        case R.id.action_show_avatar:
+                            final ImageView view = new ImageView(activity);
+                            view.setAdjustViewBounds(true);
+                            view.setMaxHeight(R.dimen.avatar_big);
+                            view.setMaxWidth(R.dimen.avatar_big);
+                            view.setBackgroundColor(Color.WHITE);
+                            view.setScaleType(ImageView.ScaleType.FIT_XY);
+                            AvatarWorkerTask.loadAvatar(contact, view, R.dimen.avatar_big);
+                            final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                            builder.setView(view);
+                            builder.create().show();
+                            break;
                         case R.id.action_contact_details:
                             activity.switchToContactDetails(message.getContact(), fingerprint);
                             break;
