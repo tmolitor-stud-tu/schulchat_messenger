@@ -597,7 +597,7 @@ public class MessageAdapter extends ArrayAdapter<Message> implements CopyTextVie
                     body = new SpannableStringBuilder(body, 0, Config.MAX_DISPLAY_MESSAGE_CHARS);
                     body.append("\u2026");
                 }
-            final Message.MergeSeparator[] mergeSeparators = body.getSpans(0, body.length(), Message.MergeSeparator.class);
+                final Message.MergeSeparator[] mergeSeparators = body.getSpans(0, body.length(), Message.MergeSeparator.class);
                 for (Message.MergeSeparator mergeSeparator : mergeSeparators) {
                     int start = body.getSpanStart(mergeSeparator);
                     int end = body.getSpanEnd(mergeSeparator);
@@ -681,6 +681,7 @@ public class MessageAdapter extends ArrayAdapter<Message> implements CopyTextVie
 
     private void displayOpenableMessage(ViewHolder viewHolder, final Message message, final boolean darkBackground) {
         toggleWhisperInfo(viewHolder, message, false, darkBackground);
+        viewHolder.download_button.setVisibility(View.VISIBLE);
         final String mimeType = message.getMimeType();
         if (mimeType != null && message.getMimeType().contains("vcard")) {
             try {
