@@ -43,7 +43,7 @@
     <bool name="use_bundled_emoji">true</bool>
     <bool name="enable_multi_accounts">false</bool>
     <bool name="show_qr_code_scan">true</bool>
-    <bool name="scroll_to_bottom">true</bool>
+    <bool name="scroll_to_bottom">false</bool>
     <bool name="start_searching">false</bool>
     <bool name="show_record_voice_btn">true</bool>
     <bool name="quick_share_attachment_choice">true</bool>
@@ -60,7 +60,7 @@
     <integer name="auto_accept_filesize_mobile">524288</integer>
     <integer name="auto_accept_filesize_roaming">0</integer>
     <integer name="automatic_message_deletion">31622400</integer>
-    <integer name="grace_period">144</integer>
+    <integer name="grace_period">0</integer>
     <string name="default_resource" translatable="false">Phone</string>
     <string name="notification_ringtone">content://settings/system/notification_sound</string>
     <string name="image_compression">mid</string>
