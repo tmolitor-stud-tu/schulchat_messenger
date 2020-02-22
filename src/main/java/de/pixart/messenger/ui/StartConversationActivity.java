@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
@@ -330,7 +331,9 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
 
     @Override
     public void onNewIntent(final Intent intent) {
-        if (!xmppConnectionServiceBound) {
+        if (xmppConnectionServiceBound) {
+            processViewIntent(intent);
+        } else {
             pendingViewIntent.push(intent);
         }
         setIntent(createLauncherIntent(this));
@@ -432,7 +435,6 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
         builder.create().show();
 
     }
-    
 
     @SuppressLint("InflateParams")
     protected void showCreateContactDialog(final String prefilledJid, final Invite invite) {
@@ -715,10 +717,15 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
         }
         this.mActivatedAccounts.addAll(AccountUtils.getEnabledAccounts(xmppConnectionService));
         configureHomeButton();
-        if (mSearchEditText != null) {
-            filter(mSearchEditText.getText().toString());
-        } else {
+        Intent intent = pendingViewIntent.pop();
+        if (intent != null && processViewIntent(intent)) {
             filter(null);
+        } else {
+            if (mSearchEditText != null) {
+                filter(mSearchEditText.getText().toString());
+            } else {
+                filter(null);
+            }
         }
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG_DIALOG);
         if (fragment != null && fragment instanceof OnBackendConnected) {
@@ -727,7 +734,6 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
         }
     }
 
-    /*
     protected boolean processViewIntent(@NonNull Intent intent) {
         final String inviteUri = intent.getStringExtra(EXTRA_INVITE_URI);
         if (inviteUri != null) {
@@ -759,22 +765,13 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
 
     private boolean handleJid(Invite invite) {
         List<Contact> contacts = xmppConnectionService.findContacts(invite.getJid(), invite.account);
-        if (invite.isAction(XmppUri.ACTION_JOIN)) {
-            Conversation muc = xmppConnectionService.findFirstMuc(invite.getJid());
-            if (muc != null && !invite.forceDialog) {
-                switchToConversationDoNotAppend(muc, invite.getBody());
-                return true;
-            } else {
-                showJoinConferenceDialog(invite.getJid().asBareJid().toString());
-                return false;
-            }
-        } else if (contacts.size() == 0) {
-            showCreateContactDialog(invite.getJid().toString(), invite);
+        if (contacts.size() == 0) {
+            //showCreateContactDialog(invite.getJid().toString(), invite);
             return false;
         } else if (contacts.size() == 1) {
             Contact contact = contacts.get(0);
             if (!invite.isSafeSource() && invite.hasFingerprints()) {
-                displayVerificationWarningDialog(contact, invite);
+                //displayVerificationWarningDialog(contact, invite);
             } else {
                 if (invite.hasFingerprints()) {
                     if (xmppConnectionService.verifyFingerprints(contact, invite.getFingerprints())) {
@@ -800,6 +797,7 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
         }
     }
 
+    /*
     private void displayVerificationWarningDialog(final Contact contact, final Invite invite) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.verify_omemo_keys);
@@ -820,8 +818,8 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
         dialog.setOnCancelListener(dialog1 -> StartConversationActivity.this.finish());
         dialog.show();
     }
-
     */
+
     protected void filter(String needle) {
         if (xmppConnectionServiceBound) {
             this.filterContacts(needle);
@@ -1160,7 +1158,6 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
             return fragments[position];
         }
     }
-/*
 
     public static void addInviteUri(Intent to, Intent from) {
         if (from != null && from.hasExtra(EXTRA_INVITE_URI)) {
@@ -1194,5 +1191,4 @@ public class StartConversationActivity extends XmppActivity implements XmppConne
             return false;
         }
     }
-*/
 }
