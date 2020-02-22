@@ -130,7 +130,7 @@ public class UpdaterActivity extends XmppActivity {
                         if (isStoragePermissionGranted() && isNetworkAvailable(getApplicationContext())) {
                             //start downloading the file using the download manager
                             if (store != null && store.equalsIgnoreCase(PlayStore)) {
-                                Uri uri = Uri.parse("market://details?id=de.pixart.messenger");
+                                Uri uri = Uri.parse("market://details?id=de.kwo.messenger");
                                 Intent marketIntent = new Intent(Intent.ACTION_VIEW, uri);
                                 PackageManager manager = getApplicationContext().getPackageManager();
                                 List<ResolveInfo> infos = manager.queryIntentActivities(marketIntent, 0);
