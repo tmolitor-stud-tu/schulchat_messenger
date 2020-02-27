@@ -33,19 +33,18 @@ repositories {
 }
 
 configurations {
-    playstoreImplementation
     cleanedAnnotations
     compile.exclude group: 'org.jetbrains' , module:'annotations'
 }
 
 dependencies {
     implementation project(':libs:android-transcoder')
-    playstoreImplementation('com.google.firebase:firebase-messaging:20.0.0') {
+    implementation('com.google.firebase:firebase-messaging:20.0.0') {
         exclude group: 'com.google.firebase', module: 'firebase-core'
         exclude group: 'com.google.firebase', module: 'firebase-analytics'
         exclude group: 'com.google.firebase', module: 'firebase-measurement-connector'
     }
-    playstoreImplementation 'com.android.installreferrer:installreferrer:1.1.1'
+    implementation 'com.android.installreferrer:installreferrer:1.1.1'
     implementation 'org.sufficientlysecure:openpgp-api:10.0'
     implementation('com.theartofdev.edmodo:android-image-cropper:2.8.0') {
         exclude group: 'com.android.support', module: 'appcompat-v7'
@@ -104,12 +103,8 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
 
-        versionCode 11
-        versionName "1.0"
         resConfigs "de", "en"
 
-        archivesBaseName += "-$versionName"
-        applicationId = 'de.kwo.messenger'
         multiDexEnabled true
 
         buildConfigField("String", "APP_SECRET", '"' + mAppSecret + '"')
@@ -117,8 +112,6 @@ android {
         buildConfigField("String", "MAGIC_CREATE_DOMAIN", '"kurswahl-online.de"')
         buildConfigField("String", "LOGTAG", '"KWO_Messenger"')
         buildConfigField("boolean", "SHOW_INTRO", "false")
-        resValue "string", "applicationId", applicationId
-        resValue "string", "app_name", "Kurswahl online Messenger"
     }
 
     dataBinding {
@@ -148,11 +141,28 @@ android {
 
     flavorDimensions("distribution")
 
-    productFlavors {
-        playstore {
-            dimension "distribution"
-        }
-    }
+	productFlavors {
+		kwo {
+			dimension "distribution"
+			applicationId = 'de.kwo.messenger'
+			resValue "string", "applicationId", applicationId
+			resValue "string", "app_name", "Kurswahl online Messenger"
+			versionName "1.0"
+			versionCode 12
+			
+			archivesBaseName += "-$versionName"
+		}
+		kwobeta {
+			dimension "distribution"
+			applicationId = 'de.kwo.messenger.beta'
+			resValue "string", "applicationId", applicationId
+			resValue "string", "app_name", "Kurswahl online Messenger (BETA)"
+			versionName "1.0"
+			versionCode 13
+			
+			archivesBaseName += "-$versionName"
+		}
+	}
     if (project.hasProperty('mStoreFile') &&
             project.hasProperty('mStorePassword') &&
             project.hasProperty('mKeyAlias') &&

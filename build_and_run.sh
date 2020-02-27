@@ -1,8 +1,27 @@
 #!/bin/bash
 
-. local/local_settings.sh
+if [[ "$1" == "" ]]; then
+	echo "Usage: $(basename "$0") appID"
+	exit 1
+fi
 
-./gradlew assemblePlaystoreRelease $@ || exit 1
+app="$(basename "$1")"
+cd "$(dirname "$0")"
+shift;
+
+if [[ ! -e local/$app.settings ]]; then
+	echo "App settings for '$1' not found at 'local/$app.settings'!"
+	exit 2
+fi
+
+. local/$app.settings
+
+build="$gradleBuild"
+if [[ "$@" != "" ]]; then
+	build=""
+fi
+
+./gradlew $build $@ || exit 1
 real_apk="$(realpath $apk)"
 dest="$(basename "$real_apk" | sed 's/-unsigned/-signed/g')"
 jarsigner -keystore "$ORG_GRADLE_PROJECT_mStoreFile" -storepass "$ORG_GRADLE_PROJECT_mStorePassword" -keypass "$ORG_GRADLE_PROJECT_mKeyPassword" "$real_apk" "$ORG_GRADLE_PROJECT_mKeyAlias" && $ANDROID_HOME/build-tools/28.0.3/zipalign -f 4 "$real_apk" "$dest" && adb install -r "$dest" && (

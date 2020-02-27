@@ -1,5 +1,5 @@
 /local
-/src/main/res/values/api_keys.xml
+/src/*/res/values/api_keys.xml
 
 .classpath
 *.swp
