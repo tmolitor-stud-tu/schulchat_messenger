@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.pixart.messenger.Config;
+import de.pixart.messenger.BuildConfig;
 import de.pixart.messenger.R;
 import de.pixart.messenger.entities.Account;
 import de.pixart.messenger.services.XmppConnectionService;
@@ -75,7 +76,7 @@ public class AccountUtils {
 
     private static Class getManageAccountActivityClass() {
         try {
-            return Class.forName("de.kwo.messenger.ui.ManageAccountActivity");
+            return Class.forName(BuildConfig.APPLICATION_ID+".ui.ManageAccountActivity");
         } catch (ClassNotFoundException e) {
             return null;
         }

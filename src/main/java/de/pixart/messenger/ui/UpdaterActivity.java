@@ -30,6 +30,7 @@ import java.net.URL;
 import java.util.List;
 
 import de.pixart.messenger.Config;
+import de.pixart.messenger.BuildConfig;
 import de.pixart.messenger.R;
 import de.pixart.messenger.persistance.FileBackend;
 import de.pixart.messenger.services.XmppConnectionService;
@@ -130,7 +131,7 @@ public class UpdaterActivity extends XmppActivity {
                         if (isStoragePermissionGranted() && isNetworkAvailable(getApplicationContext())) {
                             //start downloading the file using the download manager
                             if (store != null && store.equalsIgnoreCase(PlayStore)) {
-                                Uri uri = Uri.parse("market://details?id=de.kwo.messenger");
+                                Uri uri = Uri.parse("market://details?id="+BuildConfig.APPLICATION_ID);
                                 Intent marketIntent = new Intent(Intent.ACTION_VIEW, uri);
                                 PackageManager manager = getApplicationContext().getPackageManager();
                                 List<ResolveInfo> infos = manager.queryIntentActivities(marketIntent, 0);

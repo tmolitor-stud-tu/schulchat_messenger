@@ -69,6 +69,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.pixart.messenger.Config;
+import de.pixart.messenger.BuildConfig;
 import de.pixart.messenger.R;
 import de.pixart.messenger.crypto.OmemoSetting;
 import de.pixart.messenger.databinding.ActivityConversationsBinding;
@@ -102,15 +103,15 @@ import static de.pixart.messenger.ui.ConversationFragment.REQUEST_DECRYPT_PGP;
 
 public class ConversationsActivity extends XmppActivity implements OnConversationSelected, OnConversationArchived, OnConversationsListItemUpdated, OnConversationRead, XmppConnectionService.OnAccountUpdate, XmppConnectionService.OnConversationUpdate, XmppConnectionService.OnRosterUpdate, OnUpdateBlocklist, XmppConnectionService.OnShowErrorToast, XmppConnectionService.OnAffiliationChanged, XmppConnectionService.OnRoomDestroy {
 
-    public static final String ACTION_VIEW_CONVERSATION = "de.kwo.messenger.VIEW";
+    public static final String ACTION_VIEW_CONVERSATION = BuildConfig.APPLICATION_ID+".VIEW";
     public static final String EXTRA_CONVERSATION = "conversationUuid";
-    public static final String EXTRA_DOWNLOAD_UUID = "de.kwo.messenger.download_uuid";
-    public static final String EXTRA_AS_QUOTE = "de.kwo.messenger.as_quote";
+    public static final String EXTRA_DOWNLOAD_UUID = BuildConfig.APPLICATION_ID+".download_uuid";
+    public static final String EXTRA_AS_QUOTE = BuildConfig.APPLICATION_ID+".as_quote";
     public static final String EXTRA_NICK = "nick";
     public static final String EXTRA_USER = "user";
     public static final String EXTRA_IS_PRIVATE_MESSAGE = "pm";
     public static final String EXTRA_DO_NOT_APPEND = "do_not_append";
-    public static final String ACTION_DESTROY_MUC = "de.kwo.messenger.DESTROY_MUC";
+    public static final String ACTION_DESTROY_MUC = BuildConfig.APPLICATION_ID+".DESTROY_MUC";
     public static final int REQUEST_OPEN_MESSAGE = 0x9876;
     public static final int REQUEST_PLAY_PAUSE = 0x5432;
     private static List<String> VIEW_AND_SHARE_ACTIONS = Arrays.asList(

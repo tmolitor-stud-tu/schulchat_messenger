@@ -2,6 +2,7 @@ package de.pixart.messenger.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import de.pixart.messenger.BuildConfig;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -9,7 +10,7 @@ public class FirstStartManager {
     Context context;
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
-    private static final String PREF_NAME = "de.kwo.messenger";
+    private static final String PREF_NAME = BuildConfig.APPLICATION_ID;
     private static final String IS_FIRST_TIME_LAUNCH = "IsFirstTimeLaunch";
 
     public FirstStartManager(Context context) {

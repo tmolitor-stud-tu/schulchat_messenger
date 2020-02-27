@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import de.pixart.messenger.Config;
+import de.pixart.messenger.BuildConfig;
 import de.pixart.messenger.crypto.axolotl.FingerprintStatus;
 import de.pixart.messenger.services.AvatarService;
 import de.pixart.messenger.utils.CryptoHelper;
@@ -83,8 +84,8 @@ public class Message extends AbstractEntity implements AvatarService.Avatarable 
     public static final String MARKABLE = "markable";
     public static final String FILE_DELETED = "file_deleted";
     public static final String ME_COMMAND = "/me";
-    public static final String ERROR_MESSAGE_CANCELLED = "de.kwo.messenger.cancelled";
-    public static final String DELETED_MESSAGE_BODY = "de.kwo.messenger.message_deleted";
+    public static final String ERROR_MESSAGE_CANCELLED = BuildConfig.APPLICATION_ID+".cancelled";
+    public static final String DELETED_MESSAGE_BODY = BuildConfig.APPLICATION_ID+".message_deleted";
 
     public boolean markable = false;
     protected String conversationUuid;

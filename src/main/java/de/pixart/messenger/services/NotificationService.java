@@ -47,6 +47,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.pixart.messenger.Config;
+import de.pixart.messenger.BuildConfig;
 import de.pixart.messenger.R;
 import de.pixart.messenger.entities.Account;
 import de.pixart.messenger.entities.Contact;
@@ -72,7 +73,7 @@ public class NotificationService {
     public static final String UPDATE_CHANNEL_ID = "appupdate";
     public static final String VIDEOCOMPRESSION_CHANNEL_ID = "compression";
     public static final String ERROR_CHANNEL_ID = "error";
-    private static final String CONVERSATIONS_GROUP = "de.kwo.messenger";
+    private static final String CONVERSATIONS_GROUP = BuildConfig.APPLICATION_ID;
     private static final int NOTIFICATION_ID_MULTIPLIER = 1024 * 1024;
     public static final int NOTIFICATION_ID = 2 * NOTIFICATION_ID_MULTIPLIER;
     public static final int FOREGROUND_NOTIFICATION_ID = NOTIFICATION_ID_MULTIPLIER * 4;

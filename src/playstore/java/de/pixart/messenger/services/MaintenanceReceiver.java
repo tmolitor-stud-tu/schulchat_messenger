@@ -9,6 +9,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.io.IOException;
 
+import de.pixart.messenger.BuildConfig;
 import de.pixart.messenger.Config;
 import de.pixart.messenger.utils.Compatibility;
 
@@ -16,7 +17,7 @@ public class MaintenanceReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(Config.LOGTAG, "received intent in maintenance receiver");
-        if ("de.kwo.messenger.RENEW_INSTANCE_ID".equals(intent.getAction())) {
+        if ((BuildConfig.APPLICATION_ID+".RENEW_INSTANCE_ID").equals(intent.getAction())) {
             renewInstanceToken(context);
 
         }
