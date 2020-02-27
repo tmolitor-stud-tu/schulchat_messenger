@@ -144,25 +144,32 @@ android {
 	productFlavors {
 		kwo {
 			dimension "distribution"
-			applicationId = 'de.kwo.messenger'
+			applicationId = "de.kwo.messenger"
 			resValue "string", "applicationId", applicationId
 			resValue "string", "app_name", "Kurswahl online Messenger"
-			versionName "1.0"
+			resValue "string", "app_server", "push.kurswahl-online.de"
+			resValue "string", "gcm_defaultSenderId", gcm_defaultSenderId
+			resValue "string", "google_app_id", google_app_id
+			versionName "1.12.0"
 			versionCode 12
 			
-			archivesBaseName += "-$versionName"
+			//archivesBaseName += "-$versionName"
 		}
 		kwobeta {
 			dimension "distribution"
-			applicationId = 'de.kwo.messenger.beta'
+			applicationId = "de.kwo.messenger.beta"
 			resValue "string", "applicationId", applicationId
 			resValue "string", "app_name", "Kurswahl online Messenger (BETA)"
-			versionName "1.0"
+			resValue "string", "app_server", "push.kurswahl-online.de"
+			resValue "string", "gcm_defaultSenderId", gcm_defaultSenderId
+			resValue "string", "google_app_id", google_app_id
+			versionName "1.13.0"
 			versionCode 13
 			
-			archivesBaseName += "-$versionName"
+			//archivesBaseName += "-$versionName"
 		}
 	}
+
     if (project.hasProperty('mStoreFile') &&
             project.hasProperty('mStorePassword') &&
             project.hasProperty('mKeyAlias') &&

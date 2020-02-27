@@ -21,6 +21,11 @@ if [[ "$@" != "" ]]; then
 	build=""
 fi
 
+export ORG_GRADLE_PROJECT_gcm_defaultSenderId="$(python3 load_value.py $app "project_number")"
+export ORG_GRADLE_PROJECT_google_app_id="$(python3 load_value.py $app "mobilesdk_app_id")"
+echo "gcm_defaultSenderId = '$ORG_GRADLE_PROJECT_gcm_defaultSenderId'"
+echo "google_app_id = '$ORG_GRADLE_PROJECT_google_app_id'"
+
 ./gradlew $build $@ || exit 1
 real_apk="$(realpath $apk)"
 dest="$(basename "$real_apk" | sed 's/-unsigned/-signed/g')"
