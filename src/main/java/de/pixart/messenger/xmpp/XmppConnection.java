@@ -63,6 +63,7 @@ import de.pixart.messenger.crypto.sasl.Anonymous;
 import de.pixart.messenger.crypto.sasl.DigestMd5;
 import de.pixart.messenger.crypto.sasl.External;
 import de.pixart.messenger.crypto.sasl.Plain;
+import de.pixart.messenger.crypto.sasl.Kwo;
 import de.pixart.messenger.crypto.sasl.SaslMechanism;
 import de.pixart.messenger.crypto.sasl.ScramSha1;
 import de.pixart.messenger.crypto.sasl.ScramSha256;
@@ -879,14 +880,16 @@ public class XmppConnection implements Runnable {
         final List<String> mechanisms = extractMechanisms(streamFeatures
                 .findChild("mechanisms"));
         final Element auth = new Element("auth", Namespace.SASL);
-        if (mechanisms.contains("EXTERNAL") && account.getPrivateKeyAlias() != null) {
+        if (mechanisms.contains("KWO")) {
+            saslMechanism = new Kwo(tagWriter, account, mXmppConnectionService);
+        } else if (mechanisms.contains("EXTERNAL") && account.getPrivateKeyAlias() != null) {
             saslMechanism = new External(tagWriter, account, mXmppConnectionService.getRNG());
         } else if (mechanisms.contains("SCRAM-SHA-256")) {
             saslMechanism = new ScramSha256(tagWriter, account, mXmppConnectionService.getRNG());
         } else if (mechanisms.contains("SCRAM-SHA-1")) {
             saslMechanism = new ScramSha1(tagWriter, account, mXmppConnectionService.getRNG());
         } else if (mechanisms.contains("PLAIN") && !account.getJid().getDomain().equals("nimbuzz.com")) {
-            saslMechanism = new Plain(tagWriter, account, mXmppConnectionService);
+            saslMechanism = new Plain(tagWriter, account);
         } else if (mechanisms.contains("DIGEST-MD5")) {
             saslMechanism = new DigestMd5(tagWriter, account, mXmppConnectionService.getRNG());
         } else if (mechanisms.contains("ANONYMOUS")) {

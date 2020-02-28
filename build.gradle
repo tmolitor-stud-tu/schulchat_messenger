@@ -150,8 +150,8 @@ android {
 			resValue "string", "app_server", "push.kurswahl-online.de"
 			resValue "string", "gcm_defaultSenderId", gcm_defaultSenderId
 			resValue "string", "google_app_id", google_app_id
-			versionName "1.12.0"
-			versionCode 12
+			versionName "14.0"
+			versionCode 14
 			
 			//archivesBaseName += "-$versionName"
 		}
@@ -163,8 +163,8 @@ android {
 			resValue "string", "app_server", "push.kurswahl-online.de"
 			resValue "string", "gcm_defaultSenderId", gcm_defaultSenderId
 			resValue "string", "google_app_id", google_app_id
-			versionName "1.13.0"
-			versionCode 13
+			versionName "15.0"
+			versionCode 15
 			
 			//archivesBaseName += "-$versionName"
 		}
