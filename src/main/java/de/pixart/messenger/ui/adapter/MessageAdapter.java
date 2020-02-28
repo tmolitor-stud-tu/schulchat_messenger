@@ -493,7 +493,6 @@ public class MessageAdapter extends ArrayAdapter<Message> implements CopyTextVie
         viewHolder.richlinkview.setVisibility(View.GONE);
         viewHolder.progressBar.setVisibility(View.GONE);
         viewHolder.messageBody.setVisibility(View.GONE);
-
     }
 
     private void applyQuoteSpan(SpannableStringBuilder body, int start, int end, boolean darkBackground) {
