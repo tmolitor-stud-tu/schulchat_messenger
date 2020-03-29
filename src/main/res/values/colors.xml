@@ -51,8 +51,8 @@
 
     <color name="lightorange">#ffffe9f7</color>
     <color name="lightorange2">#fffed9f1</color>
-    <color name="middleorange">#ff3e0129</color>
-    <color name="darkorange">#ff232356</color>
+    <color name="middleorange">#ffa55eea</color>
+    <color name="darkorange">#ff8854d0</color>
 
     <color name="online">#ff388e3c</color> <!-- green 700 -->
     <color name="away">#ffff9800</color> <!-- orange 500 -->
