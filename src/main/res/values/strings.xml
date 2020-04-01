@@ -991,7 +991,7 @@
     <string name="pref_notification_grace_period_summary">The length of time notifications are silenced after detecting activity on one of your other devices.</string>
     <string name="ask_for_writeaccess">Please ask for write access</string>
     <string name="pref_theme_blue">Purple</string>
-    <string name="pref_theme_orange">Orange</string>
+    <string name="pref_theme_pink">Pink</string>
     <string name="pref_theme_color_options_summary">Select the theme color palette</string>
     <string name="pref_theme_color_options">Theme color</string>
     <string name="pref_enable_otr_summary">Enable OTR encryption for message encryption</string>

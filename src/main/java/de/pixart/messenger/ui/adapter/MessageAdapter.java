@@ -100,7 +100,6 @@ import static de.pixart.messenger.ui.SettingsActivity.SHOW_LINKS_INSIDE;
 import static de.pixart.messenger.ui.SettingsActivity.SHOW_MAPS_INSIDE;
 import static de.pixart.messenger.ui.util.MyLinkify.removeTrailingBracket;
 import static de.pixart.messenger.ui.util.MyLinkify.replaceYoutube;
-import static de.pixart.messenger.utils.Compatibility.runsTwentyOne;
 
 public class MessageAdapter extends ArrayAdapter<Message> implements CopyTextView.CopyHandler {
 
@@ -506,8 +505,8 @@ public class MessageAdapter extends ArrayAdapter<Message> implements CopyTextVie
             body.setSpan(new DividerSpan(false), end, end + 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
         int color;
-        if (activity.isOrangeTheme()) {
-            color = darkBackground ? this.getMessageTextColor(darkBackground, false) : ContextCompat.getColor(activity, R.color.darkorange);
+        if (activity.isPinkTheme()) {
+            color = darkBackground ? this.getMessageTextColor(darkBackground, false) : ContextCompat.getColor(activity, R.color.darkpink);
         } else {
             color = darkBackground ? this.getMessageTextColor(darkBackground, false) : ContextCompat.getColor(activity, R.color.darkblue);
         }
@@ -873,7 +872,7 @@ public class MessageAdapter extends ArrayAdapter<Message> implements CopyTextVie
         viewHolder.download_button.setVisibility(View.GONE);
         final RelativeLayout audioPlayer = viewHolder.audioPlayer;
         audioPlayer.setVisibility(View.VISIBLE);
-        AudioPlayer.ViewHolder.get(audioPlayer).setTheme(darkBackground, activity.isOrangeTheme());
+        AudioPlayer.ViewHolder.get(audioPlayer).setTheme(darkBackground, activity.isPinkTheme());
         this.audioPlayer.init(audioPlayer, message);
     }
 

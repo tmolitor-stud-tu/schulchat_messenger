@@ -871,7 +871,6 @@ sau chiar pierderea mesajelor.\nÎn continuare veți fi rugați să dezactivați
     <string name="pref_notification_grace_period">Perioadă de grație</string>
     <string name="pref_notification_grace_period_summary">Durata de timp cât notificările sunt ascunse după ce s-a observat activitate pe un alt dispozitiv al dumneavoastră.</string>
     <string name="pref_theme_blue">Albastru</string>
-    <string name="pref_theme_orange">Portocaliu</string>
     <string name="pref_theme_color_options_summary">Selectați paleta de culori a temei</string>
     <string name="pref_theme_color_options">Culoarea temei</string>
 </resources>

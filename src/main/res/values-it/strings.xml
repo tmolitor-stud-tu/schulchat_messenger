@@ -986,7 +986,6 @@
     <string name="pref_notification_grace_period_summary">Il tempo durante il quale le notifiche saranno silenziate dopo che sarà rilevata dell\'attività su uno degli altri tuoi dispositivi.</string>
     <string name="ask_for_writeaccess">Chiedi un accesso in scrittura</string>
     <string name="pref_theme_blue">Blu</string>
-    <string name="pref_theme_orange">Arancio</string>
     <string name="pref_theme_color_options_summary">Scegli la palette di colori del tema</string>
     <string name="pref_theme_color_options">Colore del tema</string>
     <string name="pref_enable_otr_summary">Abilita crittografia OTR per la criptazione del messaggio</string>

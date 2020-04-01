@@ -12,7 +12,6 @@ import android.media.AudioManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.PowerManager;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -23,7 +22,6 @@ import android.widget.TextView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
@@ -108,7 +106,7 @@ public class AudioPlayer implements View.OnClickListener, MediaPlayer.OnCompleti
         }
         viewHolder.progress.setOnSeekBarChangeListener(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            ColorStateList color = viewHolder.darkBackground ? ContextCompat.getColorStateList(messageAdapter.getContext(), R.color.white70) : viewHolder.isOrange ? ContextCompat.getColorStateList(messageAdapter.getContext(), R.color.darkorange) : ContextCompat.getColorStateList(messageAdapter.getContext(), R.color.darkblue);
+            ColorStateList color = viewHolder.darkBackground ? ContextCompat.getColorStateList(messageAdapter.getContext(), R.color.white70) : viewHolder.isPink ? ContextCompat.getColorStateList(messageAdapter.getContext(), R.color.darkpink) : ContextCompat.getColorStateList(messageAdapter.getContext(), R.color.darkblue);
             viewHolder.progress.setThumbTintList(color);
             viewHolder.progress.setProgressTintList(color);
         }
@@ -425,7 +423,7 @@ public class AudioPlayer implements View.OnClickListener, MediaPlayer.OnCompleti
         private SeekBar progress;
         private ImageButton playPause;
         private boolean darkBackground = false;
-        private boolean isOrange = false;
+        private boolean isPink = false;
 
         public static ViewHolder get(RelativeLayout audioPlayer) {
             ViewHolder viewHolder = (ViewHolder) audioPlayer.getTag(R.id.TAG_AUDIO_PLAYER_VIEW_HOLDER);
@@ -439,9 +437,9 @@ public class AudioPlayer implements View.OnClickListener, MediaPlayer.OnCompleti
             return viewHolder;
         }
 
-        public void setTheme(boolean darkBackground, boolean isOrange) {
+        public void setTheme(boolean darkBackground, boolean isPink) {
             this.darkBackground = darkBackground;
-            this.isOrange = isOrange;
+            this.isPink = isPink;
         }
     }
 }
