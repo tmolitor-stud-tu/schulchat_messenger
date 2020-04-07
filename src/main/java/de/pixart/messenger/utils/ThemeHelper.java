@@ -70,14 +70,14 @@ public class ThemeHelper {
                     default:
                         return dark ? R.style.ConversationsTheme_Dark : R.style.ConversationsTheme;
                 }
-            case "orange":
+            case "pink":
                 switch (fontSize) {
                     case "medium":
-                        return dark ? R.style.ConversationsTheme_Orange_Dark_Medium : R.style.ConversationsTheme_Orange_Medium;
+                        return dark ? R.style.ConversationsTheme_Pink_Dark_Medium : R.style.ConversationsTheme_Pink_Medium;
                     case "large":
-                        return dark ? R.style.ConversationsTheme_Orange_Dark_Large : R.style.ConversationsTheme_Orange_Large;
+                        return dark ? R.style.ConversationsTheme_Pink_Dark_Large : R.style.ConversationsTheme_Pink_Large;
                     default:
-                        return dark ? R.style.ConversationsTheme_Orange_Dark : R.style.ConversationsTheme_Orange;
+                        return dark ? R.style.ConversationsTheme_Pink_Dark : R.style.ConversationsTheme_Pink;
                 }
             default:
                 return dark ? R.style.ConversationsTheme_Dark : R.style.ConversationsTheme;
@@ -120,14 +120,14 @@ public class ThemeHelper {
                     default:
                         return dark ? R.style.ConversationsTheme_Dark_Dialog : R.style.ConversationsTheme_Dialog;
                 }
-            case "orange":
+            case "pink":
                 switch (fontSize) {
                     case "medium":
-                        return dark ? R.style.ConversationsTheme_Orange_Dark_Dialog_Medium : R.style.ConversationsTheme_Orange_Dialog_Medium;
+                        return dark ? R.style.ConversationsTheme_Pink_Dark_Dialog_Medium : R.style.ConversationsTheme_Pink_Dialog_Medium;
                     case "large":
-                        return dark ? R.style.ConversationsTheme_Orange_Dark_Dialog_Large : R.style.ConversationsTheme_Orange_Dialog_Large;
+                        return dark ? R.style.ConversationsTheme_Pink_Dark_Dialog_Large : R.style.ConversationsTheme_Pink_Dialog_Large;
                     default:
-                        return dark ? R.style.ConversationsTheme_Orange_Dark_Dialog : R.style.ConversationsTheme_Orange_Dialog;
+                        return dark ? R.style.ConversationsTheme_Pink_Dark_Dialog : R.style.ConversationsTheme_Pink_Dialog;
                 }
             default:
                 return dark ? R.style.ConversationsTheme_Dark_Dialog : R.style.ConversationsTheme_Dialog;
@@ -139,9 +139,9 @@ public class ThemeHelper {
             case R.style.ConversationsTheme_Dark:
             case R.style.ConversationsTheme_Dark_Large:
             case R.style.ConversationsTheme_Dark_Medium:
-            case R.style.ConversationsTheme_Orange_Dark:
-            case R.style.ConversationsTheme_Orange_Dark_Large:
-            case R.style.ConversationsTheme_Orange_Dark_Medium:
+            case R.style.ConversationsTheme_Pink_Dark:
+            case R.style.ConversationsTheme_Pink_Dark_Large:
+            case R.style.ConversationsTheme_Pink_Dark_Medium:
                 return true;
             default:
                 return false;

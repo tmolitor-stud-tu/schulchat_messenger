@@ -323,40 +323,40 @@
         <item name="ic_settings_about" type="reference">@drawable/ic_help_circle_white_24dp</item>
     </style>
 
-    <style name="ConversationsTheme.Orange" parent="ConversationsTheme">
-        <item name="colorPrimary">@color/primary_orange</item>
-        <item name="colorPrimaryDark">@color/primary_dark_orange</item>
-        <item name="colorAccent">@color/accent_orange</item>
-        <item name="colorControlNormal">@color/accent_orange</item>
-        <item name="colorControlActivated">@color/accent_orange</item>
+    <style name="ConversationsTheme.Pink" parent="ConversationsTheme">
+        <item name="colorPrimary">@color/primary_pink</item>
+        <item name="colorPrimaryDark">@color/primary_dark_pink</item>
+        <item name="colorAccent">@color/accent_pink</item>
+        <item name="colorControlNormal">@color/accent_pink</item>
+        <item name="colorControlActivated">@color/accent_pink</item>
 
-        <item name="color_bubble_light">@color/lightorange</item>
-        <item name="color_bubble_dark">@color/lightorange2</item>
+        <item name="color_bubble_light">@color/lightpink</item>
+        <item name="color_bubble_dark">@color/lightpink2</item>
         <item name="color_bubble_date">@color/lightgreen</item>
         <item name="color_bubble_warning">@color/lightred</item>
 
-        <item name="chat_bg">@drawable/bg_light_orange</item>
+        <item name="chat_bg">@drawable/bg_light_pink</item>
 
         <item name="windowActionModeOverlay">true</item>
-        <item name="android:actionModeBackground">@color/accent_orange</item>
+        <item name="android:actionModeBackground">@color/accent_pink</item>
     </style>
 
-    <style name="ConversationsTheme.Orange.Dark" parent="ConversationsTheme.Dark">
-        <item name="colorPrimary">@color/primary_orange_dark</item>
-        <item name="colorPrimaryDark">@color/primary_dark_orange_dark</item>
-        <item name="colorAccent">@color/accent_orange</item>
-        <item name="colorControlNormal">@color/accent_orange</item>
-        <item name="colorControlActivated">@color/accent_orange</item>
+    <style name="ConversationsTheme.Pink.Dark" parent="ConversationsTheme.Dark">
+        <item name="colorPrimary">@color/primary_pink_dark</item>
+        <item name="colorPrimaryDark">@color/primary_dark_pink_dark</item>
+        <item name="colorAccent">@color/accent_pink</item>
+        <item name="colorControlNormal">@color/accent_pink</item>
+        <item name="colorControlActivated">@color/accent_pink</item>
 
-        <item name="color_bubble_light">@color/middleorange</item>
-        <item name="color_bubble_dark">@color/darkorange</item>
+        <item name="color_bubble_light">@color/middlepink</item>
+        <item name="color_bubble_dark">@color/darkpink</item>
         <item name="color_bubble_date">@color/darkgreen</item>
         <item name="color_bubble_warning">@color/darkred</item>
 
-        <item name="chat_bg">@drawable/bg_dark_orange</item>
+        <item name="chat_bg">@drawable/bg_dark_pink</item>
 
         <item name="windowActionModeOverlay">true</item>
-        <item name="android:actionModeBackground">@color/accent_orange</item>
+        <item name="android:actionModeBackground">@color/accent_pink</item>
     </style>
 
     <style name="ConversationsTheme.Dialog" parent="Theme.MaterialComponents.Light.Dialog">
@@ -371,10 +371,10 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="ConversationsTheme.Orange.Dialog" parent="ConversationsTheme.Dialog">
-        <item name="colorPrimary">@color/primary_orange</item>
-        <item name="colorPrimaryDark">@color/primary_dark_orange</item>
-        <item name="colorAccent">@color/accent_orange</item>
+    <style name="ConversationsTheme.Pink.Dialog" parent="ConversationsTheme.Dialog">
+        <item name="colorPrimary">@color/primary_pink</item>
+        <item name="colorPrimaryDark">@color/primary_dark_pink</item>
+        <item name="colorAccent">@color/accent_pink</item>
     </style>
 
     <style name="ConversationsTheme.Dark.Dialog" parent="Theme.MaterialComponents.Dialog">
@@ -388,10 +388,10 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="ConversationsTheme.Orange.Dark.Dialog" parent="ConversationsTheme.Dark.Dialog">
-        <item name="colorPrimary">@color/primary_orange_dark</item>
-        <item name="colorPrimaryDark">@color/primary_dark_orange_dark</item>
-        <item name="colorAccent">@color/accent_orange</item>
+    <style name="ConversationsTheme.Pink.Dark.Dialog" parent="ConversationsTheme.Dark.Dialog">
+        <item name="colorPrimary">@color/primary_pink_dark</item>
+        <item name="colorPrimaryDark">@color/primary_dark_pink_dark</item>
+        <item name="colorAccent">@color/accent_pink</item>
     </style>
 
     <style name="ConversationsTheme.Dialog.Medium" parent="ConversationsTheme.Dialog">
@@ -399,7 +399,7 @@
         <item name="TextSizeDisplay2">51sp</item>
     </style>
 
-    <style name="ConversationsTheme.Orange.Dialog.Medium" parent="ConversationsTheme.Orange.Dialog">
+    <style name="ConversationsTheme.Pink.Dialog.Medium" parent="ConversationsTheme.Pink.Dialog">
         <item name="TextSizeBody2">16sp</item>
         <item name="TextSizeDisplay2">51sp</item>
     </style>
@@ -409,7 +409,7 @@
         <item name="TextSizeDisplay2">51sp</item>
     </style>
 
-    <style name="ConversationsTheme.Orange.Dark.Dialog.Medium" parent="ConversationsTheme.Orange.Dark.Dialog">
+    <style name="ConversationsTheme.Pink.Dark.Dialog.Medium" parent="ConversationsTheme.Pink.Dark.Dialog">
         <item name="TextSizeBody2">16sp</item>
         <item name="TextSizeDisplay2">51sp</item>
     </style>
@@ -419,7 +419,7 @@
         <item name="TextSizeDisplay2">56sp</item>
     </style>
 
-    <style name="ConversationsTheme.Orange.Dialog.Large" parent="ConversationsTheme.Orange.Dialog">
+    <style name="ConversationsTheme.Pink.Dialog.Large" parent="ConversationsTheme.Pink.Dialog">
         <item name="TextSizeBody2">18sp</item>
         <item name="TextSizeDisplay2">56sp</item>
     </style>
@@ -429,7 +429,7 @@
         <item name="TextSizeTitle">56sp</item>
     </style>
 
-    <style name="ConversationsTheme.Orange.Dark.Dialog.Large" parent="ConversationsTheme.Orange.Dark.Dialog">
+    <style name="ConversationsTheme.Pink.Dark.Dialog.Large" parent="ConversationsTheme.Pink.Dark.Dialog">
         <item name="TextSizeBody2">18sp</item>
         <item name="TextSizeTitle">56sp</item>
     </style>
@@ -478,7 +478,7 @@
         <item name="TextSizeHeadline">20sp</item>
     </style>
 
-    <style name="ConversationsTheme.Orange.Medium" parent="ConversationsTheme.Orange">
+    <style name="ConversationsTheme.Pink.Medium" parent="ConversationsTheme.Pink">
         <item name="TextSizeCaption">14sp</item>
         <item name="TextSizeBody1">16sp</item>
         <item name="TextSizeBody2">16sp</item>
@@ -492,7 +492,7 @@
         <item name="TextSizeHeadline">20sp</item>
     </style>
 
-    <style name="ConversationsTheme.Orange.Dark.Medium" parent="ConversationsTheme.Orange.Dark">
+    <style name="ConversationsTheme.Pink.Dark.Medium" parent="ConversationsTheme.Pink.Dark">
         <item name="TextSizeCaption">14sp</item>
         <item name="TextSizeBody1">16sp</item>
         <item name="TextSizeBody2">16sp</item>
@@ -534,7 +534,7 @@
         <item name="TextSizeHeadline">22sp</item>
     </style>
 
-    <style name="ConversationsTheme.Orange.Large" parent="ConversationsTheme.Orange">
+    <style name="ConversationsTheme.Pink.Large" parent="ConversationsTheme.Pink">
         <item name="TextSizeCaption">16sp</item>
         <item name="TextSizeBody1">18sp</item>
         <item name="TextSizeBody2">18sp</item>
@@ -548,7 +548,7 @@
         <item name="TextSizeHeadline">22sp</item>
     </style>
 
-    <style name="ConversationsTheme.Orange.Dark.Large" parent="ConversationsTheme.Orange.Dark">
+    <style name="ConversationsTheme.Pink.Dark.Large" parent="ConversationsTheme.Pink.Dark">
         <item name="TextSizeCaption">16sp</item>
         <item name="TextSizeBody1">18sp</item>
         <item name="TextSizeBody2">18sp</item>

@@ -985,8 +985,8 @@
     <string name="pref_notification_grace_period">Schonfrist</string>
     <string name="pref_notification_grace_period_summary">Die Zeitspanne, in der Benachrichtigungen nach der Erkennung von Aktivitäten auf einem deiner anderen Geräte unterdrückt werden.</string>
     <string name="ask_for_writeaccess">Frage nach Schreibrechten</string>
-    <string name="pref_theme_blue">Blau</string>
-    <string name="pref_theme_orange">Pink</string>
+    <string name="pref_theme_blue">Lila</string>
+    <string name="pref_theme_pink">Pink</string>
     <string name="pref_theme_color_options_summary">Wähle das Farbschema</string>
     <string name="pref_theme_color_options">Designfarbe</string>
     <string name="pref_enable_otr_summary">Aktiviere OTR-Verschlüsselung für die Nachrichtenverschlüsselung</string>

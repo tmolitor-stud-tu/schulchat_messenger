@@ -986,7 +986,6 @@
     <string name="pref_notification_grace_period">Час до блокування</string>
     <string name="ask_for_writeaccess">Будь ласка, надішліть запит на запис</string>
     <string name="pref_theme_blue">Синя</string>
-    <string name="pref_theme_orange">Помаранчева</string>
     <string name="pref_theme_color_options_summary">Оберіть палітру кольорів теми</string>
     <string name="pref_theme_color_options">Колір теми</string>
     <string name="pref_alternative_voice_settings_summary">У разі проблем із записом голосу, будь ласка, змініть кодек у цих налаштуваннях.</string>
