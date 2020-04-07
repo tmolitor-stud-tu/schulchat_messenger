@@ -10,7 +10,7 @@ cd "$(dirname "$0")"
 shift;
 
 if [[ ! -e local/$app.settings ]]; then
-	echo "App settings for '$1' not found at 'local/$app.settings'!"
+	echo "App settings for '$app' not found at 'local/$app.settings'!"
 	exit 2
 fi
 
