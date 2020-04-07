@@ -97,6 +97,7 @@ import me.drakeet.support.toast.ToastCompat;
 import pl.droidsonroids.gif.GifDrawable;
 import rocks.xmpp.addr.Jid;
 
+import static de.pixart.messenger.ui.SettingsActivity.ENABLE_OTR_ENCRYPTION;
 import static de.pixart.messenger.ui.SettingsActivity.USE_BUNDLED_EMOJIS;
 import static de.pixart.messenger.ui.SettingsActivity.USE_INTERNAL_UPDATER;
 
@@ -436,6 +437,10 @@ public abstract class XmppActivity extends ActionBarActivity {
         return getBooleanPreference("unicolored_chatbg", R.bool.use_unicolored_chatbg);
     }
 
+    public boolean enableOTR() {
+        return getBooleanPreference(ENABLE_OTR_ENCRYPTION, R.bool.enable_otr);
+    }
+
     public void setBubbleColor(final View v, final int backgroundColor, final int borderColor) {
         GradientDrawable shape = (GradientDrawable) v.getBackground();
         shape.setColor(backgroundColor);
@@ -526,10 +531,10 @@ public abstract class XmppActivity extends ActionBarActivity {
             intent.putExtra(Intent.EXTRA_TEXT, text);
             if (asQuote) {
                 intent.putExtra(ConversationsActivity.EXTRA_AS_QUOTE, true);
-                intent.putExtra(ConversationsActivity.EXTRA_ACCOUNT, nick);
+                intent.putExtra(ConversationsActivity.EXTRA_USER, nick);
             }
         }
-        if (nick != null) {
+        if (nick != null && !asQuote) {
             intent.putExtra(ConversationsActivity.EXTRA_NICK, nick);
             intent.putExtra(ConversationsActivity.EXTRA_IS_PRIVATE_MESSAGE, pm);
         }
@@ -1103,8 +1108,8 @@ public abstract class XmppActivity extends ActionBarActivity {
         protected String doInBackground(XmppConnection... params) {
             String uri = null;
             if (this.connection != null) {
-                XmppConnection.Features features = connection.getFeatures();
-                if (features.adhocinvite) {
+                XmppConnection.Features features = this.connection.getFeatures();
+                if (features != null && features.adhocinvite) {
                     int i = 0;
                     uri = this.connection.getAdHocInviteUrl(Jid.ofDomain(this.account.getJid().getDomain()));
                     try {

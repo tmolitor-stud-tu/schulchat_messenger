@@ -139,6 +139,7 @@ import static de.pixart.messenger.ui.SettingsActivity.WARN_UNENCRYPTED_CHAT;
 import static de.pixart.messenger.ui.XmppActivity.EXTRA_ACCOUNT;
 import static de.pixart.messenger.ui.XmppActivity.REQUEST_INVITE_TO_CONVERSATION;
 import static de.pixart.messenger.ui.util.SoftKeyboardUtils.hideSoftKeyboard;
+import static de.pixart.messenger.utils.Compatibility.runsTwentyOne;
 import static de.pixart.messenger.utils.PermissionUtils.allGranted;
 import static de.pixart.messenger.utils.PermissionUtils.getFirstDenied;
 import static de.pixart.messenger.utils.PermissionUtils.readGranted;
@@ -622,6 +623,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
         popup.setOnMenuItemClickListener(attachmentItem -> {
             switch (attachmentItem.getItemId()) {
                 case R.id.attach_choose_picture:
+                case R.id.attach_choose_video:
                 case R.id.attach_take_picture:
                 case R.id.attach_record_video:
                 case R.id.attach_choose_file:
@@ -986,6 +988,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
             case ATTACHMENT_CHOICE_CHOOSE_FILE:
             case ATTACHMENT_CHOICE_RECORD_VIDEO:
             case ATTACHMENT_CHOICE_RECORD_VOICE:
+            case ATTACHMENT_CHOICE_CHOOSE_VIDEO:
                 final Attachment.Type type = requestCode == ATTACHMENT_CHOICE_RECORD_VOICE ? Attachment.Type.RECORDING : Attachment.Type.FILE;
                 final List<Attachment> fileUris = Attachment.extractAttachments(getActivity(), data, type);
                 mediaPreviewAdapter.addMediaPreviews(fileUris);
@@ -1144,7 +1147,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
             }
             menuMediaBrowser.setVisible(true);
             ConversationMenuConfigurator.configureAttachmentMenu(conversation, menu, activity.xmppConnectionService.getAttachmentChoicePreference(), hasAttachments);
-            ConversationMenuConfigurator.configureEncryptionMenu(conversation, menu);
+            ConversationMenuConfigurator.configureEncryptionMenu(conversation, menu, activity);
         } else {
             //menuInviteContact.setVisible(false);
             menuGroupDetails.setVisible(false);
@@ -1425,6 +1428,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
                 handleEncryptionSelection(item);
                 break;
             case R.id.attach_choose_picture:
+            case R.id.attach_choose_video:
             case R.id.attach_take_picture:
             case R.id.attach_record_video:
             case R.id.attach_choose_file:
@@ -1484,6 +1488,9 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
         switch (item.getItemId()) {
             case R.id.attach_choose_picture:
                 attachFile(ATTACHMENT_CHOICE_CHOOSE_IMAGE);
+                break;
+            case R.id.attach_choose_video:
+                attachFile(ATTACHMENT_CHOICE_CHOOSE_VIDEO);
                 break;
             case R.id.attach_take_picture:
                 attachFile(ATTACHMENT_CHOICE_TAKE_PHOTO);
@@ -1669,7 +1676,7 @@ public class ConversationFragment extends XmppFragment implements EditMessage.Ke
     }
 
     private void updateChatBG() {
-        if (activity.unicoloredBG()) {
+        if (activity.unicoloredBG() || !runsTwentyOne()) {
             binding.conversationsFragment.setBackgroundResource(0);
             binding.conversationsFragment.setBackgroundColor(StyledAttributes.getColor(activity, R.attr.color_background_tertiary));
         } else {

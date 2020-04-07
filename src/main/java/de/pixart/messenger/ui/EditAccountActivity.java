@@ -369,7 +369,8 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
             return;
         }
 
-        if (xmppConnectionService.getAccounts().size() == 0 && Config.MAGIC_CREATE_DOMAIN != null) {
+        final List<Account> accounts = xmppConnectionService == null ? null : xmppConnectionService.getAccounts();
+        if (accounts != null && accounts.size() == 0 && Config.MAGIC_CREATE_DOMAIN != null) {
             Intent intent = SignupUtils.getSignUpIntent(this, mForceRegister != null && mForceRegister);
             startActivity(intent);
             overridePendingTransition(R.animator.fade_in, R.animator.fade_out);
