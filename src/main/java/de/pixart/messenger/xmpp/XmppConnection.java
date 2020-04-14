@@ -331,7 +331,8 @@ public class XmppConnection implements Runnable {
                     return;
                 }
                 final Resolver.Result storedBackupResult;
-                if (hardcoded) {
+				storedBackupResult = null;
+                /*if (hardcoded) {
                     storedBackupResult = null;
                 } else {
                     storedBackupResult = mXmppConnectionService.databaseBackend.findResolverResult(domain);
@@ -339,7 +340,7 @@ public class XmppConnection implements Runnable {
                         results = storedBackupResult;
                         Log.d(Config.LOGTAG, account.getJid().asBareJid() + ": loaded backup resolver result from db: " + storedBackupResult);
                     }
-                }
+                }*/
                 if (results == null || results.getSocket() == null) {
                     results = Resolver.resolve(domain);
                 }

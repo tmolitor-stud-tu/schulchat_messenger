@@ -23,6 +23,9 @@ fi
 
 export ORG_GRADLE_PROJECT_gcm_defaultSenderId="$(python3 load_value.py $app "project_number")"
 export ORG_GRADLE_PROJECT_google_app_id="$(python3 load_value.py $app "mobilesdk_app_id")"
+
+echo "app_secret = '$ORG_GRADLE_PROJECT_mAppSecret'"
+echo "signing with key '$ORG_GRADLE_PROJECT_mKeyAlias'"
 echo "gcm_defaultSenderId = '$ORG_GRADLE_PROJECT_gcm_defaultSenderId'"
 echo "google_app_id = '$ORG_GRADLE_PROJECT_google_app_id'"
 

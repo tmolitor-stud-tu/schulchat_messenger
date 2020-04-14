@@ -1,8 +1,11 @@
 package de.pixart.messenger.crypto.sasl;
 
+import android.util.Log;
 import android.content.Context;
 import android.util.Base64;
 import android.os.Build;
+import android.provider.Settings;
+import android.bluetooth.BluetoothAdapter;
 
 import java.nio.charset.Charset;
 
@@ -19,6 +22,7 @@ import de.pixart.messenger.xml.TagWriter;
 import de.pixart.messenger.utils.PhoneHelper;
 
 public class Kwo extends SaslMechanism {
+    private static final String LOGTAG = "KWO_SASL";
     private Context mContext;
 
     public Kwo(final TagWriter tagWriter, final Account account, final Context context) {
@@ -45,18 +49,18 @@ public class Kwo extends SaslMechanism {
     public String getResponse(final String challenge) throws AuthenticationException {
         if(challenge == null)
             return null;
-        return getMessage(account.getPassword(), PhoneHelper.getAndroidId(mContext), new String(Base64.decode(challenge, Base64.DEFAULT)));
+        return getMessage(account.getPassword(), mContext, new String(Base64.decode(challenge, Base64.DEFAULT)));
     }
 
-    private static String getMessage(final String password, final String deviceID, final String challenge) {
-        return Base64.encodeToString(createPassword(password, deviceID, challenge).getBytes(Charset.defaultCharset()), Base64.NO_WRAP);
+    private static String getMessage(final String password, Context context, final String challenge) {
+        return Base64.encodeToString(createPassword(password, context, challenge).getBytes(Charset.defaultCharset()), Base64.NO_WRAP);
     }
     
-    private static String createPassword(final String password, final String deviceID, final String challenge) {
+    private static String createPassword(final String password, Context context, final String challenge) {
         StringBuilder pw = new StringBuilder("");
-        String deviceName = getDeviceName();
+        String deviceName = getDeviceName(context);
         try {
-            pw.append(deviceID);
+            pw.append(PhoneHelper.getAndroidId(context));
             pw.append("|");
             pw.append(deviceName);
             pw.append("|");
@@ -90,14 +94,34 @@ public class Kwo extends SaslMechanism {
         return result.toString();
     }
 
-    private static String getDeviceName() {
+    //see https://medium.com/capital-one-tech/how-to-get-an-android-device-nickname-d5eab12f4ced
+    private static String getDeviceName(Context context) {
+        String name = "";
+        
+        //try to get user-settable device name, see https://medium.com/capital-one-tech/how-to-get-an-android-device-nickname-d5eab12f4ced
+        //if more than one of this returns a name, the last one that is not null wins
+        name = UseStringIfNotNull(name, Settings.System.getString(context.getContentResolver(), "bluetooth_name"));
+        name = UseStringIfNotNull(name, Settings.Secure.getString(context.getContentResolver(), "bluetooth_name"));
+        name = UseStringIfNotNull(name, BluetoothAdapter.getDefaultAdapter().getName());
+        name = UseStringIfNotNull(name, Settings.System.getString(context.getContentResolver(), "device_name"));
+        //the next one is taken from a commentary int he medium.com blog post, not from the main article
+        name = UseStringIfNotNull(name, Settings.Global.getString(context.getContentResolver(), Settings.Global.DEVICE_NAME));
+        name = UseStringIfNotNull(name, Settings.Secure.getString(context.getContentResolver(), "lock_screen_owner_info"));
+        
+        //add manufacturer and build
         String manufacturer = Build.MANUFACTURER;
         String model = Build.MODEL;
         if (model.startsWith(manufacturer)) {
-            return model;
+            return name!=null && name.length()>0 ? name + " (" + model + ")" : model;
         } else {
-            return manufacturer + " " + model;
+            return name!=null && name.length()>0 ? name + " (" + manufacturer + " " + model + ")" : manufacturer + " " + model;
         }
+    }
+    
+    private static String UseStringIfNotNull(String oldstr, String newstr)
+    {
+        Log.d(LOGTAG, "DEVIE NAME: '"+(oldstr == null || oldstr.length() == 0 ? "" : oldstr)+"' --> '"+(newstr == null || newstr.length() == 0 ? "" : newstr)+"'");
+        return newstr == null || newstr.length() == 0 ? oldstr : newstr;
     }
 
 }
