@@ -83,6 +83,7 @@ public class Account extends AbstractEntity implements AvatarService.Avatarable 
     protected int options = 0;
     protected State status = State.OFFLINE;
     private State lastErrorStatus = State.OFFLINE;
+    private String lastErrorMessage = null;
     protected String resource;
     protected String avatar;
     protected String hostname = null;
@@ -284,11 +285,20 @@ public class Account extends AbstractEntity implements AvatarService.Avatarable 
     public State getLastErrorStatus() {
         return this.lastErrorStatus;
     }
+    
+    public String getLastErrorMessage() {
+        return this.lastErrorMessage;
+    }
 
     public void setStatus(final State status) {
+        this.setStatus(status, null);
+    }
+    
+    public void setStatus(final State status, String message) {
         this.status = status;
         if (status.isError || status == State.ONLINE) {
             this.lastErrorStatus = status;
+            this.lastErrorMessage = message;
         }
     }
 

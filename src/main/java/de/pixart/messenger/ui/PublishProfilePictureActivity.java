@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.StringRes;
+import androidx.appcompat.app.AlertDialog;
 
 import com.theartofdev.edmodo.cropper.CropImage;
 
@@ -32,6 +33,8 @@ public class PublishProfilePictureActivity extends XmppActivity implements XmppC
 
     public static final int REQUEST_CHOOSE_PICTURE = 0x1337;
 
+    private AlertDialog loginPending = null;
+    private AlertDialog authError = null;
     private ImageView avatar;
     private TextView hintOrWarning;
     private TextView secondaryHint;
@@ -204,6 +207,7 @@ public class PublishProfilePictureActivity extends XmppActivity implements XmppC
 
         if (this.mInitialAccountSetup) {
             this.cancelButton.setText(R.string.skip);
+            handleOverflowDialogs();
         }
         configureActionBar(getSupportActionBar(), !this.mInitialAccountSetup && !handledExternalUri.get());
     }
@@ -267,12 +271,57 @@ public class PublishProfilePictureActivity extends XmppActivity implements XmppC
     public void refreshUiReal() {
         if (this.account != null) {
             reloadAvatar();
+            handleOverflowDialogs();
         }
     }
 
     @Override
     public void onAccountUpdate() {
         refreshUi();
+    }
+    
+    private void handleOverflowDialogs() {
+        if(loginPending == null)
+        {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            //builder.setTitle("Login fehlgeschlagen");
+            builder.setMessage("Logging in...");
+            builder.setCancelable(false);
+            loginPending = builder.create();
+            loginPending.show();
+        }
+        if(authError == null)
+        {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Login fehlgeschlagen");
+            builder.setCancelable(false);
+            authError = builder.create();
+        }
+        if(this.account == null)
+            return;
+        if(this.account.getStatus() == Account.State.ONLINE)
+        {
+            if(loginPending.isShowing())
+                loginPending.dismiss();
+            if(authError.isShowing())
+                authError.dismiss();
+        }
+        else if(this.account.getStatus() == Account.State.CONNECTING || this.account.getStatus() == Account.State.REGISTRATION_SUCCESSFUL)
+        {
+            if(authError.isShowing())
+                authError.dismiss();
+            if(!loginPending.isShowing())
+                loginPending.show();
+        }
+        else if(this.account.getLastErrorStatus() == Account.State.UNAUTHORIZED && this.account.getLastErrorMessage() != null)
+        {
+            if(loginPending.isShowing())
+                loginPending.dismiss();
+            if(authError.isShowing())
+                authError.dismiss();
+            authError.setMessage(this.account.getLastErrorMessage());
+            authError.show();
+        }
     }
 
 }

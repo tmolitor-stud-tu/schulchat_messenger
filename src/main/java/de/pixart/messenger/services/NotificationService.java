@@ -992,7 +992,11 @@ public class NotificationService {
             return;
         } else if (errors.size() == 1) {
             mBuilder.setContentTitle(mXmppConnectionService.getString(R.string.problem_connecting_to_account));
-            mBuilder.setContentText(errors.get(0).getJid().asBareJid().toString());
+            String lastErrorMessage = errors.get(0).getLastErrorMessage();
+            if(lastErrorMessage != null)
+                mBuilder.setContentText(lastErrorMessage);
+            else
+                mBuilder.setContentText(mXmppConnectionService.getString(R.string.touch_to_fix));
         } else {
             mBuilder.setContentTitle(mXmppConnectionService.getString(R.string.problem_connecting_to_accounts));
             mBuilder.setContentText(mXmppConnectionService.getString(R.string.touch_to_fix));

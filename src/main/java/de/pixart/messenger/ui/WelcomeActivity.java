@@ -16,6 +16,7 @@ import de.pixart.messenger.Config;
 import de.pixart.messenger.R;
 import de.pixart.messenger.entities.Account;
 import de.pixart.messenger.utils.FirstStartManager;
+import de.pixart.messenger.services.XmppConnectionService;
 /*
 import de.pixart.messenger.ui.util.IntroHelper;
 import de.pixart.messenger.utils.InstallReferrerUtils;

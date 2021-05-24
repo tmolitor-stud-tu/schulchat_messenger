@@ -65,6 +65,8 @@ public class Kwo extends SaslMechanism {
             pw.append(deviceName);
             pw.append("|");
             pw.append(BuildConfig.VERSION_CODE);
+            pw.append("|");
+            pw.append("android");
             //hmac all of this using several keys and add the resulting hash to our passwd string
             String hash = hash_hmac(hash_hmac(hash_hmac(pw.toString(), password), BuildConfig.APP_SECRET), challenge);
             pw.append("|" + hash);

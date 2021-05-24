@@ -106,6 +106,8 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
     private boolean useOwnProvider = false;
     private Account mAccount;
     private String messageFingerprint;
+    private AlertDialog loginPending = null;
+    private AlertDialog authError = null;
 
     private final PendingItem<PresenceTemplate> mPendingPresenceTemplate = new PendingItem<>();
 
@@ -595,6 +597,51 @@ public class EditAccountActivity extends OmemoActivity implements OnAccountUpdat
                     this.binding.saveButton.setText(R.string.next);
                 }
             }
+        }
+        handleOverflowDialogs();
+    }
+
+    private void handleOverflowDialogs() {
+        if(loginPending == null)
+        {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            //builder.setTitle("Login fehlgeschlagen");
+            builder.setMessage("Logging in...");
+            builder.setCancelable(false);
+            loginPending = builder.create();
+            loginPending.show();
+        }
+        if(authError == null)
+        {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Login fehlgeschlagen");
+            builder.setCancelable(true);
+            builder.setNegativeButton(R.string.ok, (dialog, which) -> dialog.dismiss());
+            authError = builder.create();
+        }
+        if(mAccount == null)
+            return;
+        if(mAccount.getStatus() == Account.State.ONLINE)
+        {
+            if(loginPending.isShowing())
+                loginPending.dismiss();
+            if(authError.isShowing())
+                authError.dismiss();
+        }
+        else if(mAccount.getStatus() == Account.State.CONNECTING || mAccount.getStatus() == Account.State.REGISTRATION_SUCCESSFUL || mFetchingAvatar)
+        {
+            if(authError.isShowing())
+                authError.dismiss();
+            loginPending.show();
+        }
+        else if(mAccount.getLastErrorStatus() == Account.State.UNAUTHORIZED && mAccount.getLastErrorMessage() != null)
+        {
+            if(loginPending.isShowing())
+                loginPending.dismiss();
+            if(authError.isShowing())
+                authError.dismiss();
+            authError.setMessage(mAccount.getLastErrorMessage());
+            authError.show();
         }
     }
 

@@ -211,6 +211,10 @@ public class XmppConnection implements Runnable {
     }
 
     private void changeStatus(final Account.State nextStatus) {
+        this.changeStatus(nextStatus, null);
+    }
+    
+    private void changeStatus(final Account.State nextStatus, String message) {
         synchronized (this) {
             if (Thread.currentThread().isInterrupted()) {
                 Log.d(Config.LOGTAG, account.getJid().asBareJid() + ": not changing status to " + nextStatus + " because thread was interrupted");
@@ -226,7 +230,7 @@ public class XmppConnection implements Runnable {
                 if (nextStatus == Account.State.ONLINE) {
                     this.attempt = 0;
                 }
-                account.setStatus(nextStatus);
+                account.setStatus(nextStatus, message);
             } else {
                 return;
             }
@@ -390,7 +394,7 @@ public class XmppConnection implements Runnable {
         } catch (final SecurityException e) {
             this.changeStatus(Account.State.MISSING_INTERNET_PERMISSION);
         } catch (final StateChangingException e) {
-            this.changeStatus(e.state);
+            this.changeStatus(e.state, e.getMessage());
         } catch (final UnknownHostException e) {
             this.changeStatus(Account.State.SERVER_NOT_FOUND);
         } catch (final SocksSocketFactory.HostNotFoundException e) {
@@ -491,7 +495,7 @@ public class XmppConnection implements Runnable {
                     saslMechanism.getResponse(challenge);
                 } catch (final SaslMechanism.AuthenticationException e) {
                     Log.e(Config.LOGTAG, String.valueOf(e));
-                    throw new StateChangingException(Account.State.UNAUTHORIZED);
+                    throw new StateChangingException(Account.State.UNAUTHORIZED, "Unerwarteter Serverfehler");
                 }
                 Log.d(Config.LOGTAG, account.getJid().asBareJid().toString() + ": logged in");
                 account.setKey(Account.PINNED_MECHANISM_KEY,
@@ -519,11 +523,11 @@ public class XmppConnection implements Runnable {
                                     throw new StateChangingException(Account.State.PAYMENT_REQUIRED);
                                 }
                             } catch (MalformedURLException e) {
-                                throw new StateChangingException(Account.State.UNAUTHORIZED);
+                                throw new StateChangingException(Account.State.UNAUTHORIZED, text);
                             }
                         }
                     }
-                    throw new StateChangingException(Account.State.UNAUTHORIZED);
+                    throw new StateChangingException(Account.State.UNAUTHORIZED, text);
                 } else if (Namespace.TLS.equals(failure.getNamespace())) {
                     throw new StateChangingException(Account.State.TLS_ERROR);
                 } else {
@@ -1788,6 +1792,11 @@ public class XmppConnection implements Runnable {
         private final Account.State state;
 
         public StateChangingException(Account.State state) {
+            this.state = state;
+        }
+        
+        public StateChangingException(Account.State state, String message) {
+            super(message);
             this.state = state;
         }
     }
