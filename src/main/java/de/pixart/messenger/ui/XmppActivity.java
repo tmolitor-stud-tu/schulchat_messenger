@@ -80,7 +80,6 @@ import de.pixart.messenger.entities.Presences;
 import de.pixart.messenger.services.AvatarService;
 import de.pixart.messenger.services.BarcodeProvider;
 import de.pixart.messenger.services.EmojiService;
-import de.pixart.messenger.services.PushSettingsService;
 import de.pixart.messenger.services.XmppConnectionService;
 import de.pixart.messenger.services.XmppConnectionService.XmppConnectionBinder;
 import de.pixart.messenger.ui.util.PresenceSelector;
@@ -1405,41 +1404,6 @@ public abstract class XmppActivity extends ActionBarActivity {
     }
 
     protected void openInstallFromUnknownSourcesDialogIfNeeded(boolean showToast) {
-        String ShowToast;
-        if (showToast == true) {
-            ShowToast = "true";
-        } else {
-            ShowToast = "false";
-        }
-        if (!installFromUnknownSourceAllowed() && xmppConnectionService.installedFrom() == null) {
-            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(R.string.install_from_unknown_sources_disabled);
-            builder.setMessage(R.string.install_from_unknown_sources_disabled_dialog);
-            builder.setPositiveButton(R.string.next, (dialog, which) -> {
-                Intent intent;
-                if (android.os.Build.VERSION.SDK_INT >= 26) {
-                    intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES);
-                    Uri uri = Uri.parse("package:" + getPackageName());
-                    intent.setData(uri);
-                } else {
-                    intent = new Intent(Settings.ACTION_SECURITY_SETTINGS);
-                }
-                Log.d(Config.LOGTAG, "Allow install from unknown sources for Android SDK " + Build.VERSION.SDK_INT + " intent " + intent.toString());
-                try {
-                    startActivityForResult(intent, REQUEST_UNKNOWN_SOURCE_OP);
-                } catch (ActivityNotFoundException e) {
-                    ToastCompat.makeText(XmppActivity.this, R.string.device_does_not_support_unknown_source_op, Toast.LENGTH_SHORT).show();
-                } finally {
-                    PushSettingsService task = new PushSettingsService(this, xmppConnectionService.installedFrom(), xmppConnectionService);
-                    task.executeOnExecutor(PushSettingsService.THREAD_POOL_EXECUTOR, ShowToast);
-                    Log.d(Config.LOGTAG, "AppUpdater started");
-                }
-            });
-            builder.create().show();
-        } else {
-            PushSettingsService task = new PushSettingsService(this, xmppConnectionService.installedFrom(), xmppConnectionService);
-            task.executeOnExecutor(PushSettingsService.THREAD_POOL_EXECUTOR, ShowToast);
-            Log.d(Config.LOGTAG, "AppUpdater started");
-        }
+        
     }
 }
