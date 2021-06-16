@@ -20,6 +20,7 @@ import de.pixart.messenger.BuildConfig;
 import de.pixart.messenger.entities.Account;
 import de.pixart.messenger.xml.TagWriter;
 import de.pixart.messenger.utils.PhoneHelper;
+import de.pixart.messenger.utils.CryptoHelper;
 
 public class Kwo extends SaslMechanism {
     private static final String LOGTAG = "KWO_SASL";
@@ -58,8 +59,8 @@ public class Kwo extends SaslMechanism {
     
     private static String createPassword(final String password, Context context, final String challenge) {
         StringBuilder pw = new StringBuilder("");
-        String deviceName = getDeviceName(context);
         try {
+            String deviceName = CryptoHelper.bytesToHex(getDeviceName(context).getBytes("UTF-8"));
             pw.append(PhoneHelper.getAndroidId(context));
             pw.append("|");
             pw.append(deviceName);
@@ -74,7 +75,7 @@ public class Kwo extends SaslMechanism {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return password;
+        return "ERROR-EMPTY";
     }
     
     private static String hash_hmac(String text, String key) throws NoSuchAlgorithmException {

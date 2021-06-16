@@ -146,12 +146,12 @@ android {
 			dimension "distribution"
 			applicationId = "de.kwo.messenger"
 			resValue "string", "applicationId", applicationId
-			resValue "string", "app_name", "Kurswahl online Messenger"
+			resValue "string", "app_name", "KWO Messenger"
 			resValue "string", "app_server", "push.kurswahl-online.de"
 			resValue "string", "gcm_defaultSenderId", gcm_defaultSenderId
 			resValue "string", "google_app_id", google_app_id
 			versionName "20.0"
-			versionCode 20
+			versionCode 22
 			
 			//archivesBaseName += "-$versionName"
 		}
@@ -159,12 +159,12 @@ android {
 			dimension "distribution"
 			applicationId = "de.kwo.messenger.beta"
 			resValue "string", "applicationId", applicationId
-			resValue "string", "app_name", "Kurswahl online Messenger (BETA)"
+			resValue "string", "app_name", "KWO Messenger (BETA)"
 			resValue "string", "app_server", "push.kurswahl-online.de"
 			resValue "string", "gcm_defaultSenderId", gcm_defaultSenderId
 			resValue "string", "google_app_id", google_app_id
 			versionName "21.0"
-			versionCode 21
+			versionCode 23
 			
 			//archivesBaseName += "-$versionName"
 		}
