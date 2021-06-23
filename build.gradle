@@ -151,7 +151,7 @@ android {
 			resValue "string", "gcm_defaultSenderId", gcm_defaultSenderId
 			resValue "string", "google_app_id", google_app_id
 			versionName "20.0"
-			versionCode 22
+			versionCode 23
 			
 			//archivesBaseName += "-$versionName"
 		}
@@ -164,7 +164,7 @@ android {
 			resValue "string", "gcm_defaultSenderId", gcm_defaultSenderId
 			resValue "string", "google_app_id", google_app_id
 			versionName "21.0"
-			versionCode 23
+			versionCode 25
 			
 			//archivesBaseName += "-$versionName"
 		}

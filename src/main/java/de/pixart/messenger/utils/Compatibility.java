@@ -97,7 +97,8 @@ public class Compatibility {
     }
 
     public static boolean keepForegroundService(Context context) {
-        return runsTwentySix() || getBooleanPreference(context, SettingsActivity.SHOW_FOREGROUND_SERVICE, R.bool.show_foreground_service);
+        return false;
+        //return runsTwentySix() || getBooleanPreference(context, SettingsActivity.SHOW_FOREGROUND_SERVICE, R.bool.show_foreground_service);
     }
 
     public static void removeUnusedPreferences(SettingsFragment settingsFragment) {
